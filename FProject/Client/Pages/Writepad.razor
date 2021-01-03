@@ -1,0 +1,12 @@
+﻿@page "/writepad"
+@layout EmptyLayout
+@inject IJSRuntime JS
+
+<canvas id="writepad">FUCK Your Browser!</canvas>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await JS.InvokeAsync<IJSObjectReference>("import", "/js/Writepad.razor.js");
+    }
+}

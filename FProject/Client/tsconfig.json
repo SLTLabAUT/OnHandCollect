@@ -5,11 +5,17 @@
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
-    "target": "es5",
-    "outDir": "wwwroot/js"
+    "target": "es6",
+    "outDir": "wwwroot/js",
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "/*": [ "wwwroot/*" ]
+    },
+    "typeRoots": [ "node_modules/@types", "@types" ]
   },
-  "exclude": [
-    "node_modules",
-    "wwwroot"
+  "include": [
+    "Pages",
+    "Shared"
   ]
 }

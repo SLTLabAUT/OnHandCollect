@@ -8,5 +8,6 @@ namespace FProject.Server.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public ICollection<Writepad> Writepads { get; set; }
     }
 }

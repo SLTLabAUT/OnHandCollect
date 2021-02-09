@@ -1,4 +1,5 @@
 ﻿using FProject.Server.Models;
+using FProject.Shared;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,16 @@ namespace FProject.Server.Data
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
+        }
+
+        public DbSet<Models.Writepad> Writepads { get; set; }
+        public DbSet<DrawingPoint> Points { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<DrawingPoint>().HasKey(p => new { p.WritepadId, p.Number });
         }
     }
 }

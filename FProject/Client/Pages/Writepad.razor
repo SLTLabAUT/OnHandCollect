@@ -1,12 +1,56 @@
-﻿@page "/writepad"
+﻿@page "/writepad/{id:int}"
 @layout EmptyLayout
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Timers
+@using FProject.Shared
+@*@attribute [Authorize]*@
 @inject IJSRuntime JS
+@inject HttpClient Http
+
+<style>
+    html {
+        overflow: hidden;
+    }
+</style>
 
 <canvas id="writepad">FUCK Your Browser!</canvas>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private IJSObjectReference jsRef;
+    private DotNetObjectReference<Writepad> componentRef;
+
+    private Timer saveTimer = new Timer(30000);
+
     protected override async Task OnInitializedAsync()
     {
-        await JS.InvokeAsync<IJSObjectReference>("import", "/js/Writepad.razor.js");
+        componentRef = DotNetObjectReference.Create(this);
+
+        // Get Latest Data
+
+        jsRef = await JS.InvokeAsync<IJSObjectReference>("import", "/js/Pages/Writepad.razor.js");
+        await jsRef.InvokeVoidAsync("init", componentRef);
+
+        saveTimer.Elapsed += async (s, e) =>
+        {
+            await jsRef.InvokeVoidAsync("save");
+        };
+        saveTimer.Enabled = true;
+    }
+
+    [JSInvokable]
+    public async Task Save(DrawingPoint[] drawingPoints)
+    {
+        //try
+        //{
+        //    await Http.PostAsync($"Writepad/{Id}");
+        //}
+        //catch (AccessTokenNotAvailableException exception)
+        //{
+        //    exception.Redirect();
+        //}
     }
 }

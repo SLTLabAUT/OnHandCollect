@@ -1,0 +1,25 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.20",
+    "lodash-es": "^4.17.20"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.167",
+    "@types/lodash-es": "^4.17.4",
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-typescript-path-resolver": "0.0.1-c",
+    "typescript": "^4.1.3"
+  }
+}

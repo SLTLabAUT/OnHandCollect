@@ -6,6 +6,7 @@
     "removeComments": false,
     "sourceMap": true,
     "target": "es6",
+    "module": "ESNext",
     "outDir": "wwwroot/js",
     "baseUrl": ".",
     "rootDir": ".",
@@ -16,6 +17,7 @@
   },
   "include": [
     "Pages",
-    "Shared"
+    "Shared",
+    "ts"
   ]
 }

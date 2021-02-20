@@ -19,7 +19,8 @@ namespace FProject.Server.Data
         {
         }
 
-        public DbSet<Models.Writepad> Writepads { get; set; }
+        public DbSet<Text> Text { get; set; }
+        public DbSet<Writepad> Writepads { get; set; }
         public DbSet<DrawingPoint> Points { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -27,6 +28,9 @@ namespace FProject.Server.Data
             base.OnModelCreating(builder);
 
             builder.Entity<DrawingPoint>().HasKey(p => new { p.WritepadId, p.Number });
+            builder.Entity<DrawingPoint>().HasQueryFilter(p => !p.IsDeleted);
+
+            builder.Entity<Writepad>().HasQueryFilter(w => !w.IsDeleted);
         }
     }
 }

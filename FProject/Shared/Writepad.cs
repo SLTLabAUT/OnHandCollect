@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 
 namespace FProject.Shared
 {
-    public class Writepad
+    public class WritepadDTO
     {
         public int Id { get; set; }
-
-        public WritepadDataType Type { get; set; }
         public PointerType PointerType { get; set; }
-        public string Text { get; set; }
+        public DateTimeOffset LastModified { get; set; }
+
+        public int TextId { get; set; }
+        public Text Text { get; set; }
 
         public ICollection<DrawingPoint> Points { get; set; }
     }
@@ -23,11 +24,5 @@ namespace FProject.Shared
         Touchpad,
         Pen,
         Touch
-    }
-
-    public enum WritepadDataType
-    {
-        Text,
-        WordGroups
     }
 }

@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "^4.17.20",
-    "lodash-es": "^4.17.20"
+    "lodash-es": "^4.17.20",
+    "lz-string": "^1.4.4",
+    "status-code-enum": "^1.0.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.167",

@@ -3,8 +3,10 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Timers
+@using System.Net
+@using System.Text
 @using FProject.Shared
-@*@attribute [Authorize]*@
+@attribute [Authorize]
 @inject IJSRuntime JS
 @inject HttpClient Http
 
@@ -15,6 +17,7 @@
 </style>
 
 <canvas id="writepad">FUCK Your Browser!</canvas>
+<span>@temp</span>
 
 @code {
     [Parameter]
@@ -23,34 +26,70 @@
     private IJSObjectReference jsRef;
     private DotNetObjectReference<Writepad> componentRef;
 
-    private Timer saveTimer = new Timer(30000);
+    private Timer saveTimer = new Timer(5000);
+    private int temp = 0;
 
     protected override async Task OnInitializedAsync()
     {
         componentRef = DotNetObjectReference.Create(this);
 
-        // Get Latest Data
-
-        jsRef = await JS.InvokeAsync<IJSObjectReference>("import", "/js/Pages/Writepad.razor.js");
-        await jsRef.InvokeVoidAsync("init", componentRef);
-
-        saveTimer.Elapsed += async (s, e) =>
+        var writepadCompressedJson = string.Empty;
+        try
         {
-            await jsRef.InvokeVoidAsync("save");
+            writepadCompressedJson = await Http.GetStringAsync($"api/Writepad/{Id}?withPoints=true");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+        jsRef = await JS.InvokeAsync<IJSObjectReference>("ImportGlobal", "Writepad", "/js/Pages/Writepad.razor.js");
+        await jsRef.InvokeVoidAsync("init", componentRef, writepadCompressedJson);
+
+        saveTimer.Elapsed += (s, e) =>
+        {
+            jsRef.InvokeVoidAsync("save");
+            temp++;
         };
         saveTimer.Enabled = true;
     }
 
     [JSInvokable]
-    public async Task Save(DrawingPoint[] drawingPoints)
+    public async Task<SaveResponseDTO> Save(string savePointsDTOCompressedJson)
+    //public async Task<SaveResponseDTO> Save(DateTimeOffset lastModified, DrawingPoint[] drawingPoints, DeletedDrawing[] deletedDrawings)
     {
-        //try
-        //{
-        //    await Http.PostAsync($"Writepad/{Id}");
-        //}
-        //catch (AccessTokenNotAvailableException exception)
-        //{
-        //    exception.Redirect();
-        //}
+        Console.WriteLine("Middle2!" + DateTime.Now);
+        try
+        {
+            //var response = await Http.PostAsJsonAsync($"api/Writepad/{Id}", new SavePointsDTO
+            //{
+            //    LastModified = lastModified,
+            //    NewPoints = drawingPoints,
+            //    DeletedDrawings = deletedDrawings
+            //});
+            //var stringContent = new StringContent(savePointsDTOCompressedJson, Encoding.ASCII, "application/json");
+            //var stringContent = new StringContent(savePointsDTOJson, Encoding.UTF8, "application/json");
+            var response = await Http.PostAsJsonAsync<string>($"api/Writepad/{Id}", savePointsDTOCompressedJson);
+
+            return new SaveResponseDTO
+            {
+                StatusCode = response.StatusCode,
+                JsonContent = await response.Content.ReadAsStringAsync()
+            };
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+            return new SaveResponseDTO
+            {
+                StatusCode = HttpStatusCode.Unauthorized
+            };
+        }
+    }
+
+    public class SaveResponseDTO
+    {
+        public HttpStatusCode StatusCode { get; set; }
+        public string JsonContent { get; set; }
     }
 }

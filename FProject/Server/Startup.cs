@@ -1,5 +1,6 @@
 using FProject.Server.Data;
 using FProject.Server.Models;
+using FProject.Server.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
+using System.Text.Json;
 
 namespace FProject.Server
 {
@@ -40,8 +42,10 @@ namespace FProject.Server
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
             services.AddRazorPages();
+
+            services.AddTransient<TextProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

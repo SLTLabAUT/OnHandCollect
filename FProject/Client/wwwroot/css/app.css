@@ -1,7 +1,47 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:not(.ms-Icon) {
+    font-family: Vazir, sans-serif !important;
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    height: 100%;
+    width: 100%;
+}
+
+#app, #app > div {
+    height: 100%;
+    width: 100%;
+}
+
+.ms-RatingStar-root--large, .ms-RatingStar-root--small {
+    direction: ltr;
+}
+
+.ms-Modal-main {
+    text-align: right !important;
+}
+
+.ms-MessageBar-icon {
+    margin: 8px 12px 8px 0 !important;
+}
+
+.ms-MessageBar-text:not(.ms-MessageBar-dismissSingleLine) {
+    margin: 8px 8px 8px 12px !important;
+}
+
+.ms-Label--required::after {
+    padding: 0 0 0 12px !important;
+}
+
+.ms-Dialog-title {
+    padding: 16px 24px 20px 46px !important;
 }
 
 a, .btn-link {
@@ -42,9 +82,9 @@ a, .btn-link {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}

@@ -2,15 +2,36 @@
 
 <h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
+<p>currentCount: @currentCount</p>
+<p>currentCountPub: @currentCountPub</p>
+<p>CurrentCount: @CurrentCount</p>
+<p>CurrentCountPub: @CurrentCountPub</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="IncrementCount1">Click me 1</button>
+<button class="btn btn-primary" @onclick="IncrementCount2">Click me 2</button>
+<button class="btn btn-primary" @onclick="IncrementCount3">Click me 3</button>
+<button class="btn btn-primary" @onclick="IncrementCount4">Click me 4</button>
 
 @code {
-    private int currentCount = 0;
+    private int currentCount;
+    public int currentCountPub;
+    private int CurrentCount { get; set; }
+    public int CurrentCountPub { get; set; }
 
-    private void IncrementCount()
+    private void IncrementCount1()
     {
         currentCount++;
+    }
+    private void IncrementCount2()
+    {
+        currentCountPub++;
+    }
+    private void IncrementCount3()
+    {
+        CurrentCount++;
+    }
+    private void IncrementCount4()
+    {
+        CurrentCountPub++;
     }
 }

@@ -19,7 +19,9 @@
     "@types/lodash-es": "^4.17.4",
     "del": "^6.0.0",
     "gulp": "^4.0.2",
+    "gulp-sass": "^4.1.0",
     "gulp-sourcemaps": "^3.0.0",
+    "gulp-terser": "^2.0.1",
     "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-typescript-path-resolver": "0.0.1-c",
     "typescript": "^4.1.3"

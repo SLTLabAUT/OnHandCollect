@@ -1,3 +1,5 @@
+using BlazorFluentUI;
+using FProject.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -38,12 +40,17 @@ namespace FProject.Client
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("FProject.ServerAPI"));
 
-            builder.Services.AddApiAuthorization();
+            builder.Services.AddApiAuthorization()
+                .AddAccountClaimsPrincipalFactory<CustomAccountClaimsPrincipalFactory>();
 
+            builder.Services.AddBlazorFluentUI();
         }
 
         public static void ConfigureProviders(IServiceProvider services)
         {
+            //var themeProvider = services.GetService<ThemeProvider>();
+            //themeProvider.UpdateTheme(new DefaultPaletteDark());
+
             // AuthenticationService.js only works with camelCase naming policy
             //try
             //{

@@ -10,4 +10,10 @@ namespace FProject.Server.Models
     {
         public ICollection<Writepad> Writepads { get; set; }
     }
+
+    public static class IdentityRoleConstants
+    {
+        public const string User = "User";
+        public const string Admin = "Admin";
+    }
 }

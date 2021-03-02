@@ -1,5 +1,7 @@
 ﻿using FProject.Server.Data;
+using FProject.Server.Models;
 using FProject.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ namespace FProject.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = IdentityRoleConstants.Admin)]
     public class TextController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

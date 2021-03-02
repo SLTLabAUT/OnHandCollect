@@ -1,18 +1,30 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
+<BFUStack Horizontal="true" Style="width:100%;">
+    <BFUStackItem ClassName="ms-hiddenMdDown" Grow=1 Style="overflow:hidden;max-width:15%;min-width:15%;">
         <NavMenu />
-    </div>
+    </BFUStackItem>
 
-    <div class="main">
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+    <BFUPanel ClassName="ms-hiddenMdUp" Type=@PanelType.SmallFixedNear OnDismiss=@HideMenu IsOpen=@isPanelOpen IsLightDismiss="true">
+        <NavigationTemplate>
+            <BFUIconButton IconName="GlobalNavButton" OnClick=@HideMenu />
+        </NavigationTemplate>
+        <ChildContent>
+            <NavMenu OnLinkClicked=@OnNavLinkClick />
+        </ChildContent>
+    </BFUPanel>
 
-        <div class="content px-4">
-            @Body
-        </div>
-    </div>
-</div>
+    <BFUStackItem Grow=7 Style="overflow:hidden">
+        <BFUStack VerticalFill="true" Style="width:100%;">
+            <BFUResponsiveLayout MaxWidth="ResponsiveMode.Medium.ToMaxCssValue()">
+                <BFUStackItem VerticalFill="false">
+                    <BFUIconButton IconName="GlobalNavButton" OnClick=@ShowMenu />
+                </BFUStackItem>
+            </BFUResponsiveLayout>
+
+            <BFUStackItem ClassName="main" Grow="1" Tokens="new BFUStackItemTokens { Padding = ((int)CurrentMode <= (int)ResponsiveMode.Medium ? 10 : 0) }" Style="overflow-y:auto;">
+                @Body
+            </BFUStackItem>
+        </BFUStack>
+    </BFUStackItem>
+</BFUStack>

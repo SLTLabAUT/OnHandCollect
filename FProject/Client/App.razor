@@ -1,23 +1,27 @@
-<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
-        <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                <NotAuthorized>
-                    @if (!context.User.Identity.IsAuthenticated)
-                    {
-                        <RedirectToLogin />
-                    }
-                    else
-                    {
-                        <p>You are not authorized to access this resource.</p>
-                    }
-                </NotAuthorized>
-            </AuthorizeRouteView>
-        </Found>
-        <NotFound>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p>Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-</CascadingAuthenticationState>
+﻿<BFUTheme>
+    <CascadingAuthenticationState>
+        <BFULayerHost Style="display:flex;flex-direction:row;width:100vw;height:100%;direction:rtl;">
+            <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+                <Found Context="routeData">
+                    <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                        <NotAuthorized>
+                            @if (!context.User.Identity.IsAuthenticated)
+                            {
+                                <RedirectToLogin />
+                            }
+                            else
+                            {
+                                <p>متاسفانه این مسیر محتوایی ندارد یا دسترسی کافی برای مشاهده‌ی آن ندارید.</p>
+                            }
+                        </NotAuthorized>
+                    </AuthorizeRouteView>
+                </Found>
+                <NotFound>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <p>متاسفانه این مسیر محتوایی ندارد یا دسترسی کافی برای مشاهده‌ی آن ندارید.</p>
+                    </LayoutView>
+                </NotFound>
+            </Router>
+        </BFULayerHost>
+    </CascadingAuthenticationState>
+</BFUTheme>

@@ -2,6 +2,7 @@
 using FProject.Shared;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
@@ -26,6 +27,9 @@ namespace FProject.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<IdentityRole>().HasData(new IdentityRole(IdentityRoleConstants.User) { NormalizedName = IdentityRoleConstants.User.ToUpper() });
+            builder.Entity<IdentityRole>().HasData(new IdentityRole(IdentityRoleConstants.Admin) { NormalizedName = IdentityRoleConstants.Admin.ToUpper() });
 
             builder.Entity<DrawingPoint>().HasKey(p => new { p.WritepadId, p.Number });
             builder.Entity<DrawingPoint>().HasQueryFilter(p => !p.IsDeleted);

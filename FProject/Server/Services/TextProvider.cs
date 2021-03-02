@@ -30,7 +30,7 @@ namespace FProject.Server.Services
                     !usedTextIds.Contains(t.Id))
                 .Select(t => t.Id)
                 .ToListAsync();
-            var textId = candidateIds[rnd.Next(candidateIds.Count)];
+            var textId = candidateIds[rnd.Next(candidateIds.Count)]; // TODO: handle no condidates remain
             var text = await _context.Text.FindAsync(textId);
             return text;
         }

@@ -37,8 +37,9 @@ namespace FProject.Server.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var writepads = await _context.Writepads
                 .Where(w => w.OwnerId == userId)
+                .Include(w => w.Text)
                 .ToListAsync();
-            return writepads.Cast<WritepadDTO>();
+            return writepads.Select(w => (WritepadDTO)w);
         }
 
         // GET api/<WritepadController>/5
@@ -58,7 +59,10 @@ namespace FProject.Server.Controllers
             {
                 return NotFound();
             }
-            return LZString.CompressToBase64(JsonSerializer.Serialize((WritepadDTO)writepad));
+            if (withPoints)
+                return LZString.CompressToBase64(JsonSerializer.Serialize((WritepadDTO)writepad));
+            else
+                return JsonSerializer.Serialize((WritepadDTO)writepad);
             //TODO: convert lz to a custom input and output formatter
         }
 
@@ -123,7 +127,6 @@ namespace FProject.Server.Controllers
             writepad.LastModified = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
-            await Task.Delay(10000);
             return Ok(new { LastModified = writepad.LastModified });
         }
 
@@ -141,6 +144,33 @@ namespace FProject.Server.Controllers
             }
 
             writepad.IsDeleted = true;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // PUT api/<WritepadController>/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStatus(int id, WritepadStatus status)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var writepad = await _context.Writepads
+                .Where(w => w.Id == id && w.OwnerId == userId)
+                .FirstOrDefaultAsync();
+            if (writepad is null)
+            {
+                return NotFound();
+            }
+            
+            if (writepad.Status != WritepadStatus.Accepted)
+            {
+                if (status == WritepadStatus.Accepted && !User.IsInRole(IdentityRoleConstants.Admin))
+                {
+                    return BadRequest();
+                }
+
+                writepad.Status = status;
+            }
             await _context.SaveChangesAsync();
 
             return NoContent();

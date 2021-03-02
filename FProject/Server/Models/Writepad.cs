@@ -13,6 +13,7 @@ namespace FProject.Server.Models
         public bool IsDeleted { get; set; }
         public PointerType PointerType { get; set; }
         public DateTimeOffset LastModified { get; set; }
+        public WritepadStatus Status { get; set; }
 
         public int TextId { get; set; }
         public Text Text { get; set; }
@@ -29,6 +30,7 @@ namespace FProject.Server.Models
                 Id = writepad.Id,
                 PointerType = writepad.PointerType,
                 LastModified = writepad.LastModified,
+                Status = writepad.Status,
                 TextId = writepad.TextId,
                 Text = writepad.Text,
                 Points = writepad.Points

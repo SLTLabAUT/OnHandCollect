@@ -7,7 +7,7 @@
     "sourceMap": true,
     "target": "es6",
     "module": "ESNext",
-    "outDir": "wwwroot/js",
+    "outDir": "wwwroot/ts",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
@@ -18,6 +18,6 @@
   "include": [
     "Pages",
     "Shared",
-    "ts"
+    "Ts"
   ]
 }

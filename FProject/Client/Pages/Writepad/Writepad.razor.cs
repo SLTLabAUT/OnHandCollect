@@ -37,7 +37,7 @@ namespace FProject.Client.Pages
         public bool IsSaving { get; set; }
         bool ForceNotRender { get; set; }
         public IJSObjectReference JSRef { get; set; }
-        public Timer SaveTimer { get; set; } = new Timer(5000);
+        public Timer SaveTimer { get; set; } = new Timer(10000);
 
         private DotNetObjectReference<Writepad> componentRef;
 
@@ -49,7 +49,7 @@ namespace FProject.Client.Pages
             JSRef = await JS.InvokeAsync<IJSObjectReference>("ImportGlobal", "Writepad", "/ts/Pages/Writepad/Writepad.razor.js");
 
             SaveTimer.Elapsed += SaveTimerElapsedHandler;
-            //saveTimer.Start();
+            SaveTimer.Start();
         }
 
         protected override async Task OnParametersSetAsync()
@@ -93,8 +93,7 @@ namespace FProject.Client.Pages
         {
             if (!IsSaving)
             {
-                IsSaving = true;
-                //JSRef.InvokeVoidAsync("save");
+                JSRef.InvokeVoidAsync("save");
             }
         }
 
@@ -121,6 +120,8 @@ namespace FProject.Client.Pages
         //public async Task<SaveResponseDTO> Save(DateTimeOffset lastModified, DrawingPoint[] drawingPoints, DeletedDrawing[] deletedDrawings)
         {
             Console.WriteLine("Middle2!" + DateTime.Now);
+            IsSaving = true;
+            PanelRef.StateHasChangedPublic();
             try
             {
                 //var response = await Http.PostAsJsonAsync($"api/Writepad/{Id}", new SavePointsDTO
@@ -160,6 +161,7 @@ namespace FProject.Client.Pages
         public void ReleaseSaveToken()
         {
             IsSaving = false;
+            PanelRef.StateHasChangedPublic();
         }
 
         [JSInvokable]

@@ -109,16 +109,16 @@ export async function save(): Promise<void> {
         return;
     }
 
+    let startingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Number <= lastSavedDrawingNumber) + 1;
+    let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > lastSavedDrawingNumber);
+    if (endingIndex == -1) {
+        return;
+    }
+
     try {
+        console.log("Start!" + new Date());
         isSaving = true;
 
-        let startingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Number <= lastSavedDrawingNumber) + 1;
-        let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > lastSavedDrawingNumber);
-        if (endingIndex == -1) {
-            return;
-        }
-
-        console.log("Start!" + new Date());
         let validDeletedDrawings = deletedDrawings.filter(d => d.StartingNumber <= lastSavedDrawingNumber);
 
         let newDrawings = writepad.Points.slice(startingIndex, endingIndex + 1);
@@ -139,9 +139,7 @@ export async function save(): Promise<void> {
             case StatusCode.ClientErrorBadRequest:
                 break;
             case StatusCode.SuccessOK:
-                console.log(writepad.LastModified);
-                console.log(response.LastModified);
-                writepad.LastModified = response.LastModified;
+                writepad.LastModified = response.lastModified;
                 lastSavedDrawingNumber = _.last(newDrawings).Number;
                 break;
             default:
@@ -162,7 +160,7 @@ interface SavePointsDTO {
 
 interface SaveResponseDTO {
     statusCode: StatusCode,
-    LastModified: Date
+    lastModified: Date
 }
 
 async function updateDotNetUndoRedo() {

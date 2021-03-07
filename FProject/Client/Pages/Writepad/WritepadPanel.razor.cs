@@ -53,7 +53,7 @@ namespace FProject.Client.Pages
 
         void AutoSaveChangedHandler(bool checkedBool)
         {
-            //Parent.SaveTimer.Enabled = checkedBool;
+            Parent.SaveTimer.Enabled = checkedBool;
             Parent.AutoSaveChecked = checkedBool;
         }
 
@@ -61,6 +61,11 @@ namespace FProject.Client.Pages
         {
             await Parent.JSRef.InvokeVoidAsync("changeDefaultMode", mode);
             MoveDisabled = !MoveDisabled;
+        }
+
+        public void StateHasChangedPublic()
+        {
+            StateHasChanged();
         }
 
         public void UndoRedoUpdator(bool undo, bool redo)

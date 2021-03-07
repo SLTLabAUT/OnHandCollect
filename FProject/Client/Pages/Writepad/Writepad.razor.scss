@@ -1,0 +1,33 @@
+﻿::deep.writepad {
+    width: 100%;
+    overflow-y: hidden;
+
+    .pad {
+        #writepad {
+            touch-action: none;
+        }
+    }
+
+    .panel {
+        box-shadow: 0 -5px 3px inset;
+        padding: 8px 3px 8px 8px;
+
+        .panel-open-close {
+            transform: rotate(180deg);
+        }
+
+        &.panel-collapsed {
+            & > .ms-StackItem:not(.panel-collapse-section) {
+                display: none;
+            }
+
+            .panel-open-close {
+                transform: rotate(0);
+            }
+        }
+    }
+
+    #data {
+        display: none;
+    }
+}

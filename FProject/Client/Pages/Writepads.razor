@@ -14,14 +14,10 @@
     <hr />
 
     <BFUStack Horizontal="true" Wrap="true" HorizontalAlign=@Alignment.SpaceAround Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 50 } }) Style="margin:25px 0;">
-        @{ 
-            var pc = new PersianCalendar();
-        }
         @for (int i = 0; i < WritepadList.Count; i++)
         {
             var writepadNumber = i + 1;
             var writepad = WritepadList[i];
-            var lm = writepad.LastModified.DateTime;
 
             <BFUStackItem>
                 <BFUDocumentCard>
@@ -105,7 +101,7 @@
                             <BFUTooltipHost>
                                 <TooltipContent>آخرین بروزرسانی</TooltipContent>
                                 <ChildContent>
-                                    <BFUText Variant=@TextType.Small>آ.ب: @string.Format("{3:00}:{4:00} {0}/{1:00}/{2:00}", pc.GetYear(lm), pc.GetMonth(lm), pc.GetDayOfMonth(lm), pc.GetHour(lm), pc.GetMinute(lm))</BFUText>
+                                    <BFUText Variant=@TextType.Small>آ.ب: @writepad.GetLocalTimeString()</BFUText>
                                 </ChildContent>
                             </BFUTooltipHost>
                         </BFUStackItem>

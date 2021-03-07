@@ -1,0 +1,162 @@
+﻿@namespace FProject.Client.Pages
+
+<BFUStack ClassName=@("panel" + (PanelCollapsed ? " panel-collapsed" : "")) Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
+    <BFUStackItem>
+        <BFUStack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
+            <BFUStackItem VerticalFill=false Align=Alignment.Center Style="width: 100%;">
+                <BFUStack Reversed=true Horizontal=true VerticalAlign=Alignment.Center>
+                    <BFUStackItem>
+                        <BFUTooltipHost>
+                            <TooltipContent>اطلاعات تخته</TooltipContent>
+                            <ChildContent>
+                                <MyBFUIconButton Variant=TextType.Large IconName="Info" />
+                            </ChildContent>
+                        </BFUTooltipHost>
+                    </BFUStackItem>
+                    <BFUStackItem Grow=1 Style="text-align: center;"><BFUText Variant=TextType.XLarge>تخته‌ی شماره‌ی @Parent.Number</BFUText></BFUStackItem>
+                    <BFUStackItem>
+                        @{
+                            string pointerTypeTooltip = string.Empty;
+                            string pointerTypeIconName = string.Empty;
+                            switch (Parent.WritepadInstance.PointerType)
+                            {
+                                case FProject.Shared.PointerType.Mouse:
+                                    pointerTypeTooltip = "موس";
+                                    pointerTypeIconName = "TouchPointer";
+                                    break;
+                                case FProject.Shared.PointerType.Touchpad:
+                                    pointerTypeTooltip = "تاچ‌پد";
+                                    pointerTypeIconName = "TouchPointer";
+                                    break;
+                                case FProject.Shared.PointerType.Pen:
+                                    pointerTypeTooltip = "قلم";
+                                    pointerTypeIconName = "PenWorkspace";
+                                    break;
+                                case FProject.Shared.PointerType.Touch:
+                                    pointerTypeTooltip = "لمس";
+                                    pointerTypeIconName = "Touch";
+                                    break;
+                            }
+
+                            string textTypeTooltip = string.Empty;
+                            string textTypeIconName = string.Empty;
+                            switch (Parent.WritepadInstance.Text.Type)
+                            {
+                                case FProject.Shared.TextType.Text:
+                                    textTypeTooltip = "متن";
+                                    textTypeIconName = "TextDocument";
+                                    break;
+                                case FProject.Shared.TextType.WordGroups:
+                                    textTypeTooltip = "گروه کلمات";
+                                    textTypeIconName = "TextBox";
+                                    break;
+                            }
+                        }
+                        <BFUText Variant=@TextType.Large>
+                            <BFUTooltipHost>
+                                <TooltipContent>@pointerTypeTooltip</TooltipContent>
+                                <ChildContent>
+                                    <BFUIcon IconName=@pointerTypeIconName />
+                                </ChildContent>
+                            </BFUTooltipHost>
+                            <BFUTooltipHost>
+                                <TooltipContent>@textTypeTooltip</TooltipContent>
+                                <ChildContent>
+                                    <BFUIcon IconName=@textTypeIconName />
+                                </ChildContent>
+                            </BFUTooltipHost>
+                        </BFUText>
+                    </BFUStackItem>
+                </BFUStack>
+            </BFUStackItem>
+            <hr />
+            <BFUStackItem Grow=1 Align=Alignment.Center Style="overflow:auto;">
+                <BFUText Block="true" Variant=@TextType.SmallPlus>@Parent.WritepadInstance.Text.Content</BFUText>
+            </BFUStackItem>
+            <hr />
+            <BFUStackItem VerticalFill=false Align=Alignment.Center Style="width: 100%;">
+                <BFUStack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
+                    <BFUStackItem Grow=1>
+                        <BFUStack>
+                            <BFUStackItem>
+                                <BFUStack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.SpaceAround VerticalAlign=Alignment.Center>
+                                    <BFUStackItem VerticalFill=false>
+                                        <MyBFUIconButton IconName="Undo" Disabled=UndoDisabled OnClick=@(args => UndoRedoHander()) />
+                                    </BFUStackItem>
+                                    <BFUStackItem VerticalFill=false>
+                                        <MyBFUIconButton IconName="Redo" Disabled=RedoDisabled OnClick=@(args => UndoRedoHander(true)) />
+                                    </BFUStackItem>
+                                </BFUStack>
+                            </BFUStackItem>
+                            <BFUStackItem>
+                                <BFUStack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.SpaceAround VerticalAlign=Alignment.Center>
+                                    <BFUStackItem VerticalFill=false>
+                                        <MyBFUIconButton IconName="Edit" Disabled=!MoveDisabled OnClick=@(args => ChangeDefaultModeHandler(FProject.Shared.DrawingMode.Non)) />
+                                    </BFUStackItem>
+                                    <BFUStackItem VerticalFill=false>
+                                        <MyBFUIconButton IconName="Move" Disabled=MoveDisabled OnClick=@(args => ChangeDefaultModeHandler(FProject.Shared.DrawingMode.Move)) />
+                                    </BFUStackItem>
+                                </BFUStack>
+                            </BFUStackItem>
+                        </BFUStack>
+                    </BFUStackItem>
+                    <BFUStackItem>
+                        <BFUStack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
+                            <BFUStackItem>
+                                <BFUToggle InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
+                            </BFUStackItem>
+                            <BFUStackItem Style="width: 100%;" ClassName=@(Parent.IsSaving ? "has-ms-Spinner--small" : "")>
+                                @if (Parent.IsSaving)
+                                {
+                                    <BFUSpinner Size=@SpinnerSize.Small ClassName="save-spinner" />
+                                }
+                                <BFUPrimaryButton Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=Parent.IsSaving OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
+                            </BFUStackItem>
+                            <BFUStackItem>
+                                <BFUTooltipHost>
+                                    <TooltipContent>آخرین بروزرسانی</TooltipContent>
+                                    <ChildContent>
+                                        <BFUText Variant=@TextType.Tiny>آ.ب: @Parent.WritepadInstance.GetLocalTimeString()</BFUText>
+                                    </ChildContent>
+                                </BFUTooltipHost>
+                            </BFUStackItem>
+                        </BFUStack>
+                    </BFUStackItem>
+                </BFUStack>
+            </BFUStackItem>
+        </BFUStack>
+    </BFUStackItem>
+    <BFUStackItem Style="margin-left:8px;">
+        <hr style="height:100%;" />
+    </BFUStackItem>
+    <BFUStackItem ClassName="panel-collapse-section">
+        <BFUStack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
+            <BFUStackItem VerticalFill=false>
+                <BFUTooltipHost>
+                    <TooltipContent>بازگشت به لیست تخته‌ها</TooltipContent>
+                    <ChildContent>
+                        <MyBFUIconButton Variant=TextType.Large IconName="AppIconDefaultList" OnClick=@(args => Navigation.NavigateTo($"/writepads")) />
+                    </ChildContent>
+                </BFUTooltipHost>
+            </BFUStackItem>
+            <BFUStackItem Grow=1 Align=Alignment.Center>
+                <BFUStack VerticalFill=true VerticalAlign=Alignment.Center>
+                    <BFUTooltipHost>
+                        <TooltipContent>جمع/باز کردن پنل</TooltipContent>
+                        <ChildContent>
+                            <MyBFUIconButton ClassName="panel-open-close" Variant=TextType.XxLargePlus IconName="NavigationFlipper" OnClick=OpenCollapseHandler />
+                        </ChildContent>
+                    </BFUTooltipHost>
+                </BFUStack>
+            </BFUStackItem>
+            <BFUStackItem VerticalFill=false>
+                <BFUTooltipHost>
+                    <TooltipContent>راهنما</TooltipContent>
+                    <ChildContent>
+                        <MyBFUIconButton Variant=TextType.Large IconName="HelpMirrored" />
+                    </ChildContent>
+                </BFUTooltipHost>
+            </BFUStackItem>
+        </BFUStack>
+    </BFUStackItem>
+</BFUStack>

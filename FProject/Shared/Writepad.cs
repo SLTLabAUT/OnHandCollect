@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,12 @@ namespace FProject.Shared
         public Text Text { get; set; }
 
         public ICollection<DrawingPoint> Points { get; set; }
+    }
+
+    public class WritepadWithNumberDTO
+    {
+        public WritepadDTO Writepad { get; set; }
+        public int Number { get; set; }
     }
 
     public enum PointerType
@@ -40,5 +47,13 @@ namespace FProject.Shared
         WaitForAcceptance,
         [Display(Name = "تأیید شده")]
         Accepted
+    }
+
+    public enum DrawingMode
+    {
+        Non,
+        Draw,
+        Erase,
+        Move
     }
 }

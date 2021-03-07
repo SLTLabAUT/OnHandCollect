@@ -36,10 +36,8 @@ namespace FProject.Client.Pages
         IEnumerable<IBFUDropdownOption> TextTypes { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override Task OnInitializedAsync()
         {
-            await base.OnInitializedAsync();
-
             Items = new BFUCommandBarItem[] {
                 new BFUCommandBarItem() { Text = "ایجاد تخته‌ی جدید", IconName = "Add", Key = "add", OnClick = AddOnClickHandler }
             };
@@ -73,6 +71,11 @@ namespace FProject.Client.Pages
                 }
             };
 
+            return base.OnInitializedAsync();
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
             try
             {
                 WritepadList = await Http.GetFromJsonAsync<List<WritepadDTO>>("api/Writepad");

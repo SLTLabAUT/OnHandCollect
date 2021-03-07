@@ -44,7 +44,7 @@ namespace FProject.Server.Controllers
 
         // GET api/<WritepadController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<string>> Get(int id, bool withPoints)
+        public async Task<ActionResult<string>> Get(int id, bool withPoints, bool withNumber)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             IQueryable<Writepad> writepadQuery = _context.Writepads
@@ -59,10 +59,25 @@ namespace FProject.Server.Controllers
             {
                 return NotFound();
             }
+            var writepadDTO = (WritepadDTO)writepad;
             if (withPoints)
-                return LZString.CompressToBase64(JsonSerializer.Serialize((WritepadDTO)writepad));
+                return LZString.CompressToBase64(JsonSerializer.Serialize(writepadDTO));
             else
-                return JsonSerializer.Serialize((WritepadDTO)writepad);
+            {
+                if (withNumber)
+                {
+                    var writepads = await _context.Writepads
+                        .Where(w => w.OwnerId == userId)
+                        .Select(w => w.Id)
+                        .ToListAsync();
+                    var number = writepads.IndexOf(writepadDTO.Id) + 1;
+                    return JsonSerializer.Serialize(new WritepadWithNumberDTO { Writepad = writepadDTO, Number = number });
+                }
+                else
+                {
+                    return JsonSerializer.Serialize(writepadDTO);
+                }
+            }
             //TODO: convert lz to a custom input and output formatter
         }
 
@@ -91,7 +106,7 @@ namespace FProject.Server.Controllers
         public async Task<IActionResult> SavePoints(int id, [FromBody] string savePointsDTOCompressedJson)
         {
             //var savePointsDTO = JsonSerializer.Deserialize<SavePointsDTO>(savePointsDTOCompressedJson);
-            var savePointsDTO = JsonSerializer.Deserialize<SavePointsDTO>(LZString.DecompressFromBase64(savePointsDTOCompressedJson));
+            var savePointsDTO = JsonSerializer.Deserialize<SavePointsRequestDTO>(LZString.DecompressFromBase64(savePointsDTOCompressedJson));
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var writepad = await _context.Writepads
                 .Where(w => w.Id == id && w.OwnerId == userId).FirstOrDefaultAsync();
@@ -99,7 +114,7 @@ namespace FProject.Server.Controllers
             {
                 return NotFound();
             }
-            else if ((writepad.LastModified - savePointsDTO.LastModified) > TimeSpan.FromMilliseconds(1))
+            else if (writepad.Status == WritepadStatus.Accepted || (writepad.LastModified - savePointsDTO.LastModified) > TimeSpan.FromMilliseconds(1))
             {
                 return BadRequest();
             }
@@ -127,7 +142,7 @@ namespace FProject.Server.Controllers
             writepad.LastModified = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
-            return Ok(new { LastModified = writepad.LastModified });
+            return Ok(new SavePointsResponseDTO { LastModified = writepad.LastModified });
         }
 
         // DELETE api/<WritepadController>/5

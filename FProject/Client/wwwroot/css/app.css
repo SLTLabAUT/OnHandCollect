@@ -1,5 +1,12 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+:root {
+    --spinnerSize-XSmall: 12px;
+    --spinnerSize-Small: 16px;
+    --spinnerSize-Medium: 20px;
+    --spinnerSize-Large: 28px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -42,6 +49,106 @@ html, body {
 
 .ms-Dialog-title {
     padding: 16px 24px 20px 46px !important;
+}
+
+.ms-Spinner {
+    position: relative;
+    top: 50%;
+    z-index: 1;
+}
+
+.ms-Spinner--xSmall {
+    width: var(--spinnerSize-XSmall) !important;
+    height: var(--spinnerSize-XSmall) !important;
+}
+
+.ms-Spinner--small {
+    width: var(--spinnerSize-Small) !important;
+    height: var(--spinnerSize-Small) !important;
+}
+
+.ms-Spinner--medium {
+    width: var(--spinnerSize-Medium) !important;
+    height: var(--spinnerSize-Medium) !important;
+}
+
+.ms-Spinner--large {
+    width: var(--spinnerSize-Large) !important;
+    height: var(--spinnerSize-Large) !important;
+}
+
+.has-ms-Spinner--xSmall {
+    margin-top: calc(-1 * var(--spinnerSize-XSmall)) !important;
+}
+
+.has-ms-Spinner--small {
+    margin-top: calc(-1 * var(--spinnerSize-Small)) !important;
+}
+
+.has-ms-Spinner--medium {
+    margin-top: calc(-1 * var(--spinnerSize-Medium)) !important;
+}
+
+.has-ms-Spinner--large {
+    margin-top: calc(-1 * var(--spinnerSize-Large)) !important;
+}
+
+.ms-Toggle--inlineLabel .ms-Toggle-label {
+    margin-right: auto !important;
+    margin-left: 16px !important;
+    order: unset !important;
+}
+
+.Icon-Size-Tiny .ms-Button-icon {
+    font-size: var(--fontSize-Tiny) !important;
+}
+
+.Icon-Size-XSmall .ms-Button-icon {
+    font-size: var(--fontSize-XSmall) !important;
+}
+
+.Icon-Size-Small .ms-Button-icon {
+    font-size: var(--fontSize-Small) !important;
+}
+
+.Icon-Size-SmallPlus .ms-Button-icon {
+    font-size: var(--fontSize-SmallPlus) !important;
+}
+
+.Icon-Size-Medium .ms-Button-icon {
+    font-size: var(--fontSize-Medium) !important;
+}
+
+.Icon-Size-MediumPlus .ms-Button-icon {
+    font-size: var(--fontSize-MediumPlus) !important;
+}
+
+.Icon-Size-Large .ms-Button-icon {
+    font-size: var(--fontSize-Large) !important;
+}
+
+.Icon-Size-XLarge .ms-Button-icon {
+    font-size: var(--fontSize-XLarge) !important;
+}
+
+.Icon-Size-XLargePlus .ms-Button-icon {
+    font-size: var(--fontSize-XLargePlus) !important;
+}
+
+.Icon-Size-XxLarge .ms-Button-icon {
+    font-size: var(--fontSize-XxLarge) !important;
+}
+
+.Icon-Size-XxLargePlus .ms-Button-icon {
+    font-size: var(--fontSize-XxLargePlus) !important;
+}
+
+.Icon-Size-SuperLarge .ms-Button-icon {
+    font-size: var(--fontSize-SuperLarge) !important;
+}
+
+.Icon-Size-Mega .ms-Button-icon {
+    font-size: var(--fontSize-Mega) !important;
 }
 
 a, .btn-link {

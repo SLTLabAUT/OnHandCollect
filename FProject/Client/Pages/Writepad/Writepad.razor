@@ -1,0 +1,26 @@
+﻿@page "/writepad/{id:int}"
+@layout EmptyLayout
+@namespace FProject.Client.Pages
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<div class="writepad">
+    @if (WritepadInstance is null)
+    {
+        <BFUSpinner Size=@SpinnerSize.Large />
+    }
+    else
+    {
+        <BFUStack Horizontal="true" VerticalFill="true" Style="width:100%;">
+            <BFUStackItem DisableShrink=true Grow=1 ClassName="pad">
+                <canvas id="writepad">مرورگر شما حداقل‌های لازم جهت نمایش این صفحه را ندارد. لطفا از مرورگری معتبر و به‌روز استفاده کنید.</canvas>
+            </BFUStackItem>
+            <BFUStackItem Align=Alignment.Center>
+                <WritepadPanel @ref=PanelRef Parent=this />
+            </BFUStackItem>
+        </BFUStack>
+        <div id="data">
+            @((MarkupString) WritepadCompressedJson)
+        </div>
+    }
+</div>

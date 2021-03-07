@@ -40,10 +40,15 @@ namespace FProject.Shared
         public int EndingNumber { get; set; }
     }
 
-    public class SavePointsDTO
+    public class SavePointsRequestDTO
     {
         public DateTimeOffset LastModified { get; set; }
         public IEnumerable<DrawingPoint> NewPoints { get; set; }
         public IEnumerable<DeletedDrawing> DeletedDrawings { get; set; }
+    }
+
+    public class SavePointsResponseDTO
+    {
+        public DateTimeOffset LastModified { get; set; }
     }
 }

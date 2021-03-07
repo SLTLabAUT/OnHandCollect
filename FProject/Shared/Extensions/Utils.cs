@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -50,6 +51,13 @@ namespace FProject.Shared.Extensions
                 throw new ArgumentException($"Expression '{expression}' doesn't have DisplayAttribute");
             }
             return attribute.Name;
+        }
+
+        public static string GetLocalTimeString(this WritepadDTO writepadDTO)
+        {
+            var pc = new PersianCalendar();
+            var lm = writepadDTO.LastModified.DateTime;
+            return string.Format("{3:00}:{4:00} {0}/{1:00}/{2:00}", pc.GetYear(lm), pc.GetMonth(lm), pc.GetDayOfMonth(lm), pc.GetHour(lm), pc.GetMinute(lm));
         }
     }
 }

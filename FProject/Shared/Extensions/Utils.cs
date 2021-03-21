@@ -52,6 +52,15 @@ namespace FProject.Shared.Extensions
             }
             return attribute.Name;
         }
+        public static string GetDisplayName<TModel>(Expression<Func<TModel, object>> expression)
+        {
+            var attribute = Attribute.GetCustomAttribute(((MemberExpression)expression.Body).Member, typeof(DisplayAttribute)) as DisplayAttribute;
+            if (attribute == null)
+            {
+                throw new ArgumentException($"Expression '{expression}' doesn't have DisplayAttribute");
+            }
+            return attribute.Name;
+        }
 
         public static string GetLocalTimeString(this WritepadDTO writepadDTO)
         {

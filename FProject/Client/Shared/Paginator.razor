@@ -1,0 +1,11 @@
+﻿<BFUStack Horizontal=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
+    <BFUStackItem>
+        <MyBFUIconButton Disabled=NextDisabled IconName="Back" OnClick=@(args => OnClickHandler(true)) />
+    </BFUStackItem>
+    <BFUStackItem Style="margin:0 10px;">
+        <BFUText>@Page</BFUText>
+    </BFUStackItem>
+    <BFUStackItem>
+        <MyBFUIconButton Disabled=BackDisabled IconName="Forward" OnClick=@(args => OnClickHandler(false)) />
+    </BFUStackItem>
+</BFUStack>

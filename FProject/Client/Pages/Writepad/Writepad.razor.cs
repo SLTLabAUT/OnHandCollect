@@ -32,12 +32,11 @@ namespace FProject.Client.Pages
         bool PanelCollapsed { get; set; }
         string WritepadCompressedJson { get; set; }
         public WritepadDTO WritepadInstance { get; set; }
-        public int Number { get; set; }
-        public bool AutoSaveChecked { get; set; } = true;
+        public bool AutoSaveChecked { get; set; }
         public bool IsSaving { get; set; }
         bool ForceNotRender { get; set; }
         public IJSObjectReference JSRef { get; set; }
-        public Timer SaveTimer { get; set; } = new Timer(10000);
+        public Timer SaveTimer { get; set; } = new Timer(30000);
 
         private DotNetObjectReference<Writepad> componentRef;
 
@@ -49,7 +48,6 @@ namespace FProject.Client.Pages
             JSRef = await JS.InvokeAsync<IJSObjectReference>("ImportGlobal", "Writepad", "/ts/Pages/Writepad/Writepad.razor.js");
 
             SaveTimer.Elapsed += SaveTimerElapsedHandler;
-            SaveTimer.Start();
         }
 
         protected override async Task OnParametersSetAsync()
@@ -57,13 +55,16 @@ namespace FProject.Client.Pages
             Console.WriteLine("Parameter");
             try
             {
-                var taskWritepadInstance = Http.GetFromJsonAsync<WritepadWithNumberDTO>($"api/Writepad/{Id}?withNumber=true");
+                var taskWritepadInstance = Http.GetFromJsonAsync<WritepadDTO>($"api/Writepad/{Id}");
                 var taskWritepadCompressedJson = Http.GetStringAsync($"api/Writepad/{Id}?withPoints=true");
                 await Task.WhenAll(taskWritepadInstance, taskWritepadCompressedJson);
-                var writepadResult = taskWritepadInstance.Result;
-                WritepadInstance = writepadResult.Writepad;
-                Number = writepadResult.Number;
+                WritepadInstance = taskWritepadInstance.Result;
                 WritepadCompressedJson = taskWritepadCompressedJson.Result;
+
+                if (WritepadInstance.Type == FProject.Shared.TextType.WordGroups)
+                {
+                    WritepadInstance.Text.Content = WritepadInstance.Text.Content.Replace(" ", "<br />");
+                }
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -81,7 +82,7 @@ namespace FProject.Client.Pages
                 return;
             }
 
-            await JSRef.InvokeVoidAsync("init", componentRef, PadRatio, string.Empty);
+            await JSRef.InvokeVoidAsync("init", componentRef, PadRatio, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1616060000000, string.Empty);
         }
 
         protected override bool ShouldRender()
@@ -95,24 +96,6 @@ namespace FProject.Client.Pages
             {
                 JSRef.InvokeVoidAsync("save");
             }
-        }
-
-        async Task UndoRedoHander(bool isRedo = false)
-        {
-            if (isRedo)
-            {
-                await JSRef.InvokeVoidAsync("redo");
-            }
-            else
-            {
-                await JSRef.InvokeVoidAsync("undo");
-            }
-        }
-
-        void AutoSaveChangedHandler(bool checkedBool)
-        {
-            SaveTimer.Stop();
-            AutoSaveChecked = checkedBool;
         }
 
         [JSInvokable]

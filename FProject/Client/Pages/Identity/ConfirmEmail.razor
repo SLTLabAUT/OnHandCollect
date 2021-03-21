@@ -1,0 +1,72 @@
+﻿@page "/identity/confirmemail"
+@using Microsoft.AspNetCore.WebUtilities
+
+<IdentityTemplate Title="تایید رایانامه">
+    @if (WaitingForConfirmation)
+    {
+        <BFUMessageBar>
+            در انتظار دریافت نتیجه‌ی تایید...
+        </BFUMessageBar>
+    }
+    else if (Confirmed)
+    {
+        <BFUMessageBar MessageBarType="MessageBarType.Success" IsMultiline="false">
+            <Actions>
+                <BFUMessageBarButton Text="ورود به سامانه" Href="/identity/login" />
+            </Actions>
+            <ChildContent>
+                رایانامه‌ی شما با موفقیت تایید شد.
+            </ChildContent>
+        </BFUMessageBar>
+    }
+    else
+    {
+        <BFUMessageBar MessageBarType="MessageBarType.Error" IsMultiline="false">
+            <Actions>
+                <BFUMessageBarButton Text="درخواست دوباره‌ی لینک تایید رایانامه" Href="/identity/resendemailconfirmation" />
+            </Actions>
+            <ChildContent>
+                لینک تایید رایانامه‌ی شما منقضی شده است، لطفا اقدام به دریافت دوباره‌ی آن نمایید.
+            </ChildContent>
+        </BFUMessageBar>
+    }
+</IdentityTemplate>
+
+@code {
+    [Inject]
+    HttpClient HttpClient { get; set; }
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    [Parameter]
+    public string Email { get; set; }
+    [Parameter]
+    public string Token { get; set; }
+
+    bool WaitingForConfirmation { get; set; } = true;
+    bool Confirmed { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var query = new Uri(Navigation.Uri).Query;
+        foreach (var queryItem in QueryHelpers.ParseQuery(query))
+        {
+            switch (queryItem.Key)
+            {
+                case "token":
+                    Token = queryItem.Value;
+                    break;
+                case "email":
+                    Email = queryItem.Value;
+                    break;
+            }
+        }
+
+        var result = await HttpClient.PostAsync($"api/Identity/ConfirmEmail?token={Token}&email={Email}", null);
+        if (result.IsSuccessStatusCode)
+        {
+            Confirmed = true;
+        }
+        WaitingForConfirmation = false;
+    }
+}

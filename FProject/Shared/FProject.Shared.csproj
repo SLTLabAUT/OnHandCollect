@@ -6,9 +6,25 @@
 
   <ItemGroup>
     <PackageReference Include="LZStringCSharp" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="5.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\ErrorMessageResource.Designer.cs">
+      <DependentUpon>ErrorMessageResource.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\ErrorMessageResource.resx">
+      <LastGenOutput>ErrorMessageResource.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

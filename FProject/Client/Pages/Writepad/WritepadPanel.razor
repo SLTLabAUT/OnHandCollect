@@ -13,8 +13,8 @@
                             </ChildContent>
                         </BFUTooltipHost>
                     </BFUStackItem>
-                    <BFUStackItem Grow=1 Style="text-align: center;"><BFUText Variant=TextType.XLarge>تخته‌ی شماره‌ی @Parent.Number</BFUText></BFUStackItem>
-                    <BFUStackItem>
+                    <BFUStackItem Grow=1 Style="text-align:center;margin:0 5px;"><BFUText Variant=TextType.XLarge Style="white-space:nowrap;">تخته‌ی شماره‌ی @Parent.WritepadInstance.UserSpecifiedNumber</BFUText></BFUStackItem>
+                    <BFUStackItem Tokens=@(new BFUStackItemTokens { Padding = "0 4px" })>
                         @{
                             string pointerTypeTooltip = string.Empty;
                             string pointerTypeIconName = string.Empty;
@@ -40,7 +40,7 @@
 
                             string textTypeTooltip = string.Empty;
                             string textTypeIconName = string.Empty;
-                            switch (Parent.WritepadInstance.Text.Type)
+                            switch (Parent.WritepadInstance.Type)
                             {
                                 case FProject.Shared.TextType.Text:
                                     textTypeTooltip = "متن";
@@ -69,11 +69,11 @@
                     </BFUStackItem>
                 </BFUStack>
             </BFUStackItem>
-            <hr />
+            <Hr />
             <BFUStackItem Grow=1 Align=Alignment.Center Style="overflow:auto;">
-                <BFUText Block="true" Variant=@TextType.SmallPlus>@Parent.WritepadInstance.Text.Content</BFUText>
+                <BFUText Block="true" Variant=@TextType.Medium Style=@($"{(Parent.WritepadInstance.Type == FProject.Shared.TextType.WordGroups ? "text-align:center;" : "")}")>@((MarkupString) Parent.WritepadInstance.Text.Content)</BFUText>
             </BFUStackItem>
-            <hr />
+            <Hr />
             <BFUStackItem VerticalFill=false Align=Alignment.Center Style="width: 100%;">
                 <BFUStack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
                     <BFUStackItem Grow=1>
@@ -100,7 +100,7 @@
                             </BFUStackItem>
                         </BFUStack>
                     </BFUStackItem>
-                    <BFUStackItem>
+                    <BFUStackItem Style="margin-left:5px;">
                         <BFUStack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
                             <BFUStackItem>
                                 <BFUToggle InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
@@ -113,7 +113,7 @@
                                 <BFUPrimaryButton Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=Parent.IsSaving OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
                             </BFUStackItem>
                             <BFUStackItem>
-                                <BFUTooltipHost>
+                                <BFUTooltipHost Style="white-space:nowrap;">
                                     <TooltipContent>آخرین بروزرسانی</TooltipContent>
                                     <ChildContent>
                                         <BFUText Variant=@TextType.Tiny>آ.ب: @Parent.WritepadInstance.GetLocalTimeString()</BFUText>

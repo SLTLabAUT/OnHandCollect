@@ -11,8 +11,10 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components.Forms;
-using FProject.Client.Resources;
 using Microsoft.AspNetCore.Components.Web;
+using FProject.Shared.Resources;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Web;
 
 namespace FProject.Client.Pages
 {
@@ -25,16 +27,20 @@ namespace FProject.Client.Pages
         [Inject]
         NavigationManager Navigation { get; set; }
 
+        int Page { get; set; } = 1;
+        int AllCount { get; set; }
         bool CreateDialogOpen { get; set; }
         bool DeleteDialogOpen { get; set; }
         bool SubmitDisabled { get; set; }
-        CreateWritepadModel NewWritepad { get; set; }
+        NewWritepadModel NewWritepad { get; set; }
         EditContext EditContext { get; set; }
-        List<WritepadDTO> WritepadList { get; set; } = new List<WritepadDTO>();
+        List<WritepadDTO> WritepadList { get; set; }
         BFUCommandBarItem[] Items { get; set; }
         IEnumerable<IBFUDropdownOption> PointerTypes { get; set; }
         IEnumerable<IBFUDropdownOption> TextTypes { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
+
+        bool HaveNextPage => Page * 10 < AllCount;
 
         protected override Task OnInitializedAsync()
         {
@@ -52,12 +58,12 @@ namespace FProject.Client.Pages
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
                 });
-            NewWritepad = new CreateWritepadModel()
+            NewWritepad = new NewWritepadModel()
             {
                 PointerType = PointerTypes.First(),
                 TextType = TextTypes.First()
             };
-            NewWritepad = new CreateWritepadModel();
+            NewWritepad = new NewWritepadModel();
             EditContext = new EditContext(NewWritepad);
             EditContext.OnValidationStateChanged += (sender, eventArgs) =>
             {
@@ -76,14 +82,38 @@ namespace FProject.Client.Pages
 
         protected override async Task OnParametersSetAsync()
         {
+            var query = new Uri(Navigation.Uri).Query;
+            foreach (var queryItem in QueryHelpers.ParseQuery(query))
+            {
+                switch (queryItem.Key)
+                {
+                    case "page":
+                        Page = int.Parse(queryItem.Value);
+                        break;
+                }
+            }
+
             try
             {
-                WritepadList = await Http.GetFromJsonAsync<List<WritepadDTO>>("api/Writepad");
+                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}");
+                WritepadList = result.Writepads.ToList();
+                AllCount = result.AllCount;
             }
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
             }
+        }
+
+        async Task OnPageChangeHandler(bool isNext)
+        {
+            var uri = new Uri(Navigation.Uri);
+            var queries = HttpUtility.ParseQueryString(uri.Query);
+            queries["page"] = $"{Page + (isNext ? 1 : -1)}";
+            var dic = queries.AllKeys.ToDictionary(k => k, k => queries[k]);
+            Navigation.NavigateTo(QueryHelpers.AddQueryString(uri.AbsolutePath, dic));
+            WritepadList = null;
+            await OnParametersSetAsync();
         }
 
         void AddOnClickHandler(ItemClickedArgs args)
@@ -105,9 +135,11 @@ namespace FProject.Client.Pages
 
             try
             {
-                var response = await Http.PostAsync($"api/Writepad?pointerType={NewWritepad.PointerType.Key}&textType={NewWritepad.TextType.Key}", null);
-                var writepad = await response.Content.ReadFromJsonAsync<WritepadDTO>();
-                WritepadList.Add(writepad);
+                var response = await Http.PostAsJsonAsync($"api/Writepad", (NewWritepadDTO)NewWritepad);
+                var writepads = await response.Content.ReadFromJsonAsync<IEnumerable<WritepadDTO>>();
+                WritepadList.InsertRange(0, writepads.OrderByDescending(e => e.UserSpecifiedNumber));
+                WritepadList = WritepadList.Take(10).ToList();
+                AllCount += (int)NewWritepad.Number;
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -129,8 +161,9 @@ namespace FProject.Client.Pages
         {
             try
             {
-                await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.Id}");
+                await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.UserSpecifiedNumber}");
                 WritepadList.Remove(CurrentWritepad);
+                AllCount--;
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -152,7 +185,7 @@ namespace FProject.Client.Pages
 
             try
             {
-                var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.WaitForAcceptance}", null);
+                var response = await Http.PutAsync($"api/Writepad/{writepad.UserSpecifiedNumber}?status={WritepadStatus.WaitForAcceptance}", null);
                 if (response.IsSuccessStatusCode)
                 {
                     writepad.Status = WritepadStatus.WaitForAcceptance;
@@ -173,7 +206,7 @@ namespace FProject.Client.Pages
 
             try
             {
-                var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.Editing}", null);
+                var response = await Http.PutAsync($"api/Writepad/{writepad.UserSpecifiedNumber}?status={WritepadStatus.Editing}", null);
                 if (response.IsSuccessStatusCode)
                 {
                     writepad.Status = WritepadStatus.Editing;
@@ -190,7 +223,7 @@ namespace FProject.Client.Pages
             Navigation.NavigateTo($"/writepad/{id}");
         }
 
-        public class CreateWritepadModel
+        public class NewWritepadModel
         {
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "نوع ورودی")]
@@ -198,6 +231,20 @@ namespace FProject.Client.Pages
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "نوع داده")]
             public IBFUDropdownOption TextType { get; set; }
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+            [Range(1, 25, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+            [Display(Name = "تعداد")]
+            public double Number { get; set; } = 1;
+
+            public static explicit operator NewWritepadDTO(NewWritepadModel model)
+            {
+                return new NewWritepadDTO
+                {
+                    PointerType = Enum.Parse<PointerType>(model.PointerType.Key),
+                    TextType = Enum.Parse<FProject.Shared.TextType>(model.TextType.Key),
+                    Number = (int)model.Number
+                };
+            }
         }
     }
 }

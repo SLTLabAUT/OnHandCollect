@@ -10,8 +10,9 @@ namespace FProject.Shared
     public class Text
     {
         public int Id { get; set; }
-        public TextType Type { get; set; }
         public string Content { get; set; }
+        public int WordCount { get; set; }
+        public float Rarity { get; set; }
     }
 
     public enum TextType

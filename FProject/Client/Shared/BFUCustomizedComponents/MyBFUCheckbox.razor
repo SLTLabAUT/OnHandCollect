@@ -1,0 +1,31 @@
+﻿@inherits BFUComponentBase
+@namespace FProject.Client.Shared
+
+<div class=@($"ms-Checkbox {(_isChecked ? "is-checked" : "")} {(_reversed ? "reversed" : "")} {(Disabled ? "is-disabled" : "")} {(_indeterminate ? "is-indeterminate": "")} {ClassName}")
+     style=@Style
+     @ref="RootElementReference">
+    <input type="checkbox"
+           id=@Id
+           class=@($"ms-Checkbox-input mediumFont" )
+           checked=@_isChecked
+           disabled=@Disabled
+           @onchange="InternalOnChange"
+           aria-disabled=@Disabled
+           aria-label=@AriaLabel
+           aria-labelledby=@AriaLabelledBy
+           aria-describedby=@AriaDescribedBy
+           aria-posinset=@AriaPositionInSet
+           aria-setsize=@AriaSetSize />
+    <label class=@($"ms-Checkbox-label")
+           for="@Id">
+        <div class=@($"ms-Checkbox-checkbox")>
+            <i class=@($"ms-Checkbox-checkmark ms-Icon ms-Icon--CheckMark") aria-hidden="true"></i>
+        </div>
+        @if (OnLabelTextClick.HasDelegate)
+        {
+<a class=@($"ms-Link ms-Checkbox-text") @onclick="OnLabelTextClick">@Label</a> }
+            else
+            {
+<span class=@($"ms-Checkbox-text")>@Label</span>}
+    </label>
+</div>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,10 +19,12 @@ namespace FProject.Server.Controllers
     public class TextController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly Regex _wordCounter;
 
         public TextController(ApplicationDbContext context)
         {
             _context = context;
+            _wordCounter = new Regex(@"(?: |\\n)+", RegexOptions.Compiled);
         }
 
         // GET api/<TextController>/5
@@ -37,6 +40,7 @@ namespace FProject.Server.Controllers
         public async Task<IActionResult> Post(Text value)
         {
             value.Id = 0;
+            value.WordCount = _wordCounter.Matches(value.Content).Count + 1;
             _context.Text.Add(value);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Get), new { id = value.Id }, value);

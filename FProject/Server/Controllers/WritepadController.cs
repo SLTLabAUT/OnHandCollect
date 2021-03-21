@@ -32,23 +32,30 @@ namespace FProject.Server.Controllers
 
         // GET: api/<WritepadController>
         [HttpGet]
-        public async Task<IEnumerable<WritepadDTO>> GetAll()
+        public async Task<WritepadsDTO> BatchGet(int page = 1)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var writepads = await _context.Writepads
                 .Where(w => w.OwnerId == userId)
                 .Include(w => w.Text)
+                .OrderBy(w => w.Status)
+                .ThenByDescending(w => w.UserSpecifiedNumber)
+                .Skip((page-1)*10)
+                .Take(10)
                 .ToListAsync();
-            return writepads.Select(w => (WritepadDTO)w);
+            var allCount = await _context.Writepads
+               .Where(w => w.OwnerId == userId)
+               .CountAsync();
+            return new WritepadsDTO { Writepads = writepads.Select(w => (WritepadDTO)w), AllCount = allCount };
         }
 
         // GET api/<WritepadController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<string>> Get(int id, bool withPoints, bool withNumber)
+        public async Task<ActionResult<string>> Get(int id, bool withPoints)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             IQueryable<Writepad> writepadQuery = _context.Writepads
-                .Where(w => w.Id == id && w.OwnerId == userId)
+                .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
                 .Include(w => w.Text);
             if (withPoints)
             {
@@ -64,41 +71,61 @@ namespace FProject.Server.Controllers
                 return LZString.CompressToBase64(JsonSerializer.Serialize(writepadDTO));
             else
             {
-                if (withNumber)
-                {
-                    var writepads = await _context.Writepads
-                        .Where(w => w.OwnerId == userId)
-                        .Select(w => w.Id)
-                        .ToListAsync();
-                    var number = writepads.IndexOf(writepadDTO.Id) + 1;
-                    return JsonSerializer.Serialize(new WritepadWithNumberDTO { Writepad = writepadDTO, Number = number });
-                }
-                else
-                {
-                    return JsonSerializer.Serialize(writepadDTO);
-                }
+                //if (withNumber)
+                //{
+                //    var writepads = await _context.Writepads
+                //        .Where(w => w.OwnerId == userId)
+                //        .Select(w => w.Id)
+                //        .ToListAsync();
+                //    var number = writepads.IndexOf(writepadDTO.Id) + 1;
+                //    return JsonSerializer.Serialize(new WritepadWithNumberDTO { Writepad = writepadDTO, Number = number });
+                //}
+                //else
+                //{
+                return JsonSerializer.Serialize(writepadDTO);
+                //}
             }
             //TODO: convert lz to a custom input and output formatter
         }
 
         // POST api/<WritepadController>
         [HttpPost]
-        public async Task<IActionResult> Post(PointerType pointerType, TextType textType, [FromServices] TextProvider textProvider)
+        public async Task<IActionResult> Post(NewWritepadDTO newWritepad, [FromServices] TextProvider textProvider)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var text = await textProvider.GetNewText(userId, textType);
-            var newWritepad = new Writepad
+            if (!ModelState.IsValid)
             {
-                PointerType = pointerType,
+                return BadRequest();
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var texts = await textProvider.GetNewText(userId, newWritepad);
+
+            var lastUserSpecifiedId = 0;
+            try
+            {
+                lastUserSpecifiedId = await _context.Writepads
+                .Where(w => w.OwnerId == userId)
+                .MaxAsync(w => w.UserSpecifiedNumber);
+            }
+            catch (InvalidOperationException) { }
+
+            var newWritepads = texts.Select(t => new Writepad
+            {
+                UserSpecifiedNumber = ++lastUserSpecifiedId,
+                PointerType = newWritepad.PointerType,
                 LastModified = DateTimeOffset.UtcNow,
-                TextId = text.Id,
+                Type = newWritepad.TextType,
+                TextId = t.Id,
                 OwnerId = userId
-            };
-            _context.Writepads.Add(newWritepad);
+            }).ToList();
+            _context.Writepads.AddRange(newWritepads);
             await _context.SaveChangesAsync();
 
-            newWritepad.Text = text;
-            return CreatedAtAction(nameof(Get), new { id = newWritepad.Id }, (WritepadDTO)newWritepad);
+            for (int i = 0; i < newWritepad.Number; i++)
+            {
+                newWritepads[i].Text = texts[i];
+            }
+            return Ok(newWritepads.Select(w => (WritepadDTO)w));
         }
 
         // POST api/<WritepadController>/{id}
@@ -109,7 +136,7 @@ namespace FProject.Server.Controllers
             var savePointsDTO = JsonSerializer.Deserialize<SavePointsRequestDTO>(LZString.DecompressFromBase64(savePointsDTOCompressedJson));
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var writepad = await _context.Writepads
-                .Where(w => w.Id == id && w.OwnerId == userId).FirstOrDefaultAsync();
+                .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId).FirstOrDefaultAsync();
             if (writepad is null)
             {
                 return NotFound();
@@ -119,7 +146,7 @@ namespace FProject.Server.Controllers
                 return BadRequest();
             }
 
-            foreach (var p in savePointsDTO.NewPoints) p.WritepadId = id;
+            foreach (var p in savePointsDTO.NewPoints) p.WritepadId = writepad.Id;
             _context.Points.AddRange(savePointsDTO.NewPoints);
 
             if (!savePointsDTO.DeletedDrawings.IsNullOrEmpty()) {
@@ -129,7 +156,7 @@ namespace FProject.Server.Controllers
                     {
                         var point = new DrawingPoint
                         {
-                            WritepadId = id,
+                            WritepadId = writepad.Id,
                             Number = i,
                             IsDeleted = true
                         };
@@ -151,7 +178,7 @@ namespace FProject.Server.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var writepad = await _context.Writepads
-                .Where(w => w.Id == id && w.OwnerId == userId)
+                .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
                 .FirstOrDefaultAsync();
             if (writepad is null)
             {
@@ -170,7 +197,7 @@ namespace FProject.Server.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var writepad = await _context.Writepads
-                .Where(w => w.Id == id && w.OwnerId == userId)
+                .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
                 .FirstOrDefaultAsync();
             if (writepad is null)
             {

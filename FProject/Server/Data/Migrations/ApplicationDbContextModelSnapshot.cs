@@ -16,7 +16,7 @@ namespace FProject.Server.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.3")
+                .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("FProject.Server.Models.ApplicationUser", b =>
@@ -26,6 +26,9 @@ namespace FProject.Server.Data.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -63,6 +66,9 @@ namespace FProject.Server.Data.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
+
+                    b.Property<int?>("Sex")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -108,11 +114,19 @@ namespace FProject.Server.Data.Migrations
                     b.Property<int>("TextId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserSpecifiedNumber")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
                     b.HasIndex("TextId");
+
+                    b.HasIndex("UserSpecifiedNumber", "OwnerId");
 
                     b.ToTable("Writepads");
                 });
@@ -176,7 +190,10 @@ namespace FProject.Server.Data.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("text");
 
-                    b.Property<int>("Type")
+                    b.Property<float>("Rarity")
+                        .HasColumnType("real");
+
+                    b.Property<int>("WordCount")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

@@ -1,0 +1,85 @@
+/*
+  Your use of the content in the files referenced here is subject to the terms of the license at https://aka.ms/fabric-assets-license
+*/
+@font-face {
+  font-family: 'FabricMDL2Icons';
+  src: url('/asset/fabric-icons.woff') format('woff');
+}
+
+.ms-Icon {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-family: 'FabricMDL2Icons';
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+}
+
+// Mixins
+@mixin ms-Icon--Accept { content: "\E8FB"; }
+@mixin ms-Icon--Add { content: "\E710"; }
+@mixin ms-Icon--AppIconDefaultList { content: "\EFDE"; }
+@mixin ms-Icon--Back { content: "\E72B"; }
+@mixin ms-Icon--ButtonControl { content: "\F6C0"; }
+@mixin ms-Icon--Cancel { content: "\E711"; }
+@mixin ms-Icon--CheckboxComposite { content: "\E73A"; }
+@mixin ms-Icon--Contact { content: "\E77B"; }
+@mixin ms-Icon--Delete { content: "\E74D"; }
+@mixin ms-Icon--Edit { content: "\E70F"; }
+@mixin ms-Icon--EditSolid12 { content: "\F4B5"; }
+@mixin ms-Icon--Forward { content: "\E72A"; }
+@mixin ms-Icon--GlobalNavButton { content: "\E700"; }
+@mixin ms-Icon--GlobalNavButtonActive { content: "\F89F"; }
+@mixin ms-Icon--HelpMirrored { content: "\EA51"; }
+@mixin ms-Icon--Info { content: "\E946"; }
+@mixin ms-Icon--InfoSolid { content: "\F167"; }
+@mixin ms-Icon--Move { content: "\E7C2"; }
+@mixin ms-Icon--NavigationFlipper { content: "\F51D"; }
+@mixin ms-Icon--PenWorkspace { content: "\EDC6"; }
+@mixin ms-Icon--Phone { content: "\E717"; }
+@mixin ms-Icon--RadioBtnOn { content: "\ECCB"; }
+@mixin ms-Icon--Redo { content: "\E7A6"; }
+@mixin ms-Icon--Save { content: "\E74E"; }
+@mixin ms-Icon--SignOut { content: "\F3B1"; }
+@mixin ms-Icon--TextBox { content: "\EDC2"; }
+@mixin ms-Icon--TextDocument { content: "\F029"; }
+@mixin ms-Icon--Touch { content: "\E815"; }
+@mixin ms-Icon--TouchPointer { content: "\E7C9"; }
+@mixin ms-Icon--Undo { content: "\E7A7"; }
+@mixin ms-Icon--WhiteBoardApp32 { content: "\F674"; }
+
+
+// Classes
+.ms-Icon--Accept:before { @include ms-Icon--Accept }
+.ms-Icon--Add:before { @include ms-Icon--Add }
+.ms-Icon--AppIconDefaultList:before { @include ms-Icon--AppIconDefaultList }
+.ms-Icon--Back:before { @include ms-Icon--Back }
+.ms-Icon--ButtonControl:before { @include ms-Icon--ButtonControl }
+.ms-Icon--Cancel:before { @include ms-Icon--Cancel }
+.ms-Icon--CheckboxComposite:before { @include ms-Icon--CheckboxComposite }
+.ms-Icon--Contact:before { @include ms-Icon--Contact }
+.ms-Icon--Delete:before { @include ms-Icon--Delete }
+.ms-Icon--Edit:before { @include ms-Icon--Edit }
+.ms-Icon--EditSolid12:before { @include ms-Icon--EditSolid12 }
+.ms-Icon--Forward:before { @include ms-Icon--Forward }
+.ms-Icon--GlobalNavButton:before { @include ms-Icon--GlobalNavButton }
+.ms-Icon--GlobalNavButtonActive:before { @include ms-Icon--GlobalNavButtonActive }
+.ms-Icon--HelpMirrored:before { @include ms-Icon--HelpMirrored }
+.ms-Icon--Info:before { @include ms-Icon--Info }
+.ms-Icon--InfoSolid:before { @include ms-Icon--InfoSolid }
+.ms-Icon--Move:before { @include ms-Icon--Move }
+.ms-Icon--NavigationFlipper:before { @include ms-Icon--NavigationFlipper }
+.ms-Icon--PenWorkspace:before { @include ms-Icon--PenWorkspace }
+.ms-Icon--Phone:before { @include ms-Icon--Phone }
+.ms-Icon--RadioBtnOn:before { @include ms-Icon--RadioBtnOn }
+.ms-Icon--Redo:before { @include ms-Icon--Redo }
+.ms-Icon--Save:before { @include ms-Icon--Save }
+.ms-Icon--SignOut:before { @include ms-Icon--SignOut }
+.ms-Icon--TextBox:before { @include ms-Icon--TextBox }
+.ms-Icon--TextDocument:before { @include ms-Icon--TextDocument }
+.ms-Icon--Touch:before { @include ms-Icon--Touch }
+.ms-Icon--TouchPointer:before { @include ms-Icon--TouchPointer }
+.ms-Icon--Undo:before { @include ms-Icon--Undo }
+.ms-Icon--WhiteBoardApp32:before { @include ms-Icon--WhiteBoardApp32 }
+

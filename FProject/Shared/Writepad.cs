@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FProject.Shared.Resources;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -10,10 +11,11 @@ namespace FProject.Shared
 {
     public class WritepadDTO
     {
-        public int Id { get; set; }
         public PointerType PointerType { get; set; }
         public DateTimeOffset LastModified { get; set; }
         public WritepadStatus Status { get; set; }
+        public TextType Type { get; set; }
+        public int UserSpecifiedNumber { get; set; }
 
         public int TextId { get; set; }
         public Text Text { get; set; }
@@ -21,10 +23,21 @@ namespace FProject.Shared
         public ICollection<DrawingPoint> Points { get; set; }
     }
 
-    public class WritepadWithNumberDTO
+    public class WritepadsDTO
     {
-        public WritepadDTO Writepad { get; set; }
-        public int Number { get; set; }
+        public IEnumerable<WritepadDTO> Writepads { get; set; }
+        public int AllCount { get; set; }
+    }
+
+    public class NewWritepadDTO
+    {
+        [Display(Name = "نوع ورودی")]
+        public PointerType PointerType { get; set; }
+        [Display(Name = "نوع داده")]
+        public TextType TextType { get; set; }
+        [Range(1, 25, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [Display(Name = "تعداد")]
+        public int Number { get; set; } = 1;
     }
 
     public enum PointerType

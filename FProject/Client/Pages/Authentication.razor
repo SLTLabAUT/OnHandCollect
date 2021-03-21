@@ -3,5 +3,18 @@
 <RemoteAuthenticatorView Action="@Action" />
 
 @code{
-    [Parameter] public string Action { get; set; }
+    [Parameter]
+    public string Action { get; set; }
+
+    //private RemoteAuthenticationApplicationPathsOptions PathsOptions { get; set; }
+
+    //protected override Task OnInitializedAsync()
+    //{
+    //    PathsOptions = new RemoteAuthenticationApplicationPathsOptions
+    //    {
+    //        LogInPath = "/identity2/login"
+    //    };
+
+    //    return base.OnInitializedAsync();
+    //}
 }

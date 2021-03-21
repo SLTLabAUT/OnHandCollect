@@ -1,0 +1,136 @@
+﻿@page "/identity/profile"
+@using FProject.Shared.Resources
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<IdentityTemplate Title="تغییرات اطلاعات کاربری">
+    @if (Model is null)
+    {
+        <BFUSpinner Size=@SpinnerSize.Large />
+    }
+    else
+    {
+        <EditForm EditContext=EditContext OnValidSubmit=FormHandler>
+            <DataAnnotationsValidator />
+            <BFUValidationSummary />
+            @if (Done)
+            {
+                <BFUMessageBar MessageBarType="MessageBarType.Success" IsMultiline="false" OnDismiss="DismissMessagebarHandler">
+                    اطلاعات کاربری شما با موفقیت تغییر کرد.
+                </BFUMessageBar>
+            }
+            <BFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.Email)) @bind-Value=@Model.Email Disabled=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+            <BFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+            <BFUDropdown ItemsSource=SexOptions
+                         Placeholder="یک گزینه را برگزینید..."
+                         @bind-SelectedOption=Model.Sex
+                         Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex)) />
+            <BFUDatePicker @bind-Value=Model.BirthDate
+                           ShowMonthPickerAsOverlay="true"
+                           FirstDayOfWeek=DayOfWeek.Saturday
+                           ShowCloseButton=true
+                           Label=@(Utils.GetDisplayName<ProfileModel, DateTime>(b => b.BirthDate))
+                           InitialPickerDate=@(DateTime.Parse("1-1-2000"))
+                           Placeholder="تاریخ مورد نظر خود را برگزینید..." />
+            <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
+                <BFUStackItem Align=Alignment.Center>
+                    <BFUSubmitButton Text="اعمال تغییرات" />
+                </BFUStackItem>
+            </BFUStack>
+        </EditForm>
+    }
+</IdentityTemplate>
+
+@code {
+    [Inject]
+    HttpClient Http { get; set; }
+
+    IEnumerable<IBFUDropdownOption> SexOptions { get; set; }
+    bool Done { get; set; }
+    ProfileModel Model { get; set; }
+    EditContext EditContext { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        SexOptions = Enum.GetValues<Sex>()
+                .Select(p => new BFUDropdownOption
+                {
+                    Text = p.GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)p).ToString()
+                });
+
+        return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            Model = (ProfileModel)await Http.GetFromJsonAsync<UserDTO>("api/Identity/UserInfo");
+            EditContext = new EditContext(Model);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    async Task FormHandler()
+    {
+        Done = false;
+
+        var result = await Http.PostAsJsonAsync($"api/Identity/UpdateProfile", (UserDTO)Model);
+        result.EnsureSuccessStatusCode();
+
+        Done = true;
+    }
+
+    void DismissMessagebarHandler()
+    {
+        Done = false;
+    }
+
+    public class ProfileModel
+    {
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [EmailAddress(ErrorMessageResourceName = "EmailAddress", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [Display(Name = "رایانامه")]
+        public string Email { get; set; }
+        [RegularExpression(@"^(?:\+98|0)\d{10}$", ErrorMessageResourceName = "PhoneNumber", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [Display(Name = "شماره‌ی تلفن همراه")]
+        public string PhoneNumber { get; set; }
+        [Display(Name = "جنسیت")]
+        public IBFUDropdownOption Sex { get; set; }
+        [DataType(DataType.Date)]
+        [Display(Name = "تاریخ تولد")]
+        public DateTime BirthDate { get; set; }
+
+        public static explicit operator UserDTO(ProfileModel model)
+        {
+            return new UserDTO
+            {
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                Sex = model.Sex is null ? null : Enum.Parse<Sex>(model.Sex.Key),
+                BirthDate = model.BirthDate.Ticks == 0 ? null : model.BirthDate
+            };
+        }
+
+        public static explicit operator ProfileModel(UserDTO model)
+        {
+            return new ProfileModel
+            {
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                Sex = model.Sex is null ? null : new BFUDropdownOption
+                {
+                    Text = model.Sex.GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)model.Sex).ToString()
+                },
+                BirthDate = model.BirthDate ?? default
+            };
+        }
+    }
+}

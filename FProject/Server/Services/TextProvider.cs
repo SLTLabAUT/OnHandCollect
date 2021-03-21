@@ -10,8 +10,6 @@ namespace FProject.Server.Services
 {
     public class TextProvider
     {
-        private static readonly Random rnd = new Random();
-
         private readonly ApplicationDbContext _context;
 
         public TextProvider(ApplicationDbContext context)
@@ -19,20 +17,62 @@ namespace FProject.Server.Services
             _context = context;
         }
 
-        public async Task<Text> GetNewText(string userId, TextType type)
+        public async Task<List<Text>> GetNewText(string userId, NewWritepadDTO newWritepad)
         {
-            var usedTextIds = await _context.Writepads
-                .Where(w => w.OwnerId == userId)
-                .Select(w => w.TextId)
+            int maxUser = 1;
+            try
+            {
+                maxUser = await _context.Writepads
+                    .Where(w => w.OwnerId == userId && w.PointerType == newWritepad.PointerType)
+                    .GroupBy(w => w.TextId)
+                    .MaxAsync(e => e.Count());
+            }
+            catch (InvalidOperationException) {}
+            int maxWritepads = 1;
+            try
+            {
+                maxWritepads = await _context.Writepads
+                    .Where(w => w.Status == WritepadStatus.Accepted)
+                    .GroupBy(w => w.TextId)
+                    .MaxAsync(e => e.Count());
+            }
+            catch (InvalidOperationException) { }
+            var allText = _context.Text
+                .Select(t => new { TextId = t.Id });
+            var userTextCount = _context.Writepads
+                .Where(w => w.OwnerId == userId && w.PointerType == newWritepad.PointerType)
+                .GroupBy(w => w.TextId)
+                .Select(g => new { g.Key, Count = (float?)g.Count() });
+            //var userAllTextCount = _context.Writepads
+            //    .Where(w => w.OwnerId == userId)
+            //    .GroupBy(w => w.TextId)
+            //    .Select(g => new { g.Key, Count = (int?)g.Count() });
+            var writepadsAcceptedTextCount = _context.Writepads
+                .Where(w => w.Status == WritepadStatus.Accepted)
+                .GroupBy(w => w.TextId)
+                .Select(g => new { g.Key, Count = (float?)g.Count() });
+            var firstJoin = from t in allText
+                            join w in writepadsAcceptedTextCount on t.TextId equals w.Key into gj
+                            from tw in gj.DefaultIfEmpty()
+                            select new { TextId = t.TextId, AllAcceptedUseRank = (tw.Count ?? 0f)/maxWritepads };
+            //var secondQuery = from tu in firstQuery
+            //                 join u in userTextCount on tu.TextId equals u.Key into gj
+            //                 from tuu in gj.DefaultIfEmpty()
+            //                 select new { TextId = tu.TextId, TextRank = tu.TextRank, UserUseCount = tu.UserUseCount, AllUserUseCount = tuu.Count ?? 0 };
+            var secondJoin = from tw in firstJoin
+                             join u in userTextCount on tw.TextId equals u.Key into gj
+                             from twu in gj.DefaultIfEmpty()
+                             select new { TextId = tw.TextId, AllAcceptedUseRank = tw.AllAcceptedUseRank, UserUseRank = (twu.Count ?? 0f)/maxUser };
+            var Ids = await secondJoin
+                .Select(e => new { TextId = e.TextId, Rank = - e.UserUseRank*2 - e.AllAcceptedUseRank })
+                .OrderByDescending(e => e.Rank)
+                .Take(newWritepad.Number)
+                .Select(e => e.TextId)
                 .ToListAsync();
-            var candidateIds = await _context.Text
-                .Where(t => t.Type == type &&
-                    !usedTextIds.Contains(t.Id))
-                .Select(t => t.Id)
+            var texts = await _context.Text
+                .Where(t => Ids.Contains(t.Id))
                 .ToListAsync();
-            var textId = candidateIds[rnd.Next(candidateIds.Count)]; // TODO: handle no condidates remain
-            var text = await _context.Text.FindAsync(textId);
-            return text;
+            return texts;
         }
     }
 }

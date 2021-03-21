@@ -12,14 +12,16 @@ function clean() {
     return del([
         "wwwroot/ts/**",
         "Pages/**/*.css",
-        "Shared/**/*.css"
+        "Shared/**/*.css",
+        "wwwroot/sass/**/*.css"
     ]);
 }
 
 function buildSass() {
     return gulp.src([
             "Pages/**/*.scss",
-            "Shared/**/*.scss"
+            "Shared/**/*.scss",
+            "wwwroot/sass/**/*.scss"
         ], { base: "./" })
         .pipe(sass().on("error", sass.logError))
         .pipe(gulp.dest("."));
@@ -32,7 +34,7 @@ function buildTs() {
         .pipe(tsProject())
         .pipe(pathResolver.tsPathResolver(tsProject.config.compilerOptions, {}))
         .pipe(terser())
-        .pipe(sourcemaps.write("."))
+        //.pipe(sourcemaps.write("."))
         .pipe(gulp.dest(tsProject.config.compilerOptions.outDir, { sourcemaps: "." }));
 }
 

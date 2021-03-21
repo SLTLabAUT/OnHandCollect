@@ -1,16 +1,16 @@
 ﻿@inherits LayoutComponentBase
 
 <BFUStack Horizontal="true" Style="width:100%;">
-    <BFUStackItem ClassName="ms-hiddenMdDown" Grow=1 Style="overflow:hidden;max-width:15%;min-width:15%;">
+    <BFUStackItem ClassName="ms-hiddenMdDown" Grow=1 Style="overflow:hidden;max-width:20%;min-width:20%;">
         <NavMenu />
     </BFUStackItem>
 
-    <BFUPanel ClassName="ms-hiddenMdUp" Type=@PanelType.SmallFixedNear OnDismiss=@HideMenu IsOpen=@isPanelOpen IsLightDismiss="true">
+    <BFUPanel ClassName="ms-hiddenMdUp" Type=@PanelType.SmallFixedFar HasCloseButton=false OnDismiss=@HideMenu IsOpen=@isPanelOpen IsLightDismiss="true">
         <NavigationTemplate>
-            <BFUIconButton IconName="GlobalNavButton" OnClick=@HideMenu />
+            <BFUIconButton OnClick=HideMenu IconName="GlobalNavButtonActive" />
         </NavigationTemplate>
         <ChildContent>
-            <NavMenu OnLinkClicked=@OnNavLinkClick />
+            <NavMenu OnLinkClicked=@OnNavLinkClick Style="box-shadow:none;" />
         </ChildContent>
     </BFUPanel>
 

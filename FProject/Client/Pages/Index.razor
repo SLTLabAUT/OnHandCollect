@@ -1,0 +1,15 @@
+﻿@page "/"
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <NotAuthorized>
+        @{
+            Navigation.NavigateTo("identity/login");
+        }
+    </NotAuthorized>
+    <Authorized>
+        @{
+            Navigation.NavigateTo("writepads");
+        }
+    </Authorized>
+</AuthorizeView>

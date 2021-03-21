@@ -1,0 +1,52 @@
+﻿@page "/identity/resendconfirmationemail"
+
+<IdentityTemplate Title="بازارسال تاییدیه‌ی رایانامه">
+    <EditForm EditContext=EditContext OnValidSubmit=FormHandler>
+        <DataAnnotationsValidator />
+        <BFUValidationSummary />
+        @if (Done)
+        {
+            <BFUMessageBar MessageBarType="MessageBarType.Success" IsMultiline="false" OnDismiss="DismissMessagebarHandler">
+                در صورتی که در سامانه ثبت‌نام کرده باشید و رایانامه‌ی شما تایید نشده باشد، رایانامه‌ای حاوی لینک تایید برایتان بازارسال گردیده است.
+            </BFUMessageBar>
+        }
+        <BFUTextField Label=@(Utils.GetDisplayName<ForgotPasswordDTO>(m => m.Email)) @bind-Value=@Model.Email ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+        <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
+            <BFUStackItem Align=Alignment.Center>
+                <BFUSubmitButton Text="درخواست لینک تایید رایانامه" />
+            </BFUStackItem>
+        </BFUStack>
+    </EditForm>
+</IdentityTemplate>
+
+@code {
+    [Inject]
+    HttpClient Http { get; set; }
+
+    bool Done { get; set; }
+    ForgotPasswordDTO Model { get; set; }
+    EditContext EditContext { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Model = new ForgotPasswordDTO();
+        EditContext = new EditContext(Model);
+
+        return base.OnInitializedAsync();
+    }
+
+    async Task FormHandler()
+    {
+        Done = false;
+
+        var result = await Http.PostAsync($"api/Identity/ResendConfirmationEmail?email={Model.Email}", null);
+        result.EnsureSuccessStatusCode();
+
+        Done = true;
+    }
+
+    void DismissMessagebarHandler()
+    {
+        Done = false;
+    }
+}

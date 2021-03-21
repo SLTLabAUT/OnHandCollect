@@ -1,43 +1,53 @@
-﻿<div class="sidebar">
-    <BFUStack VerticalFill="true" Style="overflow:hidden;box-shadow: 0 -5px 3px inset;" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 }, Padding = "5px 5px" })>
+﻿@using System.Security.Claims 
+
+<div class="sidebar" style="@Style">
+    <BFUStack VerticalFill="true" Style="overflow-y:auto;" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 }, Padding = "5px 5px" })>
+        <BFUStackItem VerticalFill="false" Align="Alignment.Center" Style="text-align: center;">
+            <BFUStack HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 20 }, Padding = "50px 0" })>
+                <BFUStackItem><BFUText Variant=TextType.XxLarge>سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</BFUText></BFUStackItem>
+                <AuthorizeView>
+                    <Authorized>
+                        <BFUStackItem>
+                            <BFUText Variant=TextType.Large>
+                                <BFUIcon IconName="Contact" /> @context.User.FindFirstValue(ClaimTypes.Email)
+                            </BFUText>
+                        </BFUStackItem>
+                    </Authorized>
+                </AuthorizeView>
+                @*<BFUStackItem>
+                    امتیازات کسب شده
+                    <br />
+                    <BFURating ReadOnly="true" Rating="0" />
+                </BFUStackItem>
+                <BFUStack Horizontal="true" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } }) Style="direction: ltr;">
+                    <BFUStackItem>
+                        <BFUIcon IconName="ButtonControl" />
+                        <br />
+                        23
+                    </BFUStackItem>
+                    <BFUStackItem>
+                        <BFUIcon IconName="RadioBtnOn" />
+                        <br />
+                        20
+                    </BFUStackItem>
+                    <BFUStackItem>
+                        <BFUIcon IconName="CheckboxComposite" />
+                        <br />
+                        30
+                    </BFUStackItem>
+                </BFUStack>*@
+            </BFUStack>
+        </BFUStackItem>
+        <Hr />
+
         <AuthorizeView>
             <Authorized>
-                <BFUStackItem VerticalFill="false" Align="Alignment.Center" Style="text-align: center;">
-                    <BFUStack HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 20 }, Padding = "50px 0" })>
-                        <BFUStackItem>@context.User.Identity.Name</BFUStackItem>
-                        <BFUStackItem>
-                            امتیازات کسب شده
-                            <br />
-                            <BFURating ReadOnly="true" Rating="2.5" />
-                        </BFUStackItem>
-                        <BFUStack Horizontal="true" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } }) Style="direction: ltr;">
-                            <BFUStackItem>
-                                <BFUIcon IconName="ButtonControl" />
-                                <br />
-                                23
-                            </BFUStackItem>
-                            <BFUStackItem>
-                                <BFUIcon IconName="RadioBtnOn" />
-                                <br />
-                                20
-                            </BFUStackItem>
-                            <BFUStackItem>
-                                <BFUIcon IconName="CheckboxComposite" />
-                                <br />
-                                30
-                            </BFUStackItem>
-                        </BFUStack>
-                    </BFUStack>
-                </BFUStackItem>
-
-                <hr />
-
-                <BFUStackItem Grow="1" Style="overflow-y:auto;">
+                <BFUStackItem Grow="1">
                     <BFUNav>
                         <BFUNavLinkGroup>
                             <BFUNavLink Name="تخته‌ها" Url="writepads" Id="writepads" Icon="WhiteBoardApp32" OnClick=@OnLinkClicked />
-                            <BFUNavLink Name="ویرایش اطلاعات کاربری" Url="authentication/profile" Id="profile" Icon="Contact" OnClick=@OnLinkClicked />
-                            <BFUNavLink Name="اطلاعیه‌ها" Url="notifications" Id="notifications" Icon="Mail" OnClick=@OnLinkClicked />
+                            <BFUNavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" Icon="Contact" OnClick=@OnLinkClicked />
+                            @*<BFUNavLink Name="اطلاعیه‌ها" Url="notifications" Id="notifications" Icon="Mail" OnClick=@OnLinkClicked />*@
                             <BFUNavLink Name="خروج" Id="logout" Icon="SignOut" OnClick=@BeginSignOut />
                         </BFUNavLinkGroup>
                     </BFUNav>
@@ -47,51 +57,22 @@
             <NotAuthorized>
                 <BFUStack VerticalFill="true" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 25 } })>
                     <BFUStackItem Align="Alignment.Center" VerticalFill="false">
-                        <BFUPrimaryButton Text="ورود" Href="authentication/login" />
+                        <BFUPrimaryButton Text="ورود" Href="identity/login" />
                     </BFUStackItem>
                     <BFUStackItem Align="Alignment.Center" VerticalFill="false">
-                        <BFUDefaultButton Text="ثبت‌نام" Href="authentication/register" />
+                        <BFUDefaultButton Text="ثبت‌نام" Href="identity/register" />
                     </BFUStackItem>
                 </BFUStack>
             </NotAuthorized>
         </AuthorizeView>
 
-        <hr />
-
+        <Hr />
         <BFUStackItem VerticalFill="false" Align="Alignment.Center">
-            <BFULink Href="/">FProject v@(typeof(Program).Assembly.GetName().Version)</BFULink>
+            <BFUText Block=true Style="text-align:center;">
+                <BFUIcon IconName="Phone" Style="transform:rotate(-90deg);" /> <BFULink Href="mailto:info@ssgums.ir">info@ssgums.ir</BFULink>
+                <br />
+                <BFULink Href="/">v@(typeof(Program).Assembly.GetName().Version)</BFULink>
+            </BFUText>
         </BFUStackItem>
     </BFUStack>
 </div>
-
-@*<div class="top-row pl-4 navbar navbar-dark">
-        <a class="navbar-brand" href="">FProject</a>
-        <button class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-
-    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-        <ul class="nav flex-column">
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="counter">
-                    <span class="oi oi-plus" aria-hidden="true"></span> Counter
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="writepad/1">
-                    <span class="oi oi-pencil" aria-hidden="true"></span> Writepad
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="fetchdata">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-                </NavLink>
-            </li>
-        </ul>
-    </div>*@

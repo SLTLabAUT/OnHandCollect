@@ -8,21 +8,24 @@
         }
     }
 
-    .panel {
+    .panel-container {
         box-shadow: 0 -5px 3px inset;
         padding: 8px 3px 8px 8px;
+        flex-basis: 0;
 
-        .panel-open-close {
-            transform: rotate(180deg);
-        }
-
-        &.panel-collapsed {
-            & > .ms-StackItem:not(.panel-collapse-section) {
-                display: none;
+        .panel {
+            .panel-open-close {
+                transform: rotate(180deg);
             }
 
-            .panel-open-close {
-                transform: rotate(0);
+            &.panel-collapsed {
+                & > .ms-StackItem:not(.panel-collapse-section) {
+                    display: none;
+                }
+
+                .panel-open-close {
+                    transform: rotate(0);
+                }
             }
         }
     }

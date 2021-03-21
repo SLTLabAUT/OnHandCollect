@@ -1,4 +1,5 @@
 ﻿using BlazorFluentUI;
+using FProject.Client.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
@@ -13,15 +14,17 @@ namespace FProject.Client.Shared
         [Inject]
         private NavigationManager Navigation { get; set; }
         [Inject]
-        private SignOutSessionStateManager SignOutManager { get; set; }
+        AuthorizeApi AuthorizeApi { get; set; }
 
+        [Parameter]
+        public string Style { get; set; }
         [Parameter]
         public EventCallback<BFUNavLink> OnLinkClicked { get; set; }
 
         private async Task BeginSignOut()
         {
-            await SignOutManager.SetSignOutState();
-            Navigation.NavigateTo("authentication/logout");
+            await AuthorizeApi.Logout();
+            Navigation.NavigateTo("/");
         }
     }
 }

@@ -1,0 +1,54 @@
+﻿@page "/identity/register"
+
+<AuthorizeView>
+    <NotAuthorized Context="Auth">
+        <IdentityTemplate Title="ثبت‌نام">
+            <EditForm EditContext=EditContext OnValidSubmit=RegisterHandler>
+                <DataAnnotationsValidator />
+                <BFUValidationSummary />
+                @if (Done)
+                {
+                    <BFUMessageBar MessageBarType="MessageBarType.Success" IsMultiline="false">
+                        حساب کاربری شما با موفقیت ایجاد گردید. لینک تایید به رایانامه‌تان ارسال شده است. جهت تکمیل فرآیند ثبت‌نام به رایانامه‌ی خود مراجعه کنید.
+                    </BFUMessageBar>
+                }
+                <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Email)) @bind-Value=@Model.Email Required=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+                <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Password)) InputType=@InputType.Password @bind-Value=@Model.Password Required=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+                <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.ConfirmPassword)) InputType=@InputType.Password @bind-Value=@Model.ConfirmPassword Required=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+                <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+                <BFUDropdown ItemsSource=SexOptions
+                             Placeholder="یک گزینه را برگزینید..."
+                             @bind-SelectedOption=Model.Sex
+                             Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex)) />
+                <BFUDatePicker @bind-Value=Model.BirthDate
+                               ShowMonthPickerAsOverlay="true"
+                               FirstDayOfWeek=DayOfWeek.Saturday
+                               ShowCloseButton=true
+                               Label=@(Utils.GetDisplayName<RegisterModel, DateTime>(b => b.BirthDate))
+                               InitialPickerDate=@(DateTime.Parse("1-1-2000"))
+                               Placeholder="تاریخ مورد نظر خود را برگزینید..." />
+                <MyBFUCheckbox Label=@(Utils.GetDisplayName<RegisterModel, bool>(m => m.AcceptTerms)) @bind-Checked=@Model.AcceptTerms OnLabelTextClick=@ShowHideTerms />
+                <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
+                    <BFUStackItem Align=Alignment.Center>
+                        <BFUSubmitButton Text="ثبت‌نام" />
+                    </BFUStackItem>
+                </BFUStack>
+            </EditForm>
+        </IdentityTemplate>
+
+        <BFUDialog Title="شرایط استفاده"
+                    IsOpen=@TermsDialogOpen
+                    OnDismiss=@(args => TermsDialogOpen=false)
+                    Style="text-align: right;">
+            <ChildContent>
+                <p>داده‌های نوشتاری به‌دست‌آمده در این سامانه، در آینده بدون اعلام هویت افراد در دسترس عموم قرارخواهدگرفت.</p>
+            </ChildContent>
+            <FooterTemplate></FooterTemplate>
+        </BFUDialog>
+    </NotAuthorized>
+    <Authorized>
+        @{
+            Navigation.NavigateTo("/");
+        }
+    </Authorized>
+</AuthorizeView>

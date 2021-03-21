@@ -14,6 +14,8 @@ namespace FProject.Server.Models
         public PointerType PointerType { get; set; }
         public DateTimeOffset LastModified { get; set; }
         public WritepadStatus Status { get; set; }
+        public TextType Type { get; set; }
+        public int UserSpecifiedNumber { get; set; }
 
         public int TextId { get; set; }
         public Text Text { get; set; }
@@ -27,8 +29,9 @@ namespace FProject.Server.Models
         {
             return new WritepadDTO
             {
-                Id = writepad.Id,
+                UserSpecifiedNumber = writepad.UserSpecifiedNumber,
                 PointerType = writepad.PointerType,
+                Type = writepad.Type,
                 LastModified = writepad.LastModified,
                 Status = writepad.Status,
                 TextId = writepad.TextId,

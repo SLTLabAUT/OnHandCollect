@@ -1,5 +1,7 @@
+using Blazored.LocalStorage;
 using BlazorFluentUI;
 using FProject.Client.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -34,16 +36,21 @@ namespace FProject.Client
 
         public static void Configure(WebAssemblyHostBuilder builder)
         {
-            builder.Services.AddHttpClient("FProject.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<IdentityAuthenticationStateProvider>();
+            builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<IdentityAuthenticationStateProvider>());
+            builder.Services.AddScoped<AuthorizeApi>();
 
-            // Supply HttpClient instances that include access tokens when making requests to the server project
+            builder.Services.AddHttpClient("FProject.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+                //.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("FProject.ServerAPI"));
 
-            builder.Services.AddApiAuthorization()
-                .AddAccountClaimsPrincipalFactory<CustomAccountClaimsPrincipalFactory>();
+            //builder.Services.AddApiAuthorization()
+            //    .AddAccountClaimsPrincipalFactory<CustomAccountClaimsPrincipalFactory>();
 
             builder.Services.AddBlazorFluentUI();
+
+            builder.Services.AddBlazoredLocalStorage();
         }
 
         public static void ConfigureProviders(IServiceProvider services)

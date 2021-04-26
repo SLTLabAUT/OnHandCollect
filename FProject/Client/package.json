@@ -12,6 +12,7 @@
     "lodash": "^4.17.20",
     "lodash-es": "^4.17.20",
     "lz-string": "^1.4.4",
+    "office-ui-fabric-core": "^11.0.0",
     "status-code-enum": "^1.0.0"
   },
   "devDependencies": {

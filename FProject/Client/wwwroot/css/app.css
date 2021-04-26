@@ -1,6 +1,4 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-
-:root {
+﻿:root {
     --spinnerSize-XSmall: 12px;
     --spinnerSize-Small: 16px;
     --spinnerSize-Medium: 20px;
@@ -25,6 +23,15 @@ html, body {
 #app, #app > div {
     height: 100%;
     width: 100%;
+}
+
+.ms-Panel-scrollableContent {
+    flex-grow: 1;
+}
+
+.ms-Panel-content {
+    height: 100%;
+    padding: 0 !important;
 }
 
 .ms-RatingStar-root--large, .ms-RatingStar-root--small {
@@ -151,30 +158,28 @@ html, body {
     font-size: var(--fontSize-Mega) !important;
 }
 
-a, .btn-link {
-    color: #0366d6;
+.ms-Calendar {
+    direction: ltr;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+.ms-Dialog-topButton {
+    right: auto !important;
+    left: 0;
+    padding: 15px 0 0 15px !important;
 }
 
-.content {
-    padding-top: 1.1rem;
+.ms-TextField-icon {
+    left: 8px;
+    right: auto !important;
 }
 
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+.ms-Slider-container {
+    direction: ltr;
+    text-align: left;
 }
 
-.invalid {
-    outline: 1px solid red;
-}
-
-.validation-message {
-    color: red;
+form > *:not(.ms-Dropdown-root) {
+    margin-top: 10px;
 }
 
 #blazor-error-ui {
@@ -192,6 +197,6 @@ a, .btn-link {
 #blazor-error-ui .dismiss {
     cursor: pointer;
     position: absolute;
-    right: 0.75rem;
+    left: 0.75rem;
     top: 0.5rem;
 }

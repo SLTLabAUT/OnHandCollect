@@ -27,6 +27,7 @@ namespace FProject.Client.Pages
         [Parameter]
         public int Id { get; set; }
 
+        bool IsInitiationDone { get; set; }
         WritepadPanel PanelRef { get; set; }
         float PadRatio { get; set; } = 0.7f;
         bool PanelCollapsed { get; set; }
@@ -82,7 +83,8 @@ namespace FProject.Client.Pages
                 return;
             }
 
-            await JSRef.InvokeVoidAsync("init", componentRef, PadRatio, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - 1616060000000, string.Empty);
+            var currentTime = await Http.GetFromJsonAsync<long>($"api/Writepad/CurrentTime");
+            await JSRef.InvokeVoidAsync("init", componentRef, PadRatio, currentTime - 1616060000000, WritepadCompressedJson);
         }
 
         protected override bool ShouldRender()

@@ -30,6 +30,12 @@ namespace FProject.Server.Controllers
             _context = context;
         }
 
+        [HttpGet("CurrentTime")]
+        public ActionResult<long> CurrentTime()
+        {
+            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        }
+
         // GET: api/<WritepadController>
         [HttpGet]
         public async Task<WritepadsDTO> BatchGet(int page = 1)

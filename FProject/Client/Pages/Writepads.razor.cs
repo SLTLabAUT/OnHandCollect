@@ -93,16 +93,9 @@ namespace FProject.Client.Pages
                 }
             }
 
-            try
-            {
-                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}");
-                WritepadList = result.Writepads.ToList();
-                AllCount = result.AllCount;
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
+            var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}");
+            WritepadList = result.Writepads.ToList();
+            AllCount = result.AllCount;
         }
 
         async Task OnPageChangeHandler(bool isNext)

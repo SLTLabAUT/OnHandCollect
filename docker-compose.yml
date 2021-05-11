@@ -1,8 +1,41 @@
-version: '3.4'
-
+version: "3.9"
 services:
   fproject.server:
-    image: ${DOCKER_REGISTRY-}fprojectserver
+    image: fprojectserver
     build:
       context: .
       dockerfile: FProject/Server/Dockerfile
+    ports:
+      - "80"
+      - "443"
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    volumes:
+      - type: volume
+        source: DataProtection-Keys
+        target: /root/.aspnet/DataProtection-Keys
+    networks:
+      - app
+      - postgres
+    depends_on:
+      - fproject.postgres
+  fproject.postgres:
+    image: postgres
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+    networks:
+      - app
+      - postgres
+volumes:
+  postgres-data:
+  DataProtection-Keys:
+networks:
+  app:
+  postgres:
+    attachable: true

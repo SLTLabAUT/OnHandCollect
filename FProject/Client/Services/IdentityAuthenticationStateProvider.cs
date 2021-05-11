@@ -24,12 +24,12 @@ namespace FProject.Client.Services
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var savedToken = await _localStorage.GetItemAsync<string>("access_token");
+            var savedToken = await GetTokenAsync();
             
             SetHttpAuthHeader(savedToken);
 
             var identity = new ClaimsIdentity();
-            if (!string.IsNullOrWhiteSpace(savedToken))
+            if (!string.IsNullOrEmpty(savedToken))
             {
                 identity = new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt");
             }
@@ -37,16 +37,18 @@ namespace FProject.Client.Services
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
 
-        public void MarkUserAsAuthenticated(string token)
+        public async Task MarkUserAsAuthenticated(string token)
         {
+            await _localStorage.SetItemAsync("access_token", token);
             SetHttpAuthHeader(token);
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
             NotifyAuthenticationStateChanged(authState);
         }
 
-        public void MarkUserAsLoggedOut()
+        public async Task MarkUserAsLoggedOut()
         {
+            await _localStorage.RemoveItemAsync("access_token");
             SetHttpAuthHeader();
             var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
             var authState = Task.FromResult(new AuthenticationState(anonymousUser));
@@ -55,7 +57,7 @@ namespace FProject.Client.Services
 
         void SetHttpAuthHeader(string token = default)
         {
-            if (string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrEmpty(token))
             {
                 _httpClient.DefaultRequestHeaders.Authorization = null;
             }
@@ -63,6 +65,34 @@ namespace FProject.Client.Services
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
             }
+        }
+
+        private async Task<string> GetTokenAsync()
+        {
+            var savedToken = await _localStorage.GetItemAsync<string>("access_token");
+
+            if (!string.IsNullOrEmpty(savedToken))
+            {
+                var claims = ParseClaimsFromJwt(savedToken);
+                var expiration = claims.FirstOrDefault(c => c.Type == "exp")?.Value;
+                var expired = false;
+                if (!string.IsNullOrEmpty(expiration))
+                {
+                    var parsed = long.TryParse(expiration, out var numericDate);
+                    expired = parsed ? DateTimeOffset.UtcNow >= DateTimeOffset.FromUnixTimeSeconds(numericDate) : false;
+                }
+                
+                if (expired)
+                {
+                    await MarkUserAsLoggedOut();
+                }
+                else
+                {
+                    return savedToken;
+                }
+            }
+
+            return null;
         }
 
         private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)

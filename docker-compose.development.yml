@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  fproject.server:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    secrets:
+      - source: appsettings.Development.json
+        target: /app/appsettings.Development.json
+        mode: 0400
+secrets:
+  appsettings.Development.json:
+    file: FProject/Server/appsettings.Development.json

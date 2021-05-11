@@ -14,13 +14,11 @@ namespace FProject.Client.Services
 {
     public class AuthorizeApi
     {
-        private ILocalStorageService _localStorage;
         private HttpClient _httpClient;
         private IdentityAuthenticationStateProvider _authenticationStateProvider;
 
-        public AuthorizeApi(ILocalStorageService localStorage, HttpClient httpClient, IdentityAuthenticationStateProvider authenticationStateProvider)
+        public AuthorizeApi(HttpClient httpClient, IdentityAuthenticationStateProvider authenticationStateProvider)
         {
-            _localStorage = localStorage;
             _httpClient = httpClient;
             _authenticationStateProvider = authenticationStateProvider;
         }
@@ -33,8 +31,7 @@ namespace FProject.Client.Services
             if (response.LoggedIn)
             {
                 var token = response.AccessToken;
-                await _localStorage.SetItemAsync("access_token", token);
-                _authenticationStateProvider.MarkUserAsAuthenticated(token);
+                await _authenticationStateProvider.MarkUserAsAuthenticated(token);
             }
 
             return response;
@@ -47,8 +44,12 @@ namespace FProject.Client.Services
             {
                 throw new HttpRequestException();
             }
-            await _localStorage.RemoveItemAsync("access_token");
-            _authenticationStateProvider.MarkUserAsLoggedOut();
+            await PostLogout();
+        }
+
+        public async Task PostLogout()
+        {
+            await _authenticationStateProvider.MarkUserAsLoggedOut();
         }
 
         public async Task<RegisterResponse> Register(RegisterDTO registerDTO)

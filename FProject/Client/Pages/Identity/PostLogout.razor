@@ -1,0 +1,18 @@
+﻿@page "/identity/postlogout"
+@using Services
+
+@code {
+    [Inject]
+    AuthorizeApi AuthorizeApi { get; set; }
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    [Parameter]
+    public string ReturnUrl { get; set; } = "/";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthorizeApi.PostLogout();
+        Navigation.NavigateTo(ReturnUrl);
+    }
+}

@@ -41,8 +41,9 @@ namespace FProject.Client
             builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<IdentityAuthenticationStateProvider>());
             builder.Services.AddScoped<AuthorizeApi>();
 
-            builder.Services.AddHttpClient("FProject.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-                //.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+            builder.Services.AddTransient<UnauthorizedMessageHandler>();
+            builder.Services.AddHttpClient("FProject.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                .AddHttpMessageHandler<UnauthorizedMessageHandler>();
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("FProject.ServerAPI"));
 
             //builder.Services.AddApiAuthorization()

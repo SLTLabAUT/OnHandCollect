@@ -2,8 +2,12 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/FProject.Client",
+      "sslPort": 0
+    },
     "iisExpress": {
-      "applicationUrl": "http://fprojectclient:12639",
+      "applicationUrl": "http://localhost:12639",
       "sslPort": 44393
     }
   },

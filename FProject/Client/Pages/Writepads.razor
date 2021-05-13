@@ -197,16 +197,16 @@
             <EditForm EditContext=EditContext AdditionalAttributes=@(new Dictionary<string, object>() { { "id", DialogId } }) OnSubmit=SubmitWritepad>
                 <DataAnnotationsValidator />
                 <BFUValidationSummary />
-                <BFUDropdown ItemsSource=PointerTypes
-                             Placeholder="یک گزینه را برگزینید..."
-                             @bind-SelectedOption=NewWritepad.PointerType
-                             Label=@(Utils.GetDisplayName<NewWritepadModel, IBFUDropdownOption>(b => b.PointerType))
-                             Required="true" />
-                <BFUDropdown ItemsSource=TextTypes
-                             Placeholder="یک گزینه را برگزینید..."
-                             @bind-SelectedOption=NewWritepad.TextType
-                             Label=@(Utils.GetDisplayName<NewWritepadModel, IBFUDropdownOption>(b => b.TextType))
-                             Required="true" />
+                <MyBFUDropdown ItemsSource=PointerTypes
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=NewWritepad.PointerType
+                               Label=@(Utils.GetDisplayName<NewWritepadModel, IBFUDropdownOption>(b => b.PointerType))
+                               Required="true" />
+                <MyBFUDropdown ItemsSource=TextTypes
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=NewWritepad.TextType
+                               Label=@(Utils.GetDisplayName<NewWritepadModel, IBFUDropdownOption>(b => b.TextType))
+                               Required="true" />
                 <BFUSlider Label=@(Utils.GetDisplayName<NewWritepadModel, double>(m => m.Number)) @bind-Value=@NewWritepad.Number Min=1 Max=25 />
             </EditForm>
         </ChildContent>

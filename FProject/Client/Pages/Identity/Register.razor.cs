@@ -37,6 +37,11 @@ namespace FProject.Client.Pages.Identity
                     Key = ((int)p).ToString()
                 });
 
+            return base.OnInitializedAsync();
+        }
+
+        protected override Task OnParametersSetAsync()
+        {
             Model = new RegisterModel();
             EditContext = new EditContext(Model);
 
@@ -50,12 +55,6 @@ namespace FProject.Client.Pages.Identity
                 Errors.Clear();
             };
 
-            return base.OnInitializedAsync();
-        }
-
-        protected override Task OnParametersSetAsync()
-        {
-            Console.WriteLine("ParameterSet");
             return base.OnParametersSetAsync();
         }
 

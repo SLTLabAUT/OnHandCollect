@@ -23,17 +23,17 @@
             }
             <BFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.Email)) @bind-Value=@Model.Email Disabled=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
             <BFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
-            <BFUDropdown ItemsSource=SexOptions
-                         Placeholder="یک گزینه را برگزینید..."
-                         @bind-SelectedOption=Model.Sex
-                         Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex)) />
-            <BFUDatePicker @bind-Value=Model.BirthDate
-                           ShowMonthPickerAsOverlay="true"
-                           FirstDayOfWeek=DayOfWeek.Saturday
-                           ShowCloseButton=true
-                           Label=@(Utils.GetDisplayName<ProfileModel, DateTime>(b => b.BirthDate))
-                           InitialPickerDate=@(DateTime.Parse("1-1-2000"))
-                           Placeholder="تاریخ مورد نظر خود را برگزینید..." />
+            <MyBFUDropdown ItemsSource=SexOptions
+                           Placeholder="یک گزینه را برگزینید..."
+                           @bind-SelectedOption=Model.Sex
+                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex)) />
+            <MyBFUDatePicker @bind-Value=Model.BirthDate
+                             ShowMonthPickerAsOverlay="true"
+                             FirstDayOfWeek=DayOfWeek.Saturday
+                             ShowCloseButton=true
+                             Label=@(Utils.GetDisplayName<ProfileModel, DateTime>(b => b.BirthDate))
+                             InitialPickerDate=@(DateTime.Parse("1-1-2000"))
+                             Placeholder="تاریخ مورد نظر خود را برگزینید..." />
             <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
                 <BFUStackItem Align=Alignment.Center>
                     <BFUSubmitButton Text="اعمال تغییرات" />

@@ -4,7 +4,7 @@
     <BFUStack VerticalFill="true" Style="overflow-y:auto;" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 }, Padding = "5px 5px" })>
         <BFUStackItem VerticalFill="false" Align="Alignment.Center" Style="text-align: center;">
             <BFUStack HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 20 }, Padding = "50px 0" })>
-                <BFUStackItem><BFUText Variant=TextType.XxLarge>سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</BFUText></BFUStackItem>
+                <BFUStackItem><BFUText Variant=TextType.XxLarge><a href="/" style="text-decoration:none;color:inherit;">سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</a></BFUText></BFUStackItem>
                 <AuthorizeView>
                     <Authorized>
                         <BFUStackItem>
@@ -69,9 +69,12 @@
         <Hr />
         <BFUStackItem VerticalFill="false" Align="Alignment.Center">
             <BFUText Block=true Style="text-align:center;">
-                <BFUIcon IconName="Phone" Style="transform:rotate(-90deg);" /> <BFULink Href="mailto:farsihandwriting@gmail.com">farsihandwriting@gmail.com</BFULink>
+                <BFUIcon IconName="Phone" Style="transform:rotate(-90deg);" /> <BFULink Href="mailto:info@farsihandwriting.com">info@farsihandwriting.com</BFULink>
                 <br />
-                <BFULink Href="/">v@(typeof(Program).Assembly.GetName().Version)</BFULink>
+                @{ 
+                    var version = typeof(Program).Assembly.GetName().Version;
+                }
+            <BFULink Href="/">v@(version.Major).@(version.Minor).@(version.Build)</BFULink>
             </BFUText>
         </BFUStackItem>
     </BFUStack>

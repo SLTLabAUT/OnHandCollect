@@ -16,17 +16,17 @@
                 <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Password)) InputType=@InputType.Password @bind-Value=@Model.Password Required=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
                 <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.ConfirmPassword)) InputType=@InputType.Password @bind-Value=@Model.ConfirmPassword Required=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
                 <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
-                <BFUDropdown ItemsSource=SexOptions
-                             Placeholder="یک گزینه را برگزینید..."
-                             @bind-SelectedOption=Model.Sex
-                             Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex)) />
-                <BFUDatePicker @bind-Value=Model.BirthDate
-                               ShowMonthPickerAsOverlay="true"
-                               FirstDayOfWeek=DayOfWeek.Saturday
-                               ShowCloseButton=true
-                               Label=@(Utils.GetDisplayName<RegisterModel, DateTime>(b => b.BirthDate))
-                               InitialPickerDate=@(DateTime.Parse("1-1-2000"))
-                               Placeholder="تاریخ مورد نظر خود را برگزینید..." />
+                <MyBFUDropdown ItemsSource=SexOptions
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=Model.Sex
+                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex)) />
+                <MyBFUDatePicker @bind-Value=Model.BirthDate
+                                 ShowMonthPickerAsOverlay="true"
+                                 FirstDayOfWeek=DayOfWeek.Saturday
+                                 ShowCloseButton=true
+                                 Label=@(Utils.GetDisplayName<RegisterModel, DateTime>(b => b.BirthDate))
+                                 InitialPickerDate=@(DateTime.Parse("1-1-2000"))
+                                 Placeholder="تاریخ مورد نظر خود را برگزینید..." />
                 <MyBFUCheckbox Label=@(Utils.GetDisplayName<RegisterModel, bool>(m => m.AcceptTerms)) @bind-Checked=@Model.AcceptTerms OnLabelTextClick=@ShowHideTerms />
                 <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
                     <BFUStackItem Align=Alignment.Center>

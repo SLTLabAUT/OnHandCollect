@@ -1,6 +1,7 @@
 ﻿using FProject.Server.Data;
 using FProject.Server.Models;
 using FProject.Shared;
+using FProject.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

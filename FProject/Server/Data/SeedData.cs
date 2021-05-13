@@ -1,5 +1,6 @@
 ﻿using FProject.Server.Models;
 using FProject.Shared;
+using FProject.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

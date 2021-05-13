@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Text.Json;
 using LZStringCSharp;
+using FProject.Shared.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -38,34 +39,72 @@ namespace FProject.Server.Controllers
 
         // GET: api/<WritepadController>
         [HttpGet]
-        public async Task<WritepadsDTO> BatchGet(int page = 1)
+        public async Task<WritepadsDTO> BatchGet(int page = 1, bool admin = false)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var writepads = await _context.Writepads
-                .Where(w => w.OwnerId == userId)
-                .Include(w => w.Text)
-                .OrderBy(w => w.Status)
-                .ThenByDescending(w => w.UserSpecifiedNumber)
-                .Skip((page-1)*10)
+            var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
+
+            IQueryable<Writepad> writepadsQuery = _context.Writepads
+                .Include(w => w.Text);
+            if (admin && isAdmin)
+            {
+                var customOrder = new int[] { 1, 2, 0 };
+                writepadsQuery = writepadsQuery
+                    .OrderBy(w => w.Status == WritepadStatus.Editing ? 3 : (int)w.Status) // Array.IndexOf could not get translated
+                    .ThenByDescending(w => w.Id);
+            }
+            else
+            {
+                writepadsQuery = writepadsQuery
+                    .Where(w => w.OwnerId == userId)
+                    .OrderBy(w => w.Status)
+                    .ThenByDescending(w => w.UserSpecifiedNumber);
+            }
+            var writepads = await writepadsQuery
+                .Skip((page - 1) * 10)
                 .Take(10)
                 .ToListAsync();
-            var allCount = await _context.Writepads
-               .Where(w => w.OwnerId == userId)
-               .CountAsync();
-            return new WritepadsDTO { Writepads = writepads.Select(w => (WritepadDTO)w), AllCount = allCount };
+
+            var allCount = 0;
+            if (admin && isAdmin)
+            {
+                allCount = await _context.Writepads
+                    .CountAsync();
+            }
+            else
+            {
+                allCount = await _context.Writepads
+                   .Where(w => w.OwnerId == userId)
+                   .CountAsync();
+            }
+
+            return new WritepadsDTO { Writepads = writepads.Select(w => admin && isAdmin ? Writepad.ToAdminWritepadDTO(w) : (WritepadDTO)w),
+                AllCount = allCount };
         }
 
         // GET api/<WritepadController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<string>> Get(int id, bool withPoints)
+        public async Task<ActionResult<string>> Get(int id, bool withPoints, bool admin = false)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
+
             IQueryable<Writepad> writepadQuery = _context.Writepads
-                .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
                 .Include(w => w.Text);
+            if (admin && isAdmin)
+            {
+                writepadQuery = writepadQuery
+                    .Where(w => w.Id == id);
+            }
+            else
+            {
+                writepadQuery = writepadQuery
+                    .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId);
+            }
             if (withPoints)
             {
-                writepadQuery = writepadQuery.Include(w => w.Points);
+                writepadQuery = writepadQuery
+                    .Include(w => w.Points);
             }
             var writepad = await writepadQuery.FirstOrDefaultAsync();
             if (writepad is null)
@@ -110,8 +149,8 @@ namespace FProject.Server.Controllers
             try
             {
                 lastUserSpecifiedId = await _context.Writepads
-                .Where(w => w.OwnerId == userId)
-                .MaxAsync(w => w.UserSpecifiedNumber);
+                    .Where(w => w.OwnerId == userId)
+                    .MaxAsync(w => w.UserSpecifiedNumber);
             }
             catch (InvalidOperationException) { }
 
@@ -180,12 +219,25 @@ namespace FProject.Server.Controllers
 
         // DELETE api/<WritepadController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, bool admin = false)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var writepad = await _context.Writepads
-                .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
-                .FirstOrDefaultAsync();
+            var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
+
+            Writepad writepad;
+            if (isAdmin && admin)
+            {
+                writepad = await _context.Writepads
+                    .Where(w => w.Id == id)
+                    .FirstOrDefaultAsync();
+            }
+            else
+            {
+                writepad = await _context.Writepads
+                    .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
+                    .FirstOrDefaultAsync();
+            }
+
             if (writepad is null)
             {
                 return NotFound();
@@ -199,26 +251,36 @@ namespace FProject.Server.Controllers
 
         // PUT api/<WritepadController>/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStatus(int id, WritepadStatus status)
+        public async Task<IActionResult> UpdateStatus(int id, WritepadStatus status, bool admin = false)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var writepad = await _context.Writepads
-                .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
-                .FirstOrDefaultAsync();
+            var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
+
+            Writepad writepad;
+            if (isAdmin && admin)
+            {
+                writepad = await _context.Writepads
+                    .Where(w => w.Id == id)
+                    .FirstOrDefaultAsync();
+            }
+            else
+            {
+                writepad = await _context.Writepads
+                    .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
+                    .FirstOrDefaultAsync();
+            }
+            
             if (writepad is null)
             {
                 return NotFound();
             }
             
-            if (writepad.Status != WritepadStatus.Accepted)
+            if ((writepad.Status == WritepadStatus.Accepted || status == WritepadStatus.Accepted) && !isAdmin)
             {
-                if (status == WritepadStatus.Accepted && !User.IsInRole(IdentityRoleConstants.Admin))
-                {
-                    return BadRequest();
-                }
-
-                writepad.Status = status;
+                return BadRequest();
             }
+
+            writepad.Status = status;
             await _context.SaveChangesAsync();
 
             return NoContent();

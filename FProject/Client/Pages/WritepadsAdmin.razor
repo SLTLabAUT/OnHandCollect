@@ -1,17 +1,17 @@
-﻿@page "/writepads"
+﻿@page "/writepadsadmin"
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
+@attribute [Authorize(Roles = IdentityRoleConstants.Admin)]
 
 <div style="height:100%;overflow:auto;">
     <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
         <BFUStackItem VerticalFill=false Style="width:100%;">
-            <BFUStack Horizontal="true" Wrap="true" Reversed="true" VerticalAlign=Alignment.Center>
+            <BFUStack Horizontal="true" Wrap="true" Reversed="true" VerticalAlign=Alignment.Center Style="width:100%;">
                 <BFUStackItem>
-                    <MyBFUText Variant=@TextType.XxLarge>تخته‌ها <BFUIcon IconName="WhiteBoardApp32" /></MyBFUText>
+                    <MyBFUText Variant=@TextType.XxLarge>تخته‌ها (صفحه‌ی مدیر) <BFUIcon IconName="WhiteBoardApp32" /></MyBFUText>
                 </BFUStackItem>
                 <BFUStackItem Grow=1 DisableShrink="true">
-                    <BFUCommandBar Items=@Items />
+                    <BFUCommandBar />
                 </BFUStackItem>
             </BFUStack>
         </BFUStackItem>
@@ -31,7 +31,7 @@
                         <BFUStack Horizontal="true" Wrap="true" HorizontalAlign=Alignment.SpaceEvenly Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 50 } }) Style="margin:0;">
                             @if (AllCount == 0)
                             {
-                                <BFUText>شما تخته‌ای ندارید.</BFUText>
+                                <BFUText>تخته‌ای وجود ندارد.</BFUText>
                             }
                             @for (int i = 0; i < WritepadList.Count; i++)
                             {
@@ -126,26 +126,26 @@
                                             <BFUStackItem>
                                                 <BFUStack Horizontal="true" Reversed="true">
                                                     @*<BFUTooltipHost>
-                                                    <TooltipContent>اطلاعات</TooltipContent>
-                                                    <ChildContent>
-                                                        <BFUIconButton IconName="InfoSolid" />
-                                                    </ChildContent>
-                                                </BFUTooltipHost>*@
-                                                    @if (writepad.Status == FProject.Shared.WritepadStatus.Editing)
+                                                        <TooltipContent>اطلاعات</TooltipContent>
+                                                        <ChildContent>
+                                                            <BFUIconButton IconName="InfoSolid" />
+                                                        </ChildContent>
+                                                    </BFUTooltipHost>*@
+                                                    @if (writepad.Status == FProject.Shared.WritepadStatus.Accepted)
                                                     {
                                                         <BFUTooltipHost>
-                                                            <TooltipContent>ارسال جهت بررسی و تایید</TooltipContent>
+                                                            <TooltipContent>رد</TooltipContent>
                                                             <ChildContent>
-                                                                <BFUIconButton OnClick=@(args => SubmitForApproval(args, writepad)) IconName="Accept" />
+                                                                <BFUIconButton OnClick=@(args => Reject(args, writepad)) IconName="Cancel" />
                                                             </ChildContent>
                                                         </BFUTooltipHost>
                                                     }
-                                                    else if (writepad.Status == FProject.Shared.WritepadStatus.WaitForAcceptance)
+                                                    else
                                                     {
                                                         <BFUTooltipHost>
-                                                            <TooltipContent>لغو درخواست بررسی و تایید</TooltipContent>
+                                                            <TooltipContent>تایید</TooltipContent>
                                                             <ChildContent>
-                                                                <BFUIconButton OnClick=@(args => CancelApprovalRequest(args, writepad)) IconName="Cancel" />
+                                                                <BFUIconButton OnClick=@(args => Approve(args, writepad)) IconName="Accept" />
                                                             </ChildContent>
                                                         </BFUTooltipHost>
                                                     }
@@ -172,49 +172,17 @@
                     <BFUStackItem VerticalFill=false Align=Alignment.Center>
                         <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
                     </BFUStackItem>
-                    <BFUStackItem>
+                    @*<BFUStackItem>
                         <BFUMessageBar>
                             پس از تکمیل هر تخته، با استفاده از دکمه‌ی <BFUIcon IconName="Accept" /> آن را جهت بررسی و تایید ارسال‌کنید.
                             <br />
                             تخته‌های تاییدشده امتیاز شما را بالا برده و شانس برنده‌شدن در قرعه‌کشیتان را افزایش‌می‌دهد.
                         </BFUMessageBar>
-                    </BFUStackItem>
+                    </BFUStackItem>*@
                 </BFUStack>
             }
         </BFUStackItem>
     </BFUStack>
-
-    @{
-        var DialogId = Guid.NewGuid();
-    }
-    <BFUDialog Title="ایجاد تخته‌ی جدید"
-               SubText="اطلاعات تخته‌ی جدید خود را در فرم زیر وارد نمایید و گزینه‌ی ذخیره را بزنید."
-               IsOpen=@CreateDialogOpen
-               DialogType=@DialogType.LargeHeader
-               OnDismiss=@(args => CreateDialogOpen=false)
-               Style="text-align: right;">
-        <ChildContent>
-            <EditForm EditContext=EditContext AdditionalAttributes=@(new Dictionary<string, object>() { { "id", DialogId } }) OnSubmit=SubmitWritepad>
-                <DataAnnotationsValidator />
-                <BFUValidationSummary />
-                <MyBFUDropdown ItemsSource=PointerTypes
-                               Placeholder="یک گزینه را برگزینید..."
-                               @bind-SelectedOption=NewWritepad.PointerType
-                               Label=@(Utils.GetDisplayName<NewWritepadModel, IBFUDropdownOption>(b => b.PointerType))
-                               Required="true" />
-                <MyBFUDropdown ItemsSource=TextTypes
-                               Placeholder="یک گزینه را برگزینید..."
-                               @bind-SelectedOption=NewWritepad.TextType
-                               Label=@(Utils.GetDisplayName<NewWritepadModel, IBFUDropdownOption>(b => b.TextType))
-                               Required="true" />
-                <BFUSlider Label=@(Utils.GetDisplayName<NewWritepadModel, double>(m => m.Number)) @bind-Value=@NewWritepad.Number Min=1 Max=25 />
-            </EditForm>
-        </ChildContent>
-        <FooterTemplate>
-            <BFUDefaultButton Text="لغو" OnClick=@(args => CreateDialogOpen=false) />
-            <BFUSubmitButton Text="ذخیره" Disabled=SubmitDisabled UnknownProperties=@(new Dictionary<string, object>() { { "form", DialogId } }) />
-        </FooterTemplate>
-    </BFUDialog>
 
     <BFUDialog Title="تایید حذف تخته"
                SubText=@($"آیا از حذف تخته‌ی شماره‌ی {CurrentWritepad?.SpecifiedNumber} اطمینان دارید؟")

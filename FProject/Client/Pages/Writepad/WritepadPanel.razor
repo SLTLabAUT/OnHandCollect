@@ -13,7 +13,7 @@
                             </ChildContent>
                         </BFUTooltipHost>
                     </BFUStackItem>
-                    <BFUStackItem Grow=1 Style="text-align:center;margin:0 5px;"><BFUText Variant=TextType.XLarge Style="white-space:nowrap;">تخته‌ی شماره‌ی @Parent.WritepadInstance.UserSpecifiedNumber</BFUText></BFUStackItem>
+                    <BFUStackItem Grow=1 Style="text-align:center;margin:0 5px;"><BFUText Variant=TextType.XLarge Style="white-space:nowrap;">تخته‌ی شماره‌ی @Parent.WritepadInstance.SpecifiedNumber</BFUText></BFUStackItem>
                     <BFUStackItem Tokens=@(new BFUStackItemTokens { Padding = "0 4px" })>
                         @{
                             string pointerTypeTooltip = string.Empty;
@@ -103,14 +103,14 @@
                     <BFUStackItem Style="margin-left:5px;">
                         <BFUStack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
                             <BFUStackItem>
-                                <BFUToggle InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
+                                <BFUToggle Disabled="Parent.AdminReview" InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
                             </BFUStackItem>
                             <BFUStackItem Style="width: 100%;" ClassName=@(Parent.IsSaving ? "has-ms-Spinner--small" : "")>
                                 @if (Parent.IsSaving)
                                 {
                                     <BFUSpinner Size=@SpinnerSize.Small ClassName="save-spinner" />
                                 }
-                                <BFUPrimaryButton Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=Parent.IsSaving OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
+                                <BFUPrimaryButton Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.AdminReview || Parent.IsSaving) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
                             </BFUStackItem>
                             <BFUStackItem>
                                 <BFUTooltipHost Style="white-space:nowrap;">
@@ -135,7 +135,7 @@
                 <BFUTooltipHost>
                     <TooltipContent>بازگشت به لیست تخته‌ها</TooltipContent>
                     <ChildContent>
-                        <MyBFUIconButton Variant=TextType.Large IconName="AppIconDefaultList" OnClick=@(args => Navigation.NavigateTo($"/writepads")) />
+                        <MyBFUIconButton Variant=TextType.Large IconName="AppIconDefaultList" OnClick=@(args => Navigation.NavigateTo($"/{(Parent.AdminReview ? "writepadsadmin" : "writepads")}")) />
                     </ChildContent>
                 </BFUTooltipHost>
             </BFUStackItem>

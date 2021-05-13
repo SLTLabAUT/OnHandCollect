@@ -106,4 +106,10 @@ namespace FProject.Shared.Models
         [Display(Name = "زن")]
         Woman
     }
+
+    public static class IdentityRoleConstants
+    {
+        public const string User = "User";
+        public const string Admin = "Admin";
+    }
 }

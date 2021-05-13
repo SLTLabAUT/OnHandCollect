@@ -130,7 +130,7 @@ namespace FProject.Client.Pages
             {
                 var response = await Http.PostAsJsonAsync($"api/Writepad", (NewWritepadDTO)NewWritepad);
                 var writepads = await response.Content.ReadFromJsonAsync<IEnumerable<WritepadDTO>>();
-                WritepadList.InsertRange(0, writepads.OrderByDescending(e => e.UserSpecifiedNumber));
+                WritepadList.InsertRange(0, writepads.OrderByDescending(e => e.SpecifiedNumber));
                 WritepadList = WritepadList.Take(10).ToList();
                 AllCount += (int)NewWritepad.Number;
             }
@@ -154,7 +154,7 @@ namespace FProject.Client.Pages
         {
             try
             {
-                await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.UserSpecifiedNumber}");
+                await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.SpecifiedNumber}");
                 WritepadList.Remove(CurrentWritepad);
                 AllCount--;
             }
@@ -178,7 +178,7 @@ namespace FProject.Client.Pages
 
             try
             {
-                var response = await Http.PutAsync($"api/Writepad/{writepad.UserSpecifiedNumber}?status={WritepadStatus.WaitForAcceptance}", null);
+                var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.WaitForAcceptance}", null);
                 if (response.IsSuccessStatusCode)
                 {
                     writepad.Status = WritepadStatus.WaitForAcceptance;
@@ -199,7 +199,7 @@ namespace FProject.Client.Pages
 
             try
             {
-                var response = await Http.PutAsync($"api/Writepad/{writepad.UserSpecifiedNumber}?status={WritepadStatus.Editing}", null);
+                var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.Editing}", null);
                 if (response.IsSuccessStatusCode)
                 {
                     writepad.Status = WritepadStatus.Editing;

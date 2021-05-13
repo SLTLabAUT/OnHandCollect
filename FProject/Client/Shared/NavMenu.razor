@@ -1,4 +1,4 @@
-﻿@using System.Security.Claims 
+﻿@using System.Security.Claims
 
 <div class="sidebar" style="@Style">
     <BFUStack VerticalFill="true" Style="overflow-y:auto;" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 }, Padding = "5px 5px" })>
@@ -41,11 +41,16 @@
         <Hr />
 
         <AuthorizeView>
-            <Authorized>
+            <Authorized Context="NavMenu">
                 <BFUStackItem Grow="1">
                     <BFUNav>
                         <BFUNavLinkGroup>
                             <BFUNavLink Name="تخته‌ها" Url="writepads" Id="writepads" Icon="WhiteBoardApp32" OnClick=@OnLinkClicked />
+                            <AuthorizeView Roles="@IdentityRoleConstants.Admin">
+                                <Authorized>
+                                    <BFUNavLink Name="تخته‌ها (صفحه‌ی مدیر)" Url="writepadsadmin" Id="writepadsadmin" Icon="WhiteBoardApp32" OnClick=@OnLinkClicked />
+                                </Authorized>
+                            </AuthorizeView>
                             <BFUNavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" Icon="Contact" OnClick=@OnLinkClicked />
                             @*<BFUNavLink Name="اطلاعیه‌ها" Url="notifications" Id="notifications" Icon="Mail" OnClick=@OnLinkClicked />*@
                             <BFUNavLink Name="خروج" Id="logout" Icon="SignOut" OnClick=@BeginSignOut />

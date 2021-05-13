@@ -1,5 +1,6 @@
 ﻿using FProject.Server.Models;
 using FProject.Shared;
+using FProject.Shared.Models;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Identity;

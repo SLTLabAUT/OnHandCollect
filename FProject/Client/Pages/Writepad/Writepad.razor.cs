@@ -3,6 +3,7 @@ using FProject.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace FProject.Client.Pages
 
         [Parameter]
         public int Id { get; set; }
+        [Parameter]
+        public bool AdminReview { get; set; }
 
         bool IsInitiationDone { get; set; }
         WritepadPanel PanelRef { get; set; }
@@ -54,22 +57,27 @@ namespace FProject.Client.Pages
         protected override async Task OnParametersSetAsync()
         {
             Console.WriteLine("Parameter");
-            try
-            {
-                var taskWritepadInstance = Http.GetFromJsonAsync<WritepadDTO>($"api/Writepad/{Id}");
-                var taskWritepadCompressedJson = Http.GetStringAsync($"api/Writepad/{Id}?withPoints=true");
-                await Task.WhenAll(taskWritepadInstance, taskWritepadCompressedJson);
-                WritepadInstance = taskWritepadInstance.Result;
-                WritepadCompressedJson = taskWritepadCompressedJson.Result;
 
-                if (WritepadInstance.Type == FProject.Shared.TextType.WordGroups)
+            var query = new Uri(Navigation.Uri).Query;
+            foreach (var queryItem in QueryHelpers.ParseQuery(query))
+            {
+                switch (queryItem.Key)
                 {
-                    WritepadInstance.Text.Content = WritepadInstance.Text.Content.Replace(" ", "<br />");
+                    case "adminreview":
+                        AdminReview = true;
+                        break;
                 }
             }
-            catch (AccessTokenNotAvailableException exception)
+
+            var taskWritepadInstance = Http.GetFromJsonAsync<WritepadDTO>($"api/Writepad/{Id}?admin={AdminReview}");
+            var taskWritepadCompressedJson = Http.GetStringAsync($"api/Writepad/{Id}?withPoints=true&admin={AdminReview}");
+            await Task.WhenAll(taskWritepadInstance, taskWritepadCompressedJson);
+            WritepadInstance = taskWritepadInstance.Result;
+            WritepadCompressedJson = taskWritepadCompressedJson.Result;
+
+            if (WritepadInstance.Type == FProject.Shared.TextType.WordGroups)
             {
-                exception.Redirect();
+                WritepadInstance.Text.Content = WritepadInstance.Text.Content.Replace(" ", "<br />");
             }
         }
 

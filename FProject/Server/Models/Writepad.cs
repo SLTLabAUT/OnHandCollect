@@ -25,11 +25,26 @@ namespace FProject.Server.Models
         public string OwnerId { get; set; }
         public ApplicationUser Owner { get; set; }
 
+        public static WritepadDTO ToAdminWritepadDTO(Writepad writepad)
+        {
+            return new WritepadDTO
+            {
+                SpecifiedNumber = writepad.Id,
+                PointerType = writepad.PointerType,
+                Type = writepad.Type,
+                LastModified = writepad.LastModified,
+                Status = writepad.Status,
+                TextId = writepad.TextId,
+                Text = writepad.Text,
+                Points = writepad.Points
+            };
+        }
+
         public static explicit operator WritepadDTO(Writepad writepad)
         {
             return new WritepadDTO
             {
-                UserSpecifiedNumber = writepad.UserSpecifiedNumber,
+                SpecifiedNumber = writepad.UserSpecifiedNumber,
                 PointerType = writepad.PointerType,
                 Type = writepad.Type,
                 LastModified = writepad.LastModified,

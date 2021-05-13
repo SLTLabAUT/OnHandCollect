@@ -15,7 +15,7 @@ namespace FProject.Shared
         public DateTimeOffset LastModified { get; set; }
         public WritepadStatus Status { get; set; }
         public TextType Type { get; set; }
-        public int UserSpecifiedNumber { get; set; }
+        public int SpecifiedNumber { get; set; }
 
         public int TextId { get; set; }
         public Text Text { get; set; }

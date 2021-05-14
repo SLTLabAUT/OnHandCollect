@@ -104,7 +104,7 @@ namespace FProject.Server.Controllers
 
             if (!result.Succeeded)
             {
-                response.Errors = result.Errors;
+                response.Errors = result.Errors.Select(e => (Shared.Models.IdentityError)e);
                 return BadRequest(response);
             }
 
@@ -221,7 +221,7 @@ namespace FProject.Server.Controllers
             var result = await _signInManager.UserManager.ResetPasswordAsync(user, dto.Token, dto.Password);
             if (!result.Succeeded)
             {
-                response.Errors = result.Errors;
+                response.Errors = result.Errors.Select(e => (Shared.Models.IdentityError)e);
                 return BadRequest(response);
             }
 
@@ -272,7 +272,7 @@ namespace FProject.Server.Controllers
             var result = await _signInManager.UserManager.ConfirmEmailAsync(user, HttpUtility.HtmlDecode(token));
             if (!result.Succeeded)
             {
-                response.Errors = result.Errors;
+                response.Errors = result.Errors.Select(e => (Shared.Models.IdentityError)e);
                 return BadRequest(response);
             }
             return Ok(response);

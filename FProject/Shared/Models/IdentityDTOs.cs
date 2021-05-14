@@ -99,6 +99,21 @@ namespace FProject.Shared.Models
         public IEnumerable<IdentityError> Errors { get; set; }
     }
 
+    public class IdentityError // Who knows what is difference between this and that. Fuck you Text.Json!
+    {
+        public string Code { get; set; }
+        public string Description { get; set; }
+
+        public static explicit operator IdentityError(Microsoft.AspNetCore.Identity.IdentityError model)
+        {
+            return new IdentityError
+            {
+                Code = model.Code,
+                Description = model.Description
+            };
+        }
+    }
+
     public enum Sex
     {
         [Display(Name = "مرد")]

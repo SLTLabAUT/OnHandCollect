@@ -12,4 +12,4 @@ services:
         mode: 0400
 secrets:
   appsettings.Development.json:
-    file: FProject/Server/appsettings.Development.json
+    file: Private/appsettings.Development.json

@@ -17,7 +17,7 @@ namespace FProject.Shared
         public TextType Type { get; set; }
         public int SpecifiedNumber { get; set; }
 
-        public int TextId { get; set; }
+        public int? TextId { get; set; }
         public Text Text { get; set; }
 
         public ICollection<DrawingPoint> Points { get; set; }
@@ -68,5 +68,17 @@ namespace FProject.Shared
         Draw,
         Erase,
         Move
+    }
+
+    public enum WritepadCreationError
+    {
+        NoReason,
+        SignNotAllowed
+    }
+
+    public enum WritepadEditionError
+    {
+        NoReason,
+        SignNotAllowed
     }
 }

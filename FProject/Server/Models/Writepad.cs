@@ -17,7 +17,7 @@ namespace FProject.Server.Models
         public TextType Type { get; set; }
         public int UserSpecifiedNumber { get; set; }
 
-        public int TextId { get; set; }
+        public int? TextId { get; set; }
         public Text Text { get; set; }
 
         public ICollection<DrawingPoint> Points { get; set; }

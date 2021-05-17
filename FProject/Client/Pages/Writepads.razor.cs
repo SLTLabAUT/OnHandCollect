@@ -32,7 +32,9 @@ namespace FProject.Client.Pages
         bool CreateDialogOpen { get; set; }
         bool DeleteDialogOpen { get; set; }
         bool SubmitDisabled { get; set; }
+        bool IsSignSelected { get; set; }
         NewWritepadModel NewWritepad { get; set; }
+        ValidationMessageStore CreateErrors { get; set; }
         EditContext EditContext { get; set; }
         List<WritepadDTO> WritepadList { get; set; }
         BFUCommandBarItem[] Items { get; set; }
@@ -58,13 +60,15 @@ namespace FProject.Client.Pages
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
                 });
-            NewWritepad = new NewWritepadModel()
-            {
-                PointerType = PointerTypes.First(),
-                TextType = TextTypes.First()
-            };
+
+            return base.OnInitializedAsync();
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
             NewWritepad = new NewWritepadModel();
             EditContext = new EditContext(NewWritepad);
+            CreateErrors = new ValidationMessageStore(EditContext);
             EditContext.OnValidationStateChanged += (sender, eventArgs) =>
             {
                 if (EditContext.GetValidationMessages().IsNullOrEmpty())
@@ -75,13 +79,14 @@ namespace FProject.Client.Pages
                 {
                     SubmitDisabled = true;
                 }
+                Console.WriteLine("OnValidationStateChanged");
+            };
+            EditContext.OnFieldChanged += (sender, eventArgs) =>
+            {
+                CreateErrors.Clear();
+                Console.WriteLine("OnFieldChanged");
             };
 
-            return base.OnInitializedAsync();
-        }
-
-        protected override async Task OnParametersSetAsync()
-        {
             var query = new Uri(Navigation.Uri).Query;
             foreach (var queryItem in QueryHelpers.ParseQuery(query))
             {
@@ -126,21 +131,27 @@ namespace FProject.Client.Pages
                 return;
             }
 
-            try
+            var result = await Http.PostAsJsonAsync($"api/Writepad", (NewWritepadDTO)NewWritepad);
+
+            switch (result.StatusCode)
             {
-                var response = await Http.PostAsJsonAsync($"api/Writepad", (NewWritepadDTO)NewWritepad);
-                var writepads = await response.Content.ReadFromJsonAsync<IEnumerable<WritepadDTO>>();
-                WritepadList.InsertRange(0, writepads.OrderByDescending(e => e.SpecifiedNumber));
-                WritepadList = WritepadList.Take(10).ToList();
-                AllCount += (int)NewWritepad.Number;
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-            finally
-            {
-                CreateDialogOpen = false;
+                case System.Net.HttpStatusCode.OK:
+                    var writepads = await result.Content.ReadFromJsonAsync<IEnumerable<WritepadDTO>>();
+
+                    WritepadList.InsertRange(0, writepads.OrderByDescending(e => e.SpecifiedNumber));
+                    WritepadList = WritepadList.Take(10).ToList();
+                    AllCount += (int)NewWritepad.Number;
+
+                    CreateDialogOpen = false;
+                    break;
+                case System.Net.HttpStatusCode.BadRequest:
+                    var error = await result.Content.ReadFromJsonAsync<WritepadCreationError>();
+                    if (error == WritepadCreationError.SignNotAllowed)
+                    {
+                        CreateErrors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "ایجاد تخته‌ی امضا با نوع ورودی یکسان هر ۱۲ ساعت یک‌بار مجاز است.");
+                        EditContext.NotifyValidationStateChanged();
+                    }
+                    break;
             }
         }
 
@@ -214,6 +225,19 @@ namespace FProject.Client.Pages
         void EditHandler(MouseEventArgs args, int id)
         {
             Navigation.NavigateTo($"/writepad/{id}");
+        }
+
+        void TextTypeChangeHandler(BFUDropdownChangeArgs args)
+        {
+            if (args.Option.Key == ((int)FProject.Shared.TextType.Sign).ToString())
+            {
+                IsSignSelected = true;
+                NewWritepad.Number = 1;
+            }
+            else
+            {
+                IsSignSelected = false;
+            }
         }
 
         public class NewWritepadModel

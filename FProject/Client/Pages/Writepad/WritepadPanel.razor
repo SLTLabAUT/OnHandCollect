@@ -50,6 +50,10 @@
                                     textTypeTooltip = "گروه کلمات";
                                     textTypeIconName = "TextBox";
                                     break;
+                                case FProject.Shared.TextType.Sign:
+                                    textTypeTooltip = "امضا";
+                                    textTypeIconName = "InsertSignatureLine";
+                                    break;
                             }
                         }
                         <BFUText Variant=@TextType.Large>
@@ -71,7 +75,9 @@
             </BFUStackItem>
             <Hr />
             <BFUStackItem Grow=1 Align=Alignment.Center Style="overflow:auto;">
-                <BFUText Block="true" Variant=@TextType.Medium Style=@($"{(Parent.WritepadInstance.Type == FProject.Shared.TextType.WordGroups ? "text-align:center;" : "")}")>@((MarkupString) Parent.WritepadInstance.Text.Content)</BFUText>
+                <BFUText Block="true" Variant=@TextType.Medium Style=@($"{(Parent.WritepadInstance.Type != FProject.Shared.TextType.Text ? "text-align:center;" : "")}")>
+                    @((MarkupString) (Parent.WritepadInstance.Text?.Content ?? "امضا."))
+                </BFUText>
             </BFUStackItem>
             <Hr />
             <BFUStackItem VerticalFill=false Align=Alignment.Center Style="width: 100%;">
@@ -103,14 +109,14 @@
                     <BFUStackItem Style="margin-left:5px;">
                         <BFUStack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
                             <BFUStackItem>
-                                <BFUToggle Disabled="Parent.AdminReview" InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
+                                <BFUToggle Disabled=@(Parent.AdminReview || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
                             </BFUStackItem>
                             <BFUStackItem Style="width: 100%;" ClassName=@(Parent.IsSaving ? "has-ms-Spinner--small" : "")>
                                 @if (Parent.IsSaving)
                                 {
                                     <BFUSpinner Size=@SpinnerSize.Small ClassName="save-spinner" />
                                 }
-                                <BFUPrimaryButton Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.AdminReview || Parent.IsSaving) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
+                                <BFUPrimaryButton Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.AdminReview || Parent.IsSaving || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
                             </BFUStackItem>
                             <BFUStackItem>
                                 <BFUTooltipHost Style="white-space:nowrap;">

@@ -34,6 +34,8 @@ namespace FProject.Client.Pages
         WritepadPanel PanelRef { get; set; }
         float PadRatio { get; set; } = 0.7f;
         bool PanelCollapsed { get; set; }
+        bool NotAllowedDialogOpen { get; set; }
+        bool InitiationDone { get; set; }
         string WritepadCompressedJson { get; set; }
         public WritepadDTO WritepadInstance { get; set; }
         public bool AutoSaveChecked { get; set; }
@@ -85,14 +87,15 @@ namespace FProject.Client.Pages
         {
             Console.WriteLine("Render");
 
-            if (firstRender)
+            if (firstRender || InitiationDone)
             {
-                Console.WriteLine("First");
+                Console.WriteLine("Nope!");
                 return;
             }
 
             var currentTime = await Http.GetFromJsonAsync<long>($"api/Writepad/CurrentTime");
             await JSRef.InvokeVoidAsync("init", componentRef, PadRatio, currentTime - 1616060000000, WritepadCompressedJson);
+            InitiationDone = true;
         }
 
         protected override bool ShouldRender()
@@ -133,6 +136,14 @@ namespace FProject.Client.Pages
                         var saveResponse = await response.Content.ReadFromJsonAsync<SavePointsResponseDTO>();
                         WritepadInstance.LastModified = saveResponse.LastModified;
                         break;
+                    case HttpStatusCode.BadRequest:
+                        var error = await response.Content.ReadFromJsonAsync<WritepadEditionError>();
+                        if (error == WritepadEditionError.SignNotAllowed)
+                        {
+                            NotAllowedDialogOpen = true;
+                            StateHasChanged();
+                        }
+                        break;
                 }
 
                 return new SaveResponseDTO
@@ -141,7 +152,7 @@ namespace FProject.Client.Pages
                     LastModified = WritepadInstance.LastModified
                 };
             }
-            catch (AccessTokenNotAvailableException exception)
+            catch (AccessTokenNotAvailableException)
             {
                 return new SaveResponseDTO
                 {

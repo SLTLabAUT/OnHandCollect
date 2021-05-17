@@ -143,7 +143,27 @@ namespace FProject.Server.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var texts = await textProvider.GetNewText(userId, newWritepad);
+            var texts = new List<Text>
+            {
+                new Text()
+            };
+            if (newWritepad.TextType == TextType.Sign)
+            {
+                var lastEditedSign = await _context.Writepads
+                    .Where(w => w.OwnerId == userId
+                        && w.Type == TextType.Sign
+                        && w.PointerType == newWritepad.PointerType)
+                    .OrderByDescending(w => w.LastModified)
+                    .FirstOrDefaultAsync();
+                if (lastEditedSign is not null && DateTimeOffset.UtcNow - lastEditedSign.LastModified < TimeSpan.FromHours(12))
+                {
+                    return BadRequest(WritepadCreationError.SignNotAllowed);
+                }
+            }
+            else
+            {
+                texts = await textProvider.GetNewText(userId, newWritepad);
+            }
 
             var lastUserSpecifiedId = 0;
             try
@@ -160,7 +180,7 @@ namespace FProject.Server.Controllers
                 PointerType = newWritepad.PointerType,
                 LastModified = DateTimeOffset.UtcNow,
                 Type = newWritepad.TextType,
-                TextId = t.Id,
+                TextId = t.Id == 0 ? null : t.Id,
                 OwnerId = userId
             }).ToList();
             _context.Writepads.AddRange(newWritepads);
@@ -189,6 +209,20 @@ namespace FProject.Server.Controllers
             else if (writepad.Status == WritepadStatus.Accepted || (writepad.LastModified - savePointsDTO.LastModified) > TimeSpan.FromMilliseconds(1))
             {
                 return BadRequest();
+            }
+            if (writepad.Type == TextType.Sign)
+            {
+                var lastEditedSign = await _context.Writepads
+                    .Where(w => w.OwnerId == userId
+                        && w.Type == TextType.Sign
+                        && w.PointerType == writepad.PointerType
+                        && w.UserSpecifiedNumber != id)
+                    .OrderByDescending(w => w.LastModified)
+                    .FirstOrDefaultAsync();
+                if (lastEditedSign is not null && DateTimeOffset.UtcNow - lastEditedSign.LastModified < TimeSpan.FromHours(12))
+                {
+                    return BadRequest(WritepadEditionError.SignNotAllowed);
+                }
             }
 
             foreach (var p in savePointsDTO.NewPoints) p.WritepadId = writepad.Id;

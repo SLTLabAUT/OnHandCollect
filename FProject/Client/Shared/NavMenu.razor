@@ -42,7 +42,7 @@
 
         <AuthorizeView>
             <Authorized Context="NavMenu">
-                <BFUStackItem Grow="1">
+                <BFUStackItem VerticalFill="false" Grow="1">
                     <BFUNav>
                         <BFUNavLinkGroup>
                             <BFUNavLink Name="تخته‌ها" Url="writepads" Id="writepads" Icon="WhiteBoardApp32" OnClick=@OnLinkClicked />
@@ -60,7 +60,7 @@
             </Authorized>
 
             <NotAuthorized>
-                <BFUStack VerticalFill="true" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 25 } })>
+                <BFUStack VerticalFill="false" Grow="1" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 25 } })>
                     <BFUStackItem Align="Alignment.Center" VerticalFill="false">
                         <BFUPrimaryButton Text="ورود" Href="identity/login" />
                     </BFUStackItem>

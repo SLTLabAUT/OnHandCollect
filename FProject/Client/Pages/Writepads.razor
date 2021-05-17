@@ -80,6 +80,10 @@
                                                                 textTypeTooltip = "گروه کلمات";
                                                                 textTypeIconName = "TextBox";
                                                                 break;
+                                                            case FProject.Shared.TextType.Sign:
+                                                                textTypeTooltip = "امضا";
+                                                                textTypeIconName = "InsertSignatureLine";
+                                                                break;
                                                         }
                                                     }
                                                     <BFUTooltipHost>
@@ -97,7 +101,7 @@
                                                 </BFUText>
                                             </BFUStackItem>
                                         </BFUStack>
-                                        <BFUText Block="true" Variant=@TextType.SmallPlus Style="padding:0 16px;min-height:4.847em;display:-webkit-box !important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">@writepad.Text.Content</BFUText>
+                                        <BFUText Block="true" Variant=@TextType.SmallPlus Style="padding:0 16px;min-height:4.847em;display:-webkit-box !important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">@(writepad.Text?.Content ?? "امضا.")</BFUText>
                                         @{
                                             string statusIcon = string.Empty;
                                             switch (writepad.Status)
@@ -206,8 +210,12 @@
                                Placeholder="یک گزینه را برگزینید..."
                                @bind-SelectedOption=NewWritepad.TextType
                                Label=@(Utils.GetDisplayName<NewWritepadModel, IBFUDropdownOption>(b => b.TextType))
-                               Required="true" />
-                <BFUSlider Label=@(Utils.GetDisplayName<NewWritepadModel, double>(m => m.Number)) @bind-Value=@NewWritepad.Number Min=1 Max=25 />
+                               Required="true"
+                               OnChange="TextTypeChangeHandler" />
+                @if (!IsSignSelected)
+                {
+                    <BFUSlider Label=@(Utils.GetDisplayName<NewWritepadModel, double>(m => m.Number)) @bind-Value=@NewWritepad.Number Min=1 Max=25 />
+                }
             </EditForm>
         </ChildContent>
         <FooterTemplate>

@@ -20,6 +20,8 @@ namespace FProject.Shared
         [Display(Name = "متن")]
         Text,
         [Display(Name = "گروه کلمات")]
-        WordGroups
+        WordGroups,
+        [Display(Name = "امضا")]
+        Sign
     }
 }

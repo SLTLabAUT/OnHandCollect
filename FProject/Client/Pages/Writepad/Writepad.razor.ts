@@ -56,9 +56,9 @@ export function init(compRef, ratio: number, origin: number, writepadCompressedJ
         LastModified: writepadReceived.LastModified,
         PointerType: writepadReceived.PointerType,
         Status: writepadReceived.Status,
+        Type: writepadReceived.Type,
         Text: {
-            Type: writepadReceived.Text.Type,
-            Content: writepadReceived.Text.Content
+            Content: writepadReceived.Text?.Content
         },
         Points: writepadReceived.Points ?? []
     };
@@ -227,6 +227,7 @@ interface Writepad {
     LastModified: Date;
     readonly PointerType: PointerType;
     readonly Status: WritepadStatus;
+    readonly Type: TextType;
     readonly Text: WritepadText;
     readonly Points: Point[];
 }
@@ -238,7 +239,6 @@ const enum WritepadStatus {
 }
 
 interface WritepadText {
-    readonly Type: TextType;
     readonly Content: string;
 }
 
@@ -264,7 +264,8 @@ interface DeletedDrawing {
 
 const enum TextType {
     Text,
-    WordGroups
+    WordGroups,
+    Sign
 }
 
 const enum PointerType {

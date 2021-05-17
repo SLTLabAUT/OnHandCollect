@@ -19,8 +19,20 @@
                 <WritepadPanel @ref=PanelRef Parent=this />
             </BFUStackItem>
         </BFUStack>
+
+        <BFUDialog Title="عدم امکان ذخیره‌ی امضا"
+                   IsOpen=@NotAllowedDialogOpen
+                   OnDismiss=@(args => NotAllowedDialogOpen=false)
+                   CloseButtonAriaLabel="بستن"
+                   Style="text-align: right;">
+            <ChildContent>
+                <p>نوشتن تخته‌ی امضا با نوع ورودی یکسان هر ۱۲ ساعت یک‌بار مجاز است.</p>
+            </ChildContent>
+            <FooterTemplate></FooterTemplate>
+        </BFUDialog>
+
         @*<div id="data">
-            @((MarkupString) WritepadCompressedJson)
-        </div>*@
+                @((MarkupString) WritepadCompressedJson)
+            </div>*@
     }
 </div>

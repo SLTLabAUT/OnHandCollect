@@ -172,7 +172,7 @@ CREATE INDEX "IX_Writepads_OwnerId" ON "Writepads" ("OwnerId");
 CREATE INDEX "IX_Writepads_TextId" ON "Writepads" ("TextId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20210228103453_Initial', '5.0.5');
+VALUES ('20210228103453_Initial', '5.0.6');
 
 COMMIT;
 
@@ -184,7 +184,7 @@ INSERT INTO "AspNetRoles" ("Id", "ConcurrencyStamp", "Name", "NormalizedName")
 VALUES ('1c6b33d2-a1d8-42fa-924b-43449867f115', 'c0a582f7-49de-43f6-9314-d24b0879ce22', 'Admin', 'ADMIN');
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20210228162153_IdentityRole', '5.0.5');
+VALUES ('20210228162153_IdentityRole', '5.0.6');
 
 COMMIT;
 
@@ -195,7 +195,7 @@ ALTER TABLE "AspNetUsers" ADD "BirthDate" timestamp without time zone NULL;
 ALTER TABLE "AspNetUsers" ADD "Sex" integer NULL;
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20210312222610_UserUpdate', '5.0.5');
+VALUES ('20210312222610_UserUpdate', '5.0.6');
 
 COMMIT;
 
@@ -204,7 +204,7 @@ START TRANSACTION;
 ALTER TABLE "Text" ADD "WordCount" integer NOT NULL DEFAULT 0;
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20210318232825_TextWordCount', '5.0.5');
+VALUES ('20210318232825_TextWordCount', '5.0.6');
 
 COMMIT;
 
@@ -217,7 +217,7 @@ ALTER TABLE "Writepads" ADD "Type" integer NOT NULL DEFAULT 0;
 ALTER TABLE "Text" ADD "Rank" real NOT NULL DEFAULT 0;
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20210319130338_TextTypeRefactor', '5.0.5');
+VALUES ('20210319130338_TextTypeRefactor', '5.0.6');
 
 COMMIT;
 
@@ -226,7 +226,7 @@ START TRANSACTION;
 ALTER TABLE "Text" RENAME COLUMN "Rank" TO "Rarity";
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20210319145635_TextRankRename', '5.0.5');
+VALUES ('20210319145635_TextRankRename', '5.0.6');
 
 COMMIT;
 
@@ -237,7 +237,20 @@ ALTER TABLE "Writepads" ADD "UserSpecifiedNumber" integer NOT NULL DEFAULT 0;
 CREATE INDEX "IX_Writepads_UserSpecifiedNumber_OwnerId" ON "Writepads" ("UserSpecifiedNumber", "OwnerId");
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20210319220441_UserSpecifiedNumber', '5.0.5');
+VALUES ('20210319220441_UserSpecifiedNumber', '5.0.6');
+
+COMMIT;
+
+START TRANSACTION;
+
+ALTER TABLE "Writepads" DROP CONSTRAINT "FK_Writepads_Text_TextId";
+
+ALTER TABLE "Writepads" ALTER COLUMN "TextId" DROP NOT NULL;
+
+ALTER TABLE "Writepads" ADD CONSTRAINT "FK_Writepads_Text_TextId" FOREIGN KEY ("TextId") REFERENCES "Text" ("Id") ON DELETE RESTRICT;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20210517182016_OptionalText', '5.0.6');
 
 COMMIT;
 

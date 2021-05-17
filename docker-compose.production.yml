@@ -10,11 +10,23 @@ services:
       - source: cert.pfx
         target: /app/cert.pfx
         mode: 0400
+      - source: dkim-key.pem
+        target: /app/dkim-key.pem
+        mode: 0400
       - source: appsettings.Production.json
         target: /app/appsettings.Production.json
         mode: 0400
 secrets:
   cert.pfx:
-    file: FProject/Server/cert.pfx
+    file: Private/cert.pfx
+  dkim-key.pem:
+    file: Private/dkim-key.pem
   appsettings.Production.json:
-    file: FProject/Server/appsettings.Production.json
+    file: Private/appsettings.Production.json
+volumes:
+  postgres-data:
+    driver: local
+    driver_opts:
+        type: none
+        o: bind
+        device: /srv/sites/handwriting_data_collection/postgres-data/_data

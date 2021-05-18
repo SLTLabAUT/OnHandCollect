@@ -23,5 +23,6 @@
 **/values.dev.yaml
 **/appsettings.Development.json
 **/appsettings.Production.json
+Private
 LICENSE
 README.md

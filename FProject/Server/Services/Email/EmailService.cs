@@ -42,7 +42,7 @@ namespace FProject.Server.Services
             smtp.Authenticate(_options.Username, _options.Password);
             if (_signer is not null)
             {
-                email.Prepare(EncodingConstraint.EightBit);
+                email.Prepare(EncodingConstraint.SevenBit);
                 _signer.Sign(email, _headers);
             }
             await smtp.SendAsync(email);

@@ -4,47 +4,47 @@
 @attribute [Authorize(Roles = IdentityRoleConstants.Admin)]
 
 <div style="height:100%;overflow:auto;">
-    <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
-        <BFUStackItem VerticalFill=false Style="width:100%;">
-            <BFUStack Horizontal="true" Wrap="true" Reversed="true" VerticalAlign=Alignment.Center Style="width:100%;">
-                <BFUStackItem>
-                    <MyBFUText Variant=@TextType.XxLarge>تخته‌ها (صفحه‌ی مدیر) <BFUIcon IconName="WhiteBoardApp32" /></MyBFUText>
-                </BFUStackItem>
-                <BFUStackItem Grow=1 DisableShrink="true">
-                    <BFUCommandBar />
-                </BFUStackItem>
-            </BFUStack>
-        </BFUStackItem>
+    <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+        <StackItem VerticalFill=false Style="width:100%;">
+            <Stack Horizontal="true" Wrap="true" Reversed="true" VerticalAlign=Alignment.Center Style="width:100%;">
+                <StackItem>
+                    <MyBFUText Variant=@TextType.XxLarge>تخته‌ها (صفحه‌ی مدیر) <Icon IconName="WhiteBoardApp32" /></MyBFUText>
+                </StackItem>
+                <StackItem Grow=1 DisableShrink="true">
+                    <CommandBar />
+                </StackItem>
+            </Stack>
+        </StackItem>
         <Hr />
-        <BFUStackItem Grow=1 Style="width:100%">
+        <StackItem Grow=1 Style="width:100%">
             @if (WritepadList is null)
             {
-                <BFUSpinner Size=@SpinnerSize.Large />
+                <Spinner Size=@SpinnerSize.Large />
             }
             else
             {
-                <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
-                    <BFUStackItem VerticalFill=false Align=Alignment.Center>
+                <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                    <StackItem VerticalFill=false Align=Alignment.Center>
                         <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
-                    </BFUStackItem>
-                    <BFUStackItem Grow=1 Style="width:100%;">
-                        <BFUStack Horizontal="true" Wrap="true" HorizontalAlign=Alignment.SpaceEvenly Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 50 } }) Style="margin:0;">
+                    </StackItem>
+                    <StackItem Grow=1 Style="width:100%;">
+                        <Stack Horizontal="true" Wrap="true" HorizontalAlign=Alignment.SpaceEvenly Tokens=@(new StackTokens { ChildrenGap = new double[] { 50 } }) Style="margin:0;">
                             @if (AllCount == 0)
                             {
-                                <BFUText>تخته‌ای وجود ندارد.</BFUText>
+                                <MyBFUText>تخته‌ای وجود ندارد.</MyBFUText>
                             }
                             @for (int i = 0; i < WritepadList.Count; i++)
                             {
                                 var writepad = WritepadList[i];
 
-                                <BFUStackItem>
-                                    <BFUDocumentCard Style="min-width:320px;">
-                                        <BFUStack Horizontal="true" VerticalAlign=@Alignment.Center Tokens=@(new BFUStackTokens { Padding = "8px 16px" }) Style=@($"font-size:{ThemeProvider.Theme.FontStyle.FontSize.XLarge};")>
-                                            <BFUStackItem Grow="1" DisableShrink="true" Tokens=@(new BFUStackItemTokens { Margin = "0 0 0 50px" })>
-                                                <BFUText Variant=@TextType.XLarge>تخته‌ی شماره‌ی @writepad.SpecifiedNumber</BFUText>
-                                            </BFUStackItem>
-                                            <BFUStackItem>
-                                                <BFUText Variant=@TextType.XLarge>
+                                <StackItem>
+                                    <DocumentCard Style="min-width:320px;" OnClickHref=@($"mailto:{writepad.Owner.Email}") OnClickTarget="_self">
+                                        <Stack Horizontal="true" VerticalAlign=@Alignment.Center Tokens=@(new StackTokens { Padding = "8px 16px" }) Style=@($"font-size:{ThemeProvider.Theme.FontStyle.FontSize.XLarge};")>
+                                            <StackItem Grow="1" DisableShrink="true" Tokens=@(new StackItemTokens { Margin = "0 0 0 50px" })>
+                                                <MyBFUText Variant=@TextType.XLarge>تخته‌ی شماره‌ی @writepad.Id</MyBFUText>
+                                            </StackItem>
+                                            <StackItem>
+                                                <MyBFUText Variant=@TextType.XLarge>
                                                     @{
                                                         string pointerTypeTooltip = string.Empty;
                                                         string pointerTypeIconName = string.Empty;
@@ -72,41 +72,58 @@
                                                         string textTypeIconName = string.Empty;
                                                         switch (writepad.Type)
                                                         {
-                                                            case FProject.Shared.TextType.Text:
+                                                            case FProject.Shared.WritepadType.Text:
                                                                 textTypeTooltip = "متن";
                                                                 textTypeIconName = "TextDocument";
                                                                 break;
-                                                            case FProject.Shared.TextType.WordGroups:
+                                                            case FProject.Shared.WritepadType.WordGroup:
                                                                 textTypeTooltip = "گروه کلمات";
                                                                 textTypeIconName = "TextBox";
                                                                 break;
-                                                            case FProject.Shared.TextType.Sign:
+                                                            case FProject.Shared.WritepadType.Sign:
                                                                 textTypeTooltip = "امضا";
                                                                 textTypeIconName = "InsertSignatureLine";
                                                                 break;
                                                         }
                                                     }
-                                                    <BFUTooltipHost>
+                                                    <TooltipHost>
                                                         <TooltipContent>@pointerTypeTooltip</TooltipContent>
                                                         <ChildContent>
-                                                            <BFUIcon IconName=@pointerTypeIconName />
+                                                            <Icon IconName=@pointerTypeIconName />
                                                         </ChildContent>
-                                                    </BFUTooltipHost>
-                                                    <BFUTooltipHost>
+                                                    </TooltipHost>
+                                                    <TooltipHost>
                                                         <TooltipContent>@textTypeTooltip</TooltipContent>
                                                         <ChildContent>
-                                                            <BFUIcon IconName=@textTypeIconName />
+                                                            <Icon IconName=@textTypeIconName />
                                                         </ChildContent>
-                                                    </BFUTooltipHost>
-                                                </BFUText>
-                                            </BFUStackItem>
-                                        </BFUStack>
-                                        <BFUText Block="true" Variant=@TextType.SmallPlus Style="padding:0 16px;min-height:4.847em;display:-webkit-box !important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">@(writepad.Text?.Content ?? "امضا.")</BFUText>
+                                                    </TooltipHost>
+                                                </MyBFUText>
+                                            </StackItem>
+                                        </Stack>
+                                        <MyBFUText Block="true" Variant=@TextType.SmallPlus Style="padding:0 16px;min-height:4.847em;display:-webkit-box !important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
+                                            @{
+                                                var text = string.Empty;
+                                                if (writepad.Type == FProject.Shared.WritepadType.WordGroup)
+                                                {
+                                                    text = writepad.Text.Content.Replace(" ", " - ");
+                                                }
+                                                else
+                                                {
+                                                    text = writepad.Text?.Content ?? "امضا.";
+                                                }
+                                            }
+                                            شماره‌ی تخته برای کاربر: @writepad.SpecifiedNumber
+                                            <br />
+                                            <BlazorFluentUI.Link Href=@($"mailto:{writepad.Owner.Email}")>@writepad.Owner.Email</BlazorFluentUI.Link>
+                                            <br />
+                                            @text
+                                        </MyBFUText>
                                         @{
                                             string statusIcon = string.Empty;
                                             switch (writepad.Status)
                                             {
-                                                case FProject.Shared.WritepadStatus.Editing:
+                                                case FProject.Shared.WritepadStatus.Draft:
                                                     statusIcon = "PageEdit";
                                                     break;
                                                 case FProject.Shared.WritepadStatus.WaitForAcceptance:
@@ -115,88 +132,92 @@
                                                 case FProject.Shared.WritepadStatus.Accepted:
                                                     statusIcon = "DocumentApproval";
                                                     break;
+                                                case FProject.Shared.WritepadStatus.NeedEdit:
+                                                    statusIcon = "PageEdit";
+                                                    break;
                                             }
                                         }
-                                        <BFUDocumentCardStatus Status=@(writepad.Status.GetAttribute<DisplayAttribute>().Name) StatusIcon=@statusIcon Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold}") />
-                                        <BFUStack Horizontal="true" VerticalAlign=@Alignment.Center Tokens=@(new BFUStackTokens { Padding = "8px 16px" })>
-                                            <BFUStackItem Grow="1" DisableShrink="true">
-                                                <BFUTooltipHost>
+                                        <DocumentCardStatus Status=@(writepad.Status.GetAttribute<DisplayAttribute>().Name) StatusIcon=@statusIcon Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold}") />
+                                        <Stack Horizontal="true" VerticalAlign=@Alignment.Center Tokens=@(new StackTokens { Padding = "8px 16px" })>
+                                            <StackItem Grow="1" DisableShrink="true">
+                                                <TooltipHost>
                                                     <TooltipContent>آخرین بروزرسانی</TooltipContent>
                                                     <ChildContent>
-                                                        <BFUText Variant=@TextType.Small>آ.ب: @writepad.GetLocalTimeString()</BFUText>
+                                                        <MyBFUText Variant=@TextType.Small>آ.ب: @writepad.GetLocalTimeString()</MyBFUText>
                                                     </ChildContent>
-                                                </BFUTooltipHost>
-                                            </BFUStackItem>
-                                            <BFUStackItem>
-                                                <BFUStack Horizontal="true" Reversed="true">
-                                                    @*<BFUTooltipHost>
+                                                </TooltipHost>
+                                            </StackItem>
+                                            <StackItem>
+                                                <Stack Horizontal="true" Reversed="true">
+                                                    @*<TooltipHost>
                                                         <TooltipContent>اطلاعات</TooltipContent>
                                                         <ChildContent>
-                                                            <BFUIconButton IconName="InfoSolid" />
+                                                            <MyBFUIconButton IconName="InfoSolid" />
                                                         </ChildContent>
-                                                    </BFUTooltipHost>*@
+                                                    </TooltipHost>*@
                                                     @if (writepad.Status == FProject.Shared.WritepadStatus.Accepted)
                                                     {
-                                                        <BFUTooltipHost>
+                                                        <TooltipHost>
                                                             <TooltipContent>رد</TooltipContent>
                                                             <ChildContent>
-                                                                <BFUIconButton OnClick=@(args => Reject(args, writepad)) IconName="Cancel" />
+                                                                <MyBFUIconButton OnClick=@(args => Reject(args, writepad)) IconName="Cancel" />
                                                             </ChildContent>
-                                                        </BFUTooltipHost>
+                                                        </TooltipHost>
                                                     }
                                                     else
                                                     {
-                                                        <BFUTooltipHost>
+                                                        <TooltipHost>
                                                             <TooltipContent>تایید</TooltipContent>
                                                             <ChildContent>
-                                                                <BFUIconButton OnClick=@(args => Approve(args, writepad)) IconName="Accept" />
+                                                                <MyBFUIconButton OnClick=@(args => Approve(args, writepad)) IconName="Accept" />
                                                             </ChildContent>
-                                                        </BFUTooltipHost>
+                                                        </TooltipHost>
                                                     }
-                                                    <BFUTooltipHost>
+                                                    <TooltipHost>
                                                         <TooltipContent>ایجاد تغییرات</TooltipContent>
                                                         <ChildContent>
-                                                            <BFUIconButton OnClick=@(args => EditHandler(args, writepad.SpecifiedNumber)) IconName="EditSolid12" />
+                                                            <MyBFUIconButton OnClick=@(args => EditHandler(args, writepad.Id)) IconName="EditSolid12" />
                                                         </ChildContent>
-                                                    </BFUTooltipHost>
-                                                    <BFUTooltipHost>
+                                                    </TooltipHost>
+                                                    <TooltipHost>
                                                         <TooltipContent>حذف</TooltipContent>
                                                         <ChildContent>
-                                                            <BFUIconButton OnClick=@(args => DeleteButtonHandler(args, writepad)) IconName="Delete" />
+                                                            <MyBFUIconButton OnClick=@(args => DeleteButtonHandler(args, writepad)) IconName="Delete" />
                                                         </ChildContent>
-                                                    </BFUTooltipHost>
-                                                </BFUStack>
-                                            </BFUStackItem>
-                                        </BFUStack>
-                                    </BFUDocumentCard>
-                                </BFUStackItem>
+                                                    </TooltipHost>
+                                                </Stack>
+                                            </StackItem>
+                                        </Stack>
+                                    </DocumentCard>
+                                </StackItem>
                             }
-                        </BFUStack>
-                    </BFUStackItem>
-                    <BFUStackItem VerticalFill=false Align=Alignment.Center>
+                        </Stack>
+                    </StackItem>
+                    <StackItem VerticalFill=false Align=Alignment.Center>
                         <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
-                    </BFUStackItem>
-                    @*<BFUStackItem>
-                        <BFUMessageBar>
-                            پس از تکمیل هر تخته، با استفاده از دکمه‌ی <BFUIcon IconName="Accept" /> آن را جهت بررسی و تایید ارسال‌کنید.
+                    </StackItem>
+                    @*<StackItem>
+                        <MessageBar>
+                            پس از تکمیل هر تخته، با استفاده از دکمه‌ی <Icon IconName="Accept" /> آن را جهت بررسی و تایید ارسال‌کنید.
                             <br />
                             تخته‌های تاییدشده امتیاز شما را بالا برده و شانس برنده‌شدن در قرعه‌کشیتان را افزایش‌می‌دهد.
-                        </BFUMessageBar>
-                    </BFUStackItem>*@
-                </BFUStack>
+                        </MessageBar>
+                    </StackItem>*@
+                </Stack>
             }
-        </BFUStackItem>
-    </BFUStack>
+        </StackItem>
+    </Stack>
 
-    <BFUDialog Title="تایید حذف تخته"
-               SubText=@($"آیا از حذف تخته‌ی شماره‌ی {CurrentWritepad?.SpecifiedNumber} اطمینان دارید؟")
-               IsOpen=@DeleteDialogOpen
-               OnDismiss=@(args => DeleteDialogOpen=false)
-               Style="text-align: right;">
+    <MyBFUDialog Title="تایید حذف تخته"
+            SubText=@($"آیا از حذف تخته‌ی شماره‌ی {CurrentWritepad?.Id} اطمینان دارید؟")
+            IsOpen=@DeleteDialogOpen
+            OnDismiss=@(args => DeleteDialogOpen=false)
+            CloseButtonAriaLabel="بستن"
+            Style="text-align: right;">
         <ChildContent></ChildContent>
         <FooterTemplate>
-            <BFUDefaultButton Text="لغو" OnClick=@(args => DeleteDialogOpen=false) />
-            <BFUPrimaryButton Text="حذف" OnClick=DeleteWritepad />
+            <DefaultButton Text="لغو" OnClick=@(args => DeleteDialogOpen=false) />
+            <PrimaryButton Text="حذف" OnClick=DeleteWritepad />
         </FooterTemplate>
-    </BFUDialog>
+    </MyBFUDialog>
 </div>

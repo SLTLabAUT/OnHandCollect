@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using BlazorFluentUI;
+using BlazorFluentUI.Themes.Default;
 using FProject.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -36,6 +38,17 @@ namespace FProject.Client
 
         public static void Configure(WebAssemblyHostBuilder builder)
         {
+            Console.WriteLine($"Client Env: {builder.HostEnvironment.Environment}");
+
+            if (builder.HostEnvironment.IsProduction())
+            {
+                builder.Logging.SetMinimumLevel(LogLevel.Warning);
+            }
+            else
+            {
+                builder.Logging.SetMinimumLevel(LogLevel.Information);
+            }
+
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<IdentityAuthenticationStateProvider>();
             builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<IdentityAuthenticationStateProvider>());
@@ -50,6 +63,7 @@ namespace FProject.Client
             //    .AddAccountClaimsPrincipalFactory<CustomAccountClaimsPrincipalFactory>();
 
             builder.Services.AddBlazorFluentUI();
+            builder.Services.AddScoped<ObjectIDGenerator>();
 
             builder.Services.AddBlazoredLocalStorage();
         }

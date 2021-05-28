@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using LZStringCSharp;
 using FProject.Shared.Models;
+using System.Linq.Expressions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -48,16 +49,29 @@ namespace FProject.Server.Controllers
                 .Include(w => w.Text);
             if (admin && isAdmin)
             {
-                var customOrder = new int[] { 1, 2, 0 };
+                var customOrder = new WritepadStatus[] {
+                    WritepadStatus.WaitForAcceptance,
+                    WritepadStatus.NeedEdit,
+                    WritepadStatus.Draft,
+                    WritepadStatus.Accepted
+                };
                 writepadsQuery = writepadsQuery
-                    .OrderBy(w => w.Status == WritepadStatus.Editing ? 3 : (int)w.Status) // Array.IndexOf could not get translated
+                    .Include(w => w.Owner)
+                    //.OrderBy(w => Array.IndexOf(customOrder, w.Status)) // Array.IndexOf could not get translated
+                    .OrderByCustomOrder(w => w.Status, customOrder)
                     .ThenByDescending(w => w.Id);
             }
             else
             {
+                var customOrder = new WritepadStatus[] {
+                    WritepadStatus.NeedEdit,
+                    WritepadStatus.Draft,
+                    WritepadStatus.WaitForAcceptance,
+                    WritepadStatus.Accepted
+                };
                 writepadsQuery = writepadsQuery
                     .Where(w => w.OwnerId == userId)
-                    .OrderBy(w => w.Status)
+                    .OrderByCustomOrder(w => w.Status, customOrder)
                     .ThenByDescending(w => w.UserSpecifiedNumber);
             }
             var writepads = await writepadsQuery
@@ -143,21 +157,28 @@ namespace FProject.Server.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var texts = new List<Text>
+            var texts = new List<Text>();
+            if (newWritepad.Type == WritepadType.Sign)
             {
-                new Text()
-            };
-            if (newWritepad.TextType == TextType.Sign)
-            {
-                var lastEditedSign = await _context.Writepads
+                var newSignCount = (await _context.Writepads
                     .Where(w => w.OwnerId == userId
-                        && w.Type == TextType.Sign
+                        && w.Type == WritepadType.Sign
                         && w.PointerType == newWritepad.PointerType)
                     .OrderByDescending(w => w.LastModified)
-                    .FirstOrDefaultAsync();
-                if (lastEditedSign is not null && DateTimeOffset.UtcNow - lastEditedSign.LastModified < TimeSpan.FromHours(12))
+                    .Take(7)
+                    .ToListAsync())
+                    .Where(w => DateTimeOffset.UtcNow - w.LastModified < TimeSpan.FromHours(12))
+                    .Count();
+
+                if (newSignCount >= 7)
                 {
                     return BadRequest(WritepadCreationError.SignNotAllowed);
+                }
+
+                newWritepad.Number = Math.Min(7 - newSignCount, newWritepad.Number);
+                for (int i = 0; i < newWritepad.Number; i++)
+                {
+                    texts.Add(new Text());
                 }
             }
             else
@@ -179,7 +200,7 @@ namespace FProject.Server.Controllers
                 UserSpecifiedNumber = ++lastUserSpecifiedId,
                 PointerType = newWritepad.PointerType,
                 LastModified = DateTimeOffset.UtcNow,
-                Type = newWritepad.TextType,
+                Type = newWritepad.Type,
                 TextId = t.Id == 0 ? null : t.Id,
                 OwnerId = userId
             }).ToList();
@@ -210,14 +231,15 @@ namespace FProject.Server.Controllers
             {
                 return BadRequest();
             }
-            if (writepad.Type == TextType.Sign)
+            if (writepad.Type == WritepadType.Sign)
             {
                 var lastEditedSign = await _context.Writepads
                     .Where(w => w.OwnerId == userId
-                        && w.Type == TextType.Sign
+                        && w.Type == WritepadType.Sign
                         && w.PointerType == writepad.PointerType
                         && w.UserSpecifiedNumber != id)
                     .OrderByDescending(w => w.LastModified)
+                    .Skip(6)
                     .FirstOrDefaultAsync();
                 if (lastEditedSign is not null && DateTimeOffset.UtcNow - lastEditedSign.LastModified < TimeSpan.FromHours(12))
                 {
@@ -309,15 +331,27 @@ namespace FProject.Server.Controllers
                 return NotFound();
             }
             
-            if ((writepad.Status == WritepadStatus.Accepted || status == WritepadStatus.Accepted) && !isAdmin)
+            if ((writepad.Status == WritepadStatus.Accepted
+                || status == WritepadStatus.Accepted
+                || status == WritepadStatus.NeedEdit) && !isAdmin)
             {
                 return BadRequest();
+            }
+
+            if (writepad.LastCheck is not null && status == WritepadStatus.Draft)
+            {
+                status = WritepadStatus.NeedEdit;
+            }
+
+            if (writepad.LastCheck is not null && (status == WritepadStatus.Accepted || status == WritepadStatus.NeedEdit))
+            {
+                writepad.LastCheck = DateTimeOffset.UtcNow;
             }
 
             writepad.Status = status;
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(status);
         }
     }
 }

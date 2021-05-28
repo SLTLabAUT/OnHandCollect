@@ -8,37 +8,35 @@
 <IdentityTemplate Title="تغییرات اطلاعات کاربری">
     @if (Model is null)
     {
-        <BFUSpinner Size=@SpinnerSize.Large />
+        <Spinner Size=@SpinnerSize.Large />
     }
     else
     {
         <EditForm EditContext=EditContext OnValidSubmit=FormHandler>
             <DataAnnotationsValidator />
-            <BFUValidationSummary />
+            <FluentUIValidationSummary />
             @if (Done)
             {
-                <BFUMessageBar MessageBarType="MessageBarType.Success" IsMultiline="false" OnDismiss="DismissMessagebarHandler">
+                <MessageBar MessageBarType="MessageBarType.Success" OnDismiss="DismissMessagebarHandler">
                     اطلاعات کاربری شما با موفقیت تغییر کرد.
-                </BFUMessageBar>
+                </MessageBar>
             }
-            <BFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.Email)) @bind-Value=@Model.Email Disabled=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
-            <BFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+            <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.Email)) @bind-Value=@Model.Email Disabled=true @bind-Value:event="OnChange" AdditionalAttributes=@(new Dictionary<string, object>() { { "name", "username" } }) />
+            <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
             <MyBFUDropdown ItemsSource=SexOptions
-                           Placeholder="یک گزینه را برگزینید..."
-                           @bind-SelectedOption=Model.Sex
-                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex)) />
-            <MyBFUDatePicker @bind-Value=Model.BirthDate
-                             ShowMonthPickerAsOverlay="true"
-                             FirstDayOfWeek=DayOfWeek.Saturday
-                             ShowCloseButton=true
-                             Label=@(Utils.GetDisplayName<ProfileModel, DateTime>(b => b.BirthDate))
-                             InitialPickerDate=@(DateTime.Parse("1-1-2000"))
-                             Placeholder="تاریخ مورد نظر خود را برگزینید..." />
-            <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
-                <BFUStackItem Align=Alignment.Center>
-                    <BFUSubmitButton Text="اعمال تغییرات" />
-                </BFUStackItem>
-            </BFUStack>
+                      Placeholder="یک گزینه را برگزینید..."
+                      @bind-SelectedOption=Model.Sex
+                      Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex)) />
+            <MyBFUNumericTextField TValue="short?" Label=@(Utils.GetDisplayName<ProfileModel, short?>(b => b.BirthYear)) @bind-Value=@Model.BirthYear @bind-Value:event="OnChange" ParsingErrorMessage="مقدار {0} باید مقداری عددی در محدوده‌ی مجاز باشد." />
+            <MyBFUDropdown ItemsSource=EducationOptions
+                      Placeholder="یک گزینه را برگزینید..."
+                      @bind-SelectedOption=Model.Education
+                      Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Education)) />
+            <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                <StackItem Align=Alignment.Center>
+                    <SubmitButton Text="اعمال تغییرات" />
+                </StackItem>
+            </Stack>
         </EditForm>
     }
 </IdentityTemplate>
@@ -47,7 +45,8 @@
     [Inject]
     HttpClient Http { get; set; }
 
-    IEnumerable<IBFUDropdownOption> SexOptions { get; set; }
+    IEnumerable<IDropdownOption> SexOptions { get; set; }
+    IEnumerable<IDropdownOption> EducationOptions { get; set; }
     bool Done { get; set; }
     ProfileModel Model { get; set; }
     EditContext EditContext { get; set; }
@@ -55,7 +54,13 @@
     protected override Task OnInitializedAsync()
     {
         SexOptions = Enum.GetValues<Sex>()
-                .Select(p => new BFUDropdownOption
+                .Select(p => new DropdownOption
+                {
+                    Text = p.GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)p).ToString()
+                });
+        EducationOptions = Enum.GetValues<Education>()
+                .Select(p => new DropdownOption
                 {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
@@ -102,10 +107,12 @@
         [Display(Name = "شماره‌ی تلفن همراه")]
         public string PhoneNumber { get; set; }
         [Display(Name = "جنسیت")]
-        public IBFUDropdownOption Sex { get; set; }
-        [DataType(DataType.Date)]
-        [Display(Name = "تاریخ تولد")]
-        public DateTime BirthDate { get; set; }
+        public IDropdownOption Sex { get; set; }
+        [Range(1200, 1400, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [Display(Name = "سال تولد")]
+        public short? BirthYear { get; set; }
+        [Display(Name = "سطح تحصیلات")]
+        public IDropdownOption Education { get; set; }
 
         public static explicit operator UserDTO(ProfileModel model)
         {
@@ -114,7 +121,8 @@
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Sex = model.Sex is null ? null : Enum.Parse<Sex>(model.Sex.Key),
-                BirthDate = model.BirthDate.Ticks == 0 ? null : model.BirthDate
+                BirthYear = model.BirthYear,
+                Education = model.Education is null ? null : Enum.Parse<Education>(model.Education.Key),
             };
         }
 
@@ -124,12 +132,17 @@
             {
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                Sex = model.Sex is null ? null : new BFUDropdownOption
+                Sex = model.Sex is null ? null : new DropdownOption
                 {
                     Text = model.Sex.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)model.Sex).ToString()
                 },
-                BirthDate = model.BirthDate ?? default
+                BirthYear = model.BirthYear,
+                Education = model.Education is null ? null : new DropdownOption
+                {
+                    Text = model.Education.GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)model.Education).ToString()
+                },
             };
         }
     }

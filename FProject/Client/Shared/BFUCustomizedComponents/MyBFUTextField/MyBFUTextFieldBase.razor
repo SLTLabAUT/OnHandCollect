@@ -1,0 +1,115 @@
+﻿@namespace BlazorFluentUI
+@inherits MyBFUTextFieldParameters
+@typeparam TValue
+
+
+<LocalCS @bind-Rules="@TextFieldLocalRules" />
+
+<div class=@($"ms-TextField mediumFont {(Underlined ? "ms-TextField--underlined" : "")} {(!string.IsNullOrWhiteSpace(ErrorMessage) ? "has-error" : "")} {(Disabled ? "is-disabled" : "")} {(Multiline ? "ms-TextField--multiline" : "")} {(Borderless ? "ms-TextField--borderless" : "")} {(!Resizable ? "ms-TextField--unresizable" : "")}  {(isFocused ? "is-focused" : "")} {(Required ? "is-required" : "")} {(!hasLabel ? "no-label" : "")} {(AutoAdjustHeight ? "auto-adjust-height" : "" )} {ClassName}")
+     style=@Style
+     @ref="RootElementReference"
+     @onclick="OnClick">
+    <div class="ms-TextField-wrapper">
+        @if (hasLabel)
+        {
+            <Label ClassName="ms-TextField-label" Required=@Required HtmlFor=@id Disabled=@Disabled>@(Label + (Underlined ? ":" : ""))</Label>
+        }
+        <div class="ms-TextField-fieldGroup">
+            @if (Prefix != null)
+            {
+                <div class="ms-TextField-prefix">
+                    <span style="padding-bottom: 1px;">@Prefix</span>
+                </div>
+            }
+            else if (PrefixContent != null)
+            {
+                <div class="ms-TextField-prefix">
+                    @PrefixContent
+                </div>
+            }
+            @if (Multiline)
+            {
+                <textarea id=@id
+                          @ref=@Element
+                          style=@(autoAdjustedHeight != -1 ? $"height:{autoAdjustedHeight}px;" : "")
+                          @bind-value=@CurrentValue
+                          @bind-value:event="oninput"
+                          @onchange=@OnChangeHandler
+                          @attributes="@AdditionalAttributes"
+                          class="mediumFont ms-TextField-field"
+                          aria-label=@AriaLabel
+                          aria-describedby=@descriptionId
+                          aria-invalid=@(!string.IsNullOrWhiteSpace(ErrorMessage) ? true : false)
+                          readOnly=@ReadOnly
+                          placeholder=@Placeholder
+                          disabled=@Disabled
+                          resizable=false
+                          @onkeydown=@OnKeyDown
+                          @onkeyup=@OnKeyUp
+                          @onkeypress=@OnKeyPress
+                          @onfocus=@OnFocusHandler
+                          @onblur=@OnBlurHandler
+                          @onpaste=@OnPaste/>
+            }
+            else
+            {
+                <input type=@TypeUtils.InputMap[this.InputType]
+                       @ref="Element"
+                       id=@id
+                       value=@(BindConverter.FormatValue(CurrentValueAsString))
+                       @oninput=@(EventCallback.Factory.CreateBinder<string?>(this, __value => CurrentValueAsString = __value, CurrentValueAsString))
+                       @onchange=@OnChangeHandler
+                       @attributes=@AdditionalAttributes
+                       autocomplete=@GetAutoCompleteString()
+                       step="@_stepAttributeValue"
+                       inputmode=@GetInputMode()
+                       class="mediumFont ms-TextField-field"
+                       aria-label=@AriaLabel
+                       aria-describedby=@descriptionId
+                       aria-invalid=@(!string.IsNullOrWhiteSpace(ErrorMessage) ? true : false)
+                       readOnly=@ReadOnly
+                       placeholder=@Placeholder
+                       disabled=@Disabled
+                       @onkeydown=@OnKeyDownHandler
+                       @onkeyup=@OnKeyUp
+                       @onkeypress=@OnKeyPress
+                       @onfocus=@OnFocusHandler
+                       @onblur=@OnBlurHandler
+                       @onpaste=@OnPaste/>
+
+            }
+            @if (hasIcon)
+            {
+                <Icon ClassName="ms-TextField-icon" IconName=@IconName IconSrc=@IconSrc />
+            }
+            @if (Suffix != null)
+            {
+                <div class="ms-TextField-suffix">
+                    <span style="padding-bottom: 1px;">@Suffix</span>
+                </div>
+            }
+            else if (SuffixContent != null)
+            {
+                <div class="ms-TextField-suffix">
+                    @SuffixContent
+                </div>
+            }
+        </div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Description) || !string.IsNullOrWhiteSpace(ErrorMessage))
+    {
+        <div id="descriptionId">
+            <span class="ms-TextField-description">@Description</span>
+            @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div role="alert">
+                    <DelayedRender Delay="100">
+                        <p class="slideDownIn20 ms-TextField--errorMessage">
+                            <span data-automation-id="error-message">@((MarkupString) ErrorMessage)</span>
+                        </p>
+                    </DelayedRender>
+                </div>
+            }
+        </div>
+    }
+</div>

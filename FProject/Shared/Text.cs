@@ -13,15 +13,12 @@ namespace FProject.Shared
         public string Content { get; set; }
         public int WordCount { get; set; }
         public float Rarity { get; set; }
+        public TextType Type { get; set; }
     }
 
     public enum TextType
     {
-        [Display(Name = "متن")]
         Text,
-        [Display(Name = "گروه کلمات")]
-        WordGroups,
-        [Display(Name = "امضا")]
-        Sign
+        WordGroup
     }
 }

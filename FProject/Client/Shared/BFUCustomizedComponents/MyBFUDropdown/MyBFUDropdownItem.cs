@@ -5,9 +5,9 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
-namespace BlazorFluentUI.BFUDropdownInternal
+namespace BlazorFluentUI
 {
-    public class MyBFUDropdownItem : BFUComponentBase
+    public class MyBFUDropdownItem: FluentUIComponentBase
     {
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public bool Hidden { get; set; }
@@ -23,7 +23,7 @@ namespace BlazorFluentUI.BFUDropdownInternal
 
         protected override Task OnParametersSetAsync()
         {
-            if (Dropdown != null &&
+            if (Dropdown!= null &&
                 (Dropdown.SelectedOptions.Any() || Dropdown.SelectedOption != null))
             {
                 if (Dropdown.SelectedOptions.FirstOrDefault(x => x.Key == Key) != null)
@@ -69,8 +69,7 @@ namespace BlazorFluentUI.BFUDropdownInternal
                 {
                     Dropdown.RemoveSelection(Key!);
                 }
-                else
-                {
+                else {
                     Dropdown.AddSelection(Key!);
                 }
             }
@@ -81,12 +80,12 @@ namespace BlazorFluentUI.BFUDropdownInternal
             }
         }
 
-        private void BuildOption(RenderTreeBuilder builder, int i = 0)
+        private void BuildOption(RenderTreeBuilder builder, int i=0)
         {
             if (Dropdown!.MultiSelect)
             {
-                builder.OpenComponent<BFUCheckbox>(i);
-                //builder.AddAttribute(i + 2, "Key", this.Key);
+                builder.OpenComponent<Checkbox>(i);
+                    //builder.AddAttribute(i + 2, "Key", this.Key);
                 builder.AddAttribute(i + 2, "Disabled", Disabled);
                 builder.AddAttribute(i + 3, "ClassName", $"ms-Dropdown-item {(Disabled ? "is-disabled" : "")} {(Hidden ? "is-hidden" : "")}  {(isSelected ? "selected" : "")}");
                 builder.AddAttribute(i + 4, "Label", Text);
@@ -96,7 +95,7 @@ namespace BlazorFluentUI.BFUDropdownInternal
             }
             else
             {
-                builder.OpenComponent<BFUCommandButton>(i);
+                builder.OpenComponent<CommandButton>(i);
                 //builder.AddAttribute(i + 1, "Key", this.Key);
                 builder.AddAttribute(i + 2, "Disabled", Disabled);
                 builder.AddAttribute(i + 3, "ClassName", $"ms-Dropdown-item {(Disabled ? "is-disabled" : "")} {(Hidden ? "is-hidden" : "")}  {(isSelected ? "selected" : "")}");
@@ -117,10 +116,10 @@ namespace BlazorFluentUI.BFUDropdownInternal
             builder.OpenElement(0, "div");
             builder.AddAttribute(1, "class", "mediumFont ms-Dropdown-itemHeader");
             builder.AddElementReferenceCapture(2, element => RootElementReference = element);
-            builder.OpenElement(3, "span");
-            builder.AddAttribute(4, "class", "ms-Dropdown-optionText");
-            builder.AddContent(5, Text);
-            builder.CloseElement();
+                builder.OpenElement(3, "span");
+                builder.AddAttribute(4, "class", "ms-Dropdown-optionText");
+                builder.AddContent(5, Text);
+                builder.CloseElement();
             builder.CloseElement();
         }
 

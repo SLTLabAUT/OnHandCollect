@@ -27,12 +27,15 @@ namespace FProject.Server.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("BirthDate")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<short?>("BirthYear")
+                        .HasColumnType("smallint");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
+
+                    b.Property<int?>("Education")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -98,6 +101,9 @@ namespace FProject.Server.Data.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LastCheck")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("LastModified")
                         .HasColumnType("timestamp with time zone");
@@ -192,6 +198,9 @@ namespace FProject.Server.Data.Migrations
 
                     b.Property<float>("Rarity")
                         .HasColumnType("real");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.Property<int>("WordCount")
                         .HasColumnType("integer");

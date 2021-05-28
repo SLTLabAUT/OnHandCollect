@@ -3,19 +3,19 @@
 <IdentityTemplate Title="بازارسال تاییدیه‌ی رایانامه">
     <EditForm EditContext=EditContext OnValidSubmit=FormHandler>
         <DataAnnotationsValidator />
-        <BFUValidationSummary />
+        <FluentUIValidationSummary />
         @if (Done)
         {
-            <BFUMessageBar MessageBarType="MessageBarType.Success" IsMultiline="false" OnDismiss="DismissMessagebarHandler">
+            <MessageBar MessageBarType="MessageBarType.Success" OnDismiss="DismissMessagebarHandler">
                 در صورتی که در سامانه ثبت‌نام کرده باشید و رایانامه‌ی شما تایید نشده باشد، رایانامه‌ای حاوی لینک تایید برایتان بازارسال گردیده است.
-            </BFUMessageBar>
+            </MessageBar>
         }
-        <BFUTextField Label=@(Utils.GetDisplayName<ForgotPasswordDTO>(m => m.Email)) @bind-Value=@Model.Email ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
-        <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
-            <BFUStackItem Align=Alignment.Center>
-                <BFUSubmitButton Text="درخواست لینک تایید رایانامه" />
-            </BFUStackItem>
-        </BFUStack>
+        <MyBFUTextField Label=@(Utils.GetDisplayName<ForgotPasswordDTO>(m => m.Email)) @bind-Value=@Model.Email @bind-Value:event="OnChange" AdditionalAttributes=@(new Dictionary<string, object>() { { "name", "username" } }) />
+        <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+            <StackItem Align=Alignment.Center>
+                <SubmitButton Text="درخواست لینک تایید رایانامه" />
+            </StackItem>
+        </Stack>
     </EditForm>
 </IdentityTemplate>
 

@@ -1,5 +1,6 @@
 ﻿using FProject.Server.Data;
 using FProject.Shared;
+using FProject.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,9 @@ namespace FProject.Server.Services
             try
             {
                 maxUser = await _context.Writepads
-                    .Where(w => w.OwnerId == userId && w.PointerType == newWritepad.PointerType)
+                    .Where(w => w.OwnerId == userId
+                        && w.PointerType == newWritepad.PointerType
+                        && w.Type == newWritepad.Type)
                     .GroupBy(w => w.TextId)
                     .MaxAsync(e => e.Count());
             }
@@ -32,15 +35,20 @@ namespace FProject.Server.Services
             try
             {
                 maxWritepads = await _context.Writepads
-                    .Where(w => w.Status == WritepadStatus.Accepted)
+                    .Where(w => w.Status == WritepadStatus.Accepted
+                        && w.Type == newWritepad.Type)
                     .GroupBy(w => w.TextId)
                     .MaxAsync(e => e.Count());
             }
             catch (InvalidOperationException) { }
+            var textType = newWritepad.Type.ToTextType();
             var allText = _context.Text
+                .Where(t => t.Type == textType)
                 .Select(t => new { TextId = t.Id });
             var userTextCount = _context.Writepads
-                .Where(w => w.OwnerId == userId && w.PointerType == newWritepad.PointerType)
+                .Where(w => w.OwnerId == userId
+                    && w.PointerType == newWritepad.PointerType
+                    && w.Type == newWritepad.Type)
                 .GroupBy(w => w.TextId)
                 .Select(g => new { g.Key, Count = (float?)g.Count() });
             //var userAllTextCount = _context.Writepads
@@ -48,7 +56,8 @@ namespace FProject.Server.Services
             //    .GroupBy(w => w.TextId)
             //    .Select(g => new { g.Key, Count = (int?)g.Count() });
             var writepadsAcceptedTextCount = _context.Writepads
-                .Where(w => w.Status == WritepadStatus.Accepted)
+                .Where(w => w.Status == WritepadStatus.Accepted
+                    && w.Type == newWritepad.Type)
                 .GroupBy(w => w.TextId)
                 .Select(g => new { g.Key, Count = (float?)g.Count() });
             var firstJoin = from t in allText

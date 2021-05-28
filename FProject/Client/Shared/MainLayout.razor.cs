@@ -24,7 +24,7 @@ namespace FProject.Client.Shared
             isPanelOpen = false;
         }
 
-        void OnNavLinkClick(BFUNavLink linkBase)
+        void OnNavLinkClick(BlazorFluentUI.Routing.NavLink linkBase)
         {
             HideMenu();
         }

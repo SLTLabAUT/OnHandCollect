@@ -1,5 +1,4 @@
-﻿using BlazorFluentUI.BFUDropdownInternal;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -11,55 +10,52 @@ using System.Threading.Tasks;
 
 namespace BlazorFluentUI
 {
-    public partial class MyBFUDropdown : BFUResponsiveComponentBase
+    public partial class MyBFUDropdown : MyBFUResponsiveComponentBase
     {
         [Parameter] public RenderFragment? ChildContent { get; set; }
         [Parameter] public IEnumerable<string>? DefaultSelectedKeys { get; set; }
-        [Parameter] public IEnumerable<IBFUDropdownOption>? DefaultSelectedOptions { get; set; }
+        [Parameter] public IEnumerable<IDropdownOption>? DefaultSelectedOptions { get; set; }
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public int DropdownWidth { get; set; } = 0;
         [Parameter] public string? ErrorMessage { get; set; }
-        [Parameter] public IEnumerable<IBFUDropdownOption>? ItemsSource { get; set; }
-        [Parameter] public RenderFragment<IBFUDropdownOption>? ItemTemplate { get; set; }
+        [Parameter] public IEnumerable<IDropdownOption>? ItemsSource { get; set; }
+        [Parameter] public RenderFragment<IDropdownOption>? ItemTemplate { get; set; }
         [Parameter] public string? Label { get; set; }
         [Parameter] public bool MultiSelect { get; set; }
-        [Parameter] public EventCallback<BFUDropdownChangeArgs> OnChange { get; set; }
+        [Parameter] public EventCallback<DropdownChangeArgs> OnChange { get; set; }
         [Parameter] public string? Placeholder { get; set; }
         [Parameter] public bool Required { get; set; }
         [Parameter] public ResponsiveMode ResponsiveMode { get; set; }
         //[Parameter] [Obsolete] public string? SelectedKey { get; set; }
-        [Parameter] public IBFUDropdownOption? SelectedOption { get; set; }
-        [Parameter] public EventCallback<IBFUDropdownOption?> SelectedOptionChanged { get; set; }
+        [Parameter] public IDropdownOption? SelectedOption { get; set; }
+        [Parameter] public EventCallback<IDropdownOption?> SelectedOptionChanged { get; set; }
         //[Parameter] [Obsolete] public EventCallback<string> SelectedKeyChanged { get; set; }
         //[Parameter] [Obsolete] public List<string> SelectedKeys { get; set; } = new List<string>();
-        [Parameter] public IEnumerable<IBFUDropdownOption> SelectedOptions { get; set; } = new List<IBFUDropdownOption>();
+        [Parameter] public IEnumerable<IDropdownOption> SelectedOptions { get; set; } = new List<IDropdownOption>();
         //[Parameter] [Obsolete] public EventCallback<List<string>> SelectedKeysChanged { get; set; }
-        [Parameter] public EventCallback<IEnumerable<IBFUDropdownOption>> SelectedOptionsChanged { get; set; }
-
-        [Inject]
-        private IJSRuntime? jSRuntime { get; set; }
+        [Parameter] public EventCallback<IEnumerable<IDropdownOption>> SelectedOptionsChanged { get; set; }
 
         [CascadingParameter] EditContext CascadedEditContext { get; set; } = default!;
 
         private FieldIdentifier FieldIdentifier;
 
         [Parameter]
-        public Expression<Func<IBFUDropdownOption>>? SelectedOptionExpression { get; set; }
+        public Expression<Func<IDropdownOption>>? SelectedOptionExpression { get; set; }
         [Parameter]
-        public Expression<Func<IEnumerable<IBFUDropdownOption>>>? SelectedOptionsExpression { get; set; }
+        public Expression<Func<IEnumerable<IDropdownOption>>>? SelectedOptionsExpression { get; set; }
 
-        protected bool isOpen { get; set; }
+        protected bool IsOpen { get; set; }
 
         protected string id = Guid.NewGuid().ToString();
         protected bool isSmall = false;
-        protected Rectangle dropDownBounds = new Rectangle();
+        protected Rectangle dropDownBounds = new();
 
         private ElementReference calloutReference;
         private ElementReference panelReference;
         private ElementReference _chosenReference;
         private string? _registrationToken;
 
-        private BFUFocusZone? calloutFocusZone;
+        private FocusZone? calloutFocusZone;
         private CalloutPositionedInfo? _calloutPositionedInfo;
 
         //private bool firstRender = true;
@@ -67,16 +63,15 @@ namespace BlazorFluentUI
         #region Style
         private ICollection<IRule> DropdownLocalRules { get; set; } = new List<IRule>();
 
-        private Rule DropdownTitleOpenRule = new Rule();
-        private Rule DropdownCalloutRule = new Rule();
-        private Rule DropdownCalloutMainRule = new Rule();
+        private Rule DropdownTitleOpenRule = new();
+        private Rule DropdownCalloutRule = new();
+        private Rule DropdownCalloutMainRule = new();
         #endregion
 
-        protected override Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             CreateLocalCss();
             SetStyle();
-            return base.OnInitializedAsync();
         }
 
 
@@ -88,7 +83,7 @@ namespace BlazorFluentUI
         public void ResetSelection()
         {
             //SelectedKeys.Clear();
-            SelectedOptions = Enumerable.Empty<IBFUDropdownOption>();
+            SelectedOptions = Enumerable.Empty<IDropdownOption>();
             //SelectedKey = null;
 
             if (MultiSelect)
@@ -110,7 +105,7 @@ namespace BlazorFluentUI
 
         public void AddSelection(string key)
         {
-            IBFUDropdownOption? option = ItemsSource!.FirstOrDefault(x => x.Key == key);
+            IDropdownOption? option = ItemsSource!.FirstOrDefault(x => x.Key == key);
             if (option == null)
                 return;
 
@@ -120,7 +115,7 @@ namespace BlazorFluentUI
                     throw new Exception("This option was already selected somehow.");
 
                 if (OnChange.HasDelegate)
-                    OnChange.InvokeAsync(new BFUDropdownChangeArgs(option, true));
+                    OnChange.InvokeAsync(new DropdownChangeArgs(option, true));
 
                 SelectedOptions = SelectedOptions.Append(option).ToList();
 
@@ -134,11 +129,11 @@ namespace BlazorFluentUI
                 {
                     SelectedOption = option;
                     if (OnChange.HasDelegate)
-                        OnChange.InvokeAsync(new BFUDropdownChangeArgs(option, true));
+                        OnChange.InvokeAsync(new DropdownChangeArgs(option, true));
                     if (SelectedOptionChanged.HasDelegate)
                         SelectedOptionChanged.InvokeAsync(SelectedOption);
                 }
-                isOpen = false;
+                IsOpen = false;
             }
 
             if (FieldIdentifier.FieldName != null)
@@ -148,7 +143,7 @@ namespace BlazorFluentUI
 
         public void RemoveSelection(string key)
         {
-            IBFUDropdownOption? option = ItemsSource!.FirstOrDefault(x => x.Key == key);
+            IDropdownOption? option = ItemsSource!.FirstOrDefault(x => x.Key == key);
             if (option == null)
                 return;
 
@@ -158,7 +153,7 @@ namespace BlazorFluentUI
                     throw new Exception("This option was not already selected.");
 
                 if (OnChange.HasDelegate)
-                    OnChange.InvokeAsync(new BFUDropdownChangeArgs(option, false));
+                    OnChange.InvokeAsync(new DropdownChangeArgs(option, false));
 
                 SelectedOptions = SelectedOptions.Where(x => x != option).ToList();
 
@@ -172,7 +167,7 @@ namespace BlazorFluentUI
                 {
                     SelectedOption = null;
                     if (OnChange.HasDelegate)
-                        OnChange.InvokeAsync(new BFUDropdownChangeArgs(option, false));
+                        OnChange.InvokeAsync(new DropdownChangeArgs(option, false));
 
                     if (SelectedOptionChanged.HasDelegate)
                         SelectedOptionChanged.InvokeAsync(SelectedOption);
@@ -190,9 +185,9 @@ namespace BlazorFluentUI
         [JSInvokable]
         public override async Task OnResizedAsync(double windowWidth, double windowHeight)
         {
-            var oldBounds = dropDownBounds;
-            dropDownBounds = await this.GetBoundsAsync();
-            if (oldBounds.width != dropDownBounds.width)
+            Rectangle? oldBounds = dropDownBounds;
+            dropDownBounds = await GetBoundsAsync();
+            if (oldBounds.Width != dropDownBounds.Width)
             {
                 StateHasChanged();
             }
@@ -201,23 +196,22 @@ namespace BlazorFluentUI
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
+
             if (firstRender)
             {
                 GetDropdownBounds();
-
             }
-            if (isOpen && _registrationToken == null)
+            if (IsOpen && _registrationToken == null)
                 _ = RegisterListFocusAsync();
 
-            if (!isOpen && _registrationToken != null)
+            if (!IsOpen && _registrationToken != null)
                 _ = DeregisterListFocusAsync();
-
-            await base.OnAfterRenderAsync(firstRender);
         }
 
         private async void GetDropdownBounds()
         {
-            dropDownBounds = await this.GetBoundsAsync();
+            dropDownBounds = await GetBoundsAsync();
         }
 
         protected override async Task OnParametersSetAsync()
@@ -230,7 +224,7 @@ namespace BlazorFluentUI
             }
             if (DefaultSelectedOptions != null)
             {
-                foreach (IBFUDropdownOption? option in DefaultSelectedOptions)
+                foreach (IDropdownOption? option in DefaultSelectedOptions)
                     AddSelection(option.Key!);
             }
             if (ItemTemplate == null)
@@ -250,12 +244,11 @@ namespace BlazorFluentUI
             if (CascadedEditContext != null && (SelectedOptionExpression != null || SelectedOptionsExpression != null))
             {
                 if (SelectedOptionExpression != null)
-                    FieldIdentifier = FieldIdentifier.Create<IBFUDropdownOption>(SelectedOptionExpression);
+                    FieldIdentifier = FieldIdentifier.Create<IDropdownOption>(SelectedOptionExpression);
                 else
-                    FieldIdentifier = FieldIdentifier.Create<IEnumerable<IBFUDropdownOption>>(SelectedOptionsExpression!);
+                    FieldIdentifier = FieldIdentifier.Create<IEnumerable<IDropdownOption>>(SelectedOptionsExpression!);
 
                 //CascadedEditContext?.NotifyFieldChanged(FieldIdentifier);
-
                 CascadedEditContext!.OnValidationStateChanged += CascadedEditContext_OnValidationStateChanged;
             }
         }
@@ -275,14 +268,14 @@ namespace BlazorFluentUI
                 _chosenReference = panelReference;
             else
                 _chosenReference = calloutReference;
-            _registrationToken = await jSRuntime.InvokeAsync<string>("BlazorFluentUiBaseComponent.registerKeyEventsForList", _chosenReference);
+            _registrationToken = await baseModule!.InvokeAsync<string>("registerKeyEventsForList", _chosenReference);
         }
 
         private async Task DeregisterListFocusAsync()
         {
             if (_registrationToken != null)
             {
-                await jSRuntime.InvokeVoidAsync("BlazorFluentUiBaseComponent.deregisterKeyEventsForList", _registrationToken);
+                await baseModule!.InvokeVoidAsync("deregisterKeyEventsForList", _registrationToken);
                 _registrationToken = null;
             }
         }
@@ -301,15 +294,15 @@ namespace BlazorFluentUI
             {
                 case "Enter":
                 case " ":
-                    isOpen = !isOpen;
+                    IsOpen = !IsOpen;
                     break;
                 case "Escape":
-                    isOpen = false;
+                    IsOpen = false;
                     break;
                 case "ArrowDown":
                     if (containsExpandCollapseModifier)
                     {
-                        isOpen = true;
+                        IsOpen = true;
                     }
                     break;
             }
@@ -319,7 +312,7 @@ namespace BlazorFluentUI
         protected Task ClickHandler(MouseEventArgs args)
         {
             if (!Disabled)
-                isOpen = !isOpen;  //There is a problem here.  Clicking when open causes automatic dismissal (light dismiss) so this just opens it again.
+                IsOpen = !IsOpen;  //There is a problem here.  Clicking when open causes automatic dismissal (light dismiss) so this just opens it again.
             return Task.CompletedTask;
         }
         protected static Task FocusHandler(FocusEventArgs args)
@@ -331,7 +324,7 @@ namespace BlazorFluentUI
 
         protected void DismissHandler()
         {
-            isOpen = false;
+            IsOpen = false;
         }
 
         private void CreateLocalCss()
@@ -349,21 +342,18 @@ namespace BlazorFluentUI
         {
             DropdownTitleOpenRule.Properties = new CssString()
             {
-                Css = $"border-radius:{(_calloutPositionedInfo?.TargetEdge == RectangleEdge.Bottom ? $"{Theme.Effects.RoundedCorner2} {Theme.Effects.RoundedCorner2} 0 0" : $"0 0 {Theme.Effects.RoundedCorner2} {Theme.Effects.RoundedCorner2}")};"
+                Css = $"border-radius:{(_calloutPositionedInfo?.TargetEdge == RectangleEdge.Bottom ? $"{Theme?.Effects.RoundedCorner2} {Theme?.Effects.RoundedCorner2} 0 0" : $"0 0 {Theme?.Effects.RoundedCorner2} {Theme?.Effects.RoundedCorner2}")};"
             };
             DropdownCalloutRule.Properties = new CssString()
             {
-                Css = $"border-radius:{(_calloutPositionedInfo?.TargetEdge == RectangleEdge.Bottom ? $"0 0 {Theme.Effects.RoundedCorner2} {Theme.Effects.RoundedCorner2}" : $"{Theme.Effects.RoundedCorner2} {Theme.Effects.RoundedCorner2} 0 0")};"
+                Css = $"border-radius:{(_calloutPositionedInfo?.TargetEdge == RectangleEdge.Bottom ? $"0 0 {Theme?.Effects.RoundedCorner2} {Theme?.Effects.RoundedCorner2}" : $"{Theme?.Effects.RoundedCorner2} {Theme?.Effects.RoundedCorner2} 0 0")};"
             };
             DropdownCalloutMainRule.Properties = new CssString()
             {
-                Css = $"border-radius:{(_calloutPositionedInfo?.TargetEdge == RectangleEdge.Bottom ? $"0 0 {Theme.Effects.RoundedCorner2} {Theme.Effects.RoundedCorner2}" : $"{Theme.Effects.RoundedCorner2} {Theme.Effects.RoundedCorner2} 0 0")};"
+                Css = $"border-radius:{(_calloutPositionedInfo?.TargetEdge == RectangleEdge.Bottom ? $"0 0 {Theme?.Effects.RoundedCorner2} {Theme?.Effects.RoundedCorner2}" : $"{Theme?.Effects.RoundedCorner2} {Theme?.Effects.RoundedCorner2} 0 0")};"
             };
 
 
         }
-
-
-
     }
 }

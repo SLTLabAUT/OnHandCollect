@@ -23,6 +23,9 @@ namespace FProject.Client.Pages
         bool UndoDisabled { get; set; }
         bool RedoDisabled { get; set; } = true;
         bool MoveDisabled { get; set; }
+        public bool NotAllowedDialogOpen { get; set; }
+        bool LeaveConfirmDialogOpen { get; set; }
+        bool HelpDialogOpen { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -33,10 +36,33 @@ namespace FProject.Client.Pages
             }
         }
 
+        async Task HelpDismissHandler(EventArgs args)
+        {
+            await Parent.JSRef.InvokeVoidAsync("pauseVideo");
+            HelpDialogOpen = false;
+        }
+
         void OpenCollapseHandler(MouseEventArgs args)
         {
             PanelCollapsed = !PanelCollapsed;
             CollapsedChanged = true;
+        }
+
+        async Task LeaveHandler(MouseEventArgs args)
+        {
+            if (await Parent.JSRef.InvokeAsync<bool>("isSaveRequired"))
+            {
+                LeaveConfirmDialogOpen = true;
+            }
+            else
+            {
+                Leave();
+            }
+        }
+
+        void Leave()
+        {
+            Navigation.NavigateTo($"/{(Parent.AdminReview ? "writepadsadmin" : "writepads")}");
         }
 
         async Task UndoRedoHander(bool isRedo = false)
@@ -51,10 +77,10 @@ namespace FProject.Client.Pages
             }
         }
 
-        void AutoSaveChangedHandler(bool checkedBool)
+        void AutoSaveChangedHandler(bool? checkedBool)
         {
-            Parent.SaveTimer.Enabled = checkedBool;
-            Parent.AutoSaveChecked = checkedBool;
+            Parent.SaveTimer.Enabled = checkedBool ?? false;
+            Parent.AutoSaveChecked = checkedBool ?? false;
         }
 
         async Task ChangeDefaultModeHandler(DrawingMode mode)

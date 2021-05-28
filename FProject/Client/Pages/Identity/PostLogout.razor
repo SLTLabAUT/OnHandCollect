@@ -8,11 +8,11 @@
     NavigationManager Navigation { get; set; }
 
     [Parameter]
-    public string ReturnUrl { get; set; } = "/";
+    public string ReturnUrl { get; set; } = "/index";
 
     protected override async Task OnInitializedAsync()
     {
         await AuthorizeApi.PostLogout();
-        Navigation.NavigateTo(ReturnUrl);
+        Navigation.NavigateTo(ReturnUrl, ReturnUrl == "/");
     }
 }

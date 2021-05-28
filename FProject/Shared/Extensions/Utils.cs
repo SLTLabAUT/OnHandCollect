@@ -43,6 +43,39 @@ namespace FProject.Shared.Extensions
                 .GetCustomAttribute<TAttribute>();
         }
 
+        public static IOrderedQueryable<TSource> OrderByCustomOrder<TSource, TCompare>(this IQueryable<TSource> query, Expression<Func<TSource, TCompare>> memberSelector, IList<TCompare> orderList)
+        {
+            var intType = typeof(int);
+            var lambdaExpression = (LambdaExpression)memberSelector;
+            var member = (MemberExpression)lambdaExpression.Body;
+            var parameters = lambdaExpression.Parameters;
+
+            ConditionalExpression exp = null;
+            for (int i = orderList.Count - 1; i >= 0; i--)
+            {
+                if (exp is null)
+                {
+                    exp = Expression.Condition(
+                        Expression.Equal(member, Expression.Constant(orderList[i])),
+                        Expression.Constant(i),
+                        Expression.Constant(orderList.Count),
+                        intType
+                    );
+                }
+                else
+                {
+                    exp = Expression.Condition(
+                        Expression.Equal(member, Expression.Constant(orderList[i])),
+                        Expression.Constant(i),
+                        exp,
+                        intType
+                    );
+                }
+            }
+
+            return query.OrderBy(Expression.Lambda<Func<TSource, int>>(exp, parameters));
+        }
+
         public static string GetDisplayName<TModel, TProperty>(Expression<Func<TModel, TProperty>> expression)
         {
             var attribute = Attribute.GetCustomAttribute(((MemberExpression)expression.Body).Member, typeof(DisplayAttribute)) as DisplayAttribute;
@@ -67,6 +100,16 @@ namespace FProject.Shared.Extensions
             var pc = new PersianCalendar();
             var lm = writepadDTO.LastModified.LocalDateTime;
             return string.Format("{3:00}:{4:00} {0}/{1:00}/{2:00}", pc.GetYear(lm), pc.GetMonth(lm), pc.GetDayOfMonth(lm), pc.GetHour(lm), pc.GetMinute(lm));
+        }
+
+        public static TextType ToTextType(this WritepadType type)
+        {
+            return type switch
+            {
+                WritepadType.Text => TextType.Text,
+                WritepadType.WordGroup => TextType.WordGroup,
+                _ => throw new NotSupportedException()
+            };
         }
     }
 }

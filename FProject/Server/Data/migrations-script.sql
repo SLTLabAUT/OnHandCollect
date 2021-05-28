@@ -254,3 +254,27 @@ VALUES ('20210517182016_OptionalText', '5.0.6');
 
 COMMIT;
 
+START TRANSACTION;
+
+ALTER TABLE "AspNetUsers" DROP COLUMN "BirthDate";
+
+ALTER TABLE "Writepads" ADD "LastCheck" timestamp with time zone NULL;
+
+ALTER TABLE "AspNetUsers" ADD "BirthYear" smallint NULL;
+
+ALTER TABLE "AspNetUsers" ADD "Education" integer NULL;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20210525142152_UserAndWritepadStatus', '5.0.6');
+
+COMMIT;
+
+START TRANSACTION;
+
+ALTER TABLE "Text" ADD "Type" integer NOT NULL DEFAULT 0;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20210527142018_TextType', '5.0.6');
+
+COMMIT;
+

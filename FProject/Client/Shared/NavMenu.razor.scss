@@ -12,3 +12,7 @@
     left: unset;
     right: 8px;
 }
+
+::deep .home .ms-Button-label {
+    font-weight: var(--fontWeight-Regular);
+}

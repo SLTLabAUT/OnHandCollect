@@ -1,30 +1,32 @@
 ﻿@inherits LayoutComponentBase
 
-<BFUStack Horizontal="true" Style="width:100%;">
-    <BFUStackItem ClassName="ms-hiddenMdDown" Grow=1 Style="overflow:hidden;max-width:20%;min-width:20%;">
-        <NavMenu />
-    </BFUStackItem>
+<div class="main-container">
+    <Stack Horizontal="true" Style="width:100%;">
+        <StackItem ClassName="ms-hiddenMdDown" Grow=1 Style="overflow:hidden;max-width:20%;min-width:20%;">
+            <NavMenu />
+        </StackItem>
 
-    <BFUPanel ClassName="ms-hiddenMdUp" Type=@PanelType.SmallFixedFar HasCloseButton=false OnDismiss=@HideMenu IsOpen=@isPanelOpen IsLightDismiss="true">
-        <NavigationTemplate>
-            <BFUIconButton OnClick=HideMenu IconName="GlobalNavButtonActive" />
-        </NavigationTemplate>
-        <ChildContent>
-            <NavMenu OnLinkClicked=@OnNavLinkClick Style="box-shadow:none;" />
-        </ChildContent>
-    </BFUPanel>
+        <Panel ClassName="ms-hiddenMdUp" Type=@PanelType.SmallFixedFar HasCloseButton=false OnDismiss=@HideMenu IsOpen=@isPanelOpen IsLightDismiss="true">
+            <NavigationTemplate>
+                <MyBFUIconButton OnClick=HideMenu IconName="GlobalNavButtonActive" />
+            </NavigationTemplate>
+            <ChildContent>
+                <NavMenu OnLinkClicked=@OnNavLinkClick Style="box-shadow:none;" />
+            </ChildContent>
+        </Panel>
 
-    <BFUStackItem Grow=7 Style="overflow:hidden">
-        <BFUStack VerticalFill="true" Style="width:100%;">
-            <BFUResponsiveLayout MaxWidth="ResponsiveMode.Medium.ToMaxCssValue()">
-                <BFUStackItem VerticalFill="false">
-                    <BFUIconButton IconName="GlobalNavButton" OnClick=@ShowMenu />
-                </BFUStackItem>
-            </BFUResponsiveLayout>
+        <StackItem Grow=7 Style="overflow:hidden">
+            <Stack VerticalFill="true" Style="width:100%;">
+                <ResponsiveLayout MaxWidth="ResponsiveMode.Medium.ToMaxCssValue()">
+                    <StackItem VerticalFill="false">
+                        <MyBFUIconButton IconName="GlobalNavButton" OnClick=@ShowMenu />
+                    </StackItem>
+                </ResponsiveLayout>
 
-            <BFUStackItem ClassName="main" Grow="1" Tokens="new BFUStackItemTokens { Padding = ((int)CurrentMode <= (int)ResponsiveMode.Medium ? 10 : 0) }" Style="overflow-y:auto;">
-                @Body
-            </BFUStackItem>
-        </BFUStack>
-    </BFUStackItem>
-</BFUStack>
+                <StackItem ClassName="main" Grow="1" Tokens="new StackItemTokens { Padding = ((int)CurrentMode <= (int)ResponsiveMode.Medium ? 10 : 0) }" Style="overflow-y:auto;">
+                    @Body
+                </StackItem>
+            </Stack>
+        </StackItem>
+    </Stack>
+</div>

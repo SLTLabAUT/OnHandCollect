@@ -37,25 +37,25 @@ namespace FProject.Client.Pages
         ValidationMessageStore CreateErrors { get; set; }
         EditContext EditContext { get; set; }
         List<WritepadDTO> WritepadList { get; set; }
-        BFUCommandBarItem[] Items { get; set; }
-        IEnumerable<IBFUDropdownOption> PointerTypes { get; set; }
-        IEnumerable<IBFUDropdownOption> TextTypes { get; set; }
+        CommandBarItem[] Items { get; set; }
+        IEnumerable<IDropdownOption> PointerTypes { get; set; }
+        IEnumerable<IDropdownOption> TextTypes { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
 
         bool HaveNextPage => Page * 10 < AllCount;
 
         protected override Task OnInitializedAsync()
         {
-            Items = new BFUCommandBarItem[] {
-                new BFUCommandBarItem() { Text = "ایجاد تخته‌ی جدید", IconName = "Add", Key = "add", OnClick = AddOnClickHandler }
+            Items = new CommandBarItem[] {
+                new CommandBarItem() { Text = "ایجاد تخته‌ی جدید", IconName = "Add", Key = "add", OnClick = AddOnClickHandler }
             };
             PointerTypes = Enum.GetValues<PointerType>()
-                .Select(p => new BFUDropdownOption {
+                .Select(p => new DropdownOption {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int) p).ToString()
                 });
-            TextTypes = Enum.GetValues<FProject.Shared.TextType>()
-                .Select(p => new BFUDropdownOption
+            TextTypes = Enum.GetValues<WritepadType>()
+                .Select(p => new DropdownOption
                 {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
@@ -148,7 +148,7 @@ namespace FProject.Client.Pages
                     var error = await result.Content.ReadFromJsonAsync<WritepadCreationError>();
                     if (error == WritepadCreationError.SignNotAllowed)
                     {
-                        CreateErrors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "ایجاد تخته‌ی امضا با نوع ورودی یکسان هر ۱۲ ساعت یک‌بار مجاز است.");
+                        CreateErrors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "ایجاد تخته‌ی امضا با نوع ورودی یکسان تنها ۷ عدد هر ۱۲ ساعت مجاز است.");
                         EditContext.NotifyValidationStateChanged();
                     }
                     break;
@@ -182,43 +182,20 @@ namespace FProject.Client.Pages
 
         async Task SubmitForApproval(MouseEventArgs args, WritepadDTO writepad)
         {
-            if (writepad.Status != WritepadStatus.Editing)
+            var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.WaitForAcceptance}", null);
+            if (response.IsSuccessStatusCode)
             {
-                return;
-            }
-
-            try
-            {
-                var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.WaitForAcceptance}", null);
-                if (response.IsSuccessStatusCode)
-                {
-                    writepad.Status = WritepadStatus.WaitForAcceptance;
-                }
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
+                writepad.Status = WritepadStatus.WaitForAcceptance;
             }
         }
 
         async Task CancelApprovalRequest(MouseEventArgs args, WritepadDTO writepad)
         {
-            if (writepad.Status != WritepadStatus.WaitForAcceptance)
+            var result = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.Draft}", null);
+            if (result.IsSuccessStatusCode)
             {
-                return;
-            }
-
-            try
-            {
-                var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.Editing}", null);
-                if (response.IsSuccessStatusCode)
-                {
-                    writepad.Status = WritepadStatus.Editing;
-                }
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
+                var response = await result.Content.ReadFromJsonAsync<WritepadStatus>();
+                writepad.Status = response;
             }
         }
 
@@ -227,12 +204,12 @@ namespace FProject.Client.Pages
             Navigation.NavigateTo($"/writepad/{id}");
         }
 
-        void TextTypeChangeHandler(BFUDropdownChangeArgs args)
+        void TextTypeChangeHandler(DropdownChangeArgs args)
         {
-            if (args.Option.Key == ((int)FProject.Shared.TextType.Sign).ToString())
+            if (args.Option.Key == ((int)WritepadType.Sign).ToString())
             {
                 IsSignSelected = true;
-                NewWritepad.Number = 1;
+                NewWritepad.Number = Math.Min(7, NewWritepad.Number);
             }
             else
             {
@@ -244,10 +221,10 @@ namespace FProject.Client.Pages
         {
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "نوع ورودی")]
-            public IBFUDropdownOption PointerType { get; set; }
+            public IDropdownOption PointerType { get; set; }
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "نوع داده")]
-            public IBFUDropdownOption TextType { get; set; }
+            public IDropdownOption WritepadType { get; set; }
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Range(1, 25, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "تعداد")]
@@ -258,7 +235,7 @@ namespace FProject.Client.Pages
                 return new NewWritepadDTO
                 {
                     PointerType = Enum.Parse<PointerType>(model.PointerType.Key),
-                    TextType = Enum.Parse<FProject.Shared.TextType>(model.TextType.Key),
+                    Type = Enum.Parse<WritepadType>(model.WritepadType.Key),
                     Number = (int)model.Number
                 };
             }

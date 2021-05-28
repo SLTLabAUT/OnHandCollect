@@ -34,7 +34,6 @@ namespace FProject.Client.Pages
         WritepadPanel PanelRef { get; set; }
         float PadRatio { get; set; } = 0.7f;
         bool PanelCollapsed { get; set; }
-        bool NotAllowedDialogOpen { get; set; }
         bool InitiationDone { get; set; }
         string WritepadCompressedJson { get; set; }
         public WritepadDTO WritepadInstance { get; set; }
@@ -48,7 +47,6 @@ namespace FProject.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            Console.WriteLine("Init");
             componentRef = DotNetObjectReference.Create(this);
 
             JSRef = await JS.InvokeAsync<IJSObjectReference>("ImportGlobal", "Writepad", "/ts/Pages/Writepad/Writepad.razor.js");
@@ -58,8 +56,6 @@ namespace FProject.Client.Pages
 
         protected override async Task OnParametersSetAsync()
         {
-            Console.WriteLine("Parameter");
-
             var query = new Uri(Navigation.Uri).Query;
             foreach (var queryItem in QueryHelpers.ParseQuery(query))
             {
@@ -77,7 +73,7 @@ namespace FProject.Client.Pages
             WritepadInstance = taskWritepadInstance.Result;
             WritepadCompressedJson = taskWritepadCompressedJson.Result;
 
-            if (WritepadInstance.Type == FProject.Shared.TextType.WordGroups)
+            if (WritepadInstance.Type == WritepadType.WordGroup)
             {
                 WritepadInstance.Text.Content = WritepadInstance.Text.Content.Replace(" ", "<br />");
             }
@@ -85,11 +81,8 @@ namespace FProject.Client.Pages
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Console.WriteLine("Render");
-
             if (firstRender || InitiationDone)
             {
-                Console.WriteLine("Nope!");
                 return;
             }
 
@@ -115,7 +108,6 @@ namespace FProject.Client.Pages
         public async Task<SaveResponseDTO> Save(string savePointsDTOCompressedJson)
         //public async Task<SaveResponseDTO> Save(DateTimeOffset lastModified, DrawingPoint[] drawingPoints, DeletedDrawing[] deletedDrawings)
         {
-            Console.WriteLine("Middle2!" + DateTime.Now);
             IsSaving = true;
             PanelRef.StateHasChangedPublic();
             try
@@ -140,8 +132,7 @@ namespace FProject.Client.Pages
                         var error = await response.Content.ReadFromJsonAsync<WritepadEditionError>();
                         if (error == WritepadEditionError.SignNotAllowed)
                         {
-                            NotAllowedDialogOpen = true;
-                            StateHasChanged();
+                            PanelRef.NotAllowedDialogOpen = true;
                         }
                         break;
                 }

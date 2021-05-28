@@ -91,6 +91,10 @@ export function init(compRef, ratio: number, origin: number, writepadCompressedJ
     updateDotNetUndoRedo();
 }
 
+export function pauseVideo() {
+    (<HTMLVideoElement>document.getElementById("video"))?.pause();
+}
+
 function onScroll(event: Event) {
     updatePadOffset();
 }
@@ -117,6 +121,14 @@ function updatePadOffset() {
     padOffset = window.innerWidth - canvas.width - pad.scrollLeft;
 }
 
+export function isSaveRequired() {
+    let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > lastSavedDrawingNumber);
+    if (endingIndex == -1 && !isSaving) {
+        return false;
+    }
+    return true;
+}
+
 export async function save(): Promise<void> {
     if (isSaving) {
         return;
@@ -127,7 +139,7 @@ export async function save(): Promise<void> {
 
     let startingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Number <= lastSavedDrawingNumber) + 1;
     let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > lastSavedDrawingNumber);
-    if (endingIndex == -1) {
+    if (!isSaveRequired()) {
         return;
     }
 
@@ -227,7 +239,7 @@ interface Writepad {
     LastModified: Date;
     readonly PointerType: PointerType;
     readonly Status: WritepadStatus;
-    readonly Type: TextType;
+    readonly Type: WritepadType;
     readonly Text: WritepadText;
     readonly Points: Point[];
 }
@@ -262,9 +274,9 @@ interface DeletedDrawing {
     EndingNumber: number
 }
 
-const enum TextType {
+const enum WritepadType {
     Text,
-    WordGroups,
+    WordGroup,
     Sign
 }
 

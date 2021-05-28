@@ -1,4 +1,5 @@
-﻿using FProject.Client.Services;
+﻿
+using FProject.Client.Services;
 using FProject.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -20,7 +21,7 @@ namespace FProject.Client.Pages.Identity
         AuthorizeApi AuthorizeApi { get; set; }
 
         [Parameter]
-        public string ReturnUrl { get; set; } = "/";
+        public string ReturnUrl { get; set; } = "/index";
 
         LoginDTO LoginDTO { get; set; }
         EditContext EditContext { get; set; }
@@ -33,15 +34,10 @@ namespace FProject.Client.Pages.Identity
             EditContext = new EditContext(LoginDTO);
 
             Errors = new ValidationMessageStore(EditContext);
-            EditContext.OnValidationRequested += (sender, eventArgs) =>
-            {
-                Errors.Clear();
-            };
             EditContext.OnFieldChanged += (sender, eventArgs) =>
             {
                 Errors.Clear();
             };
-            Console.WriteLine("ParameterSet");
         }
 
         async Task LoginHandler()
@@ -70,7 +66,7 @@ namespace FProject.Client.Pages.Identity
 
         void NavigateToReturnUrl()
         {
-            Navigation.NavigateTo(ReturnUrl);
+            Navigation.NavigateTo(ReturnUrl, ReturnUrl == "/");
         }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,43 +27,8 @@ namespace FProject.Server.Data
                 await EnsureRole(serviceProvider, adminID, IdentityRoleConstants.Admin);
 
                 await EnsureText(context);
-
-                //SeedDB(context, adminID);
-                await context.SaveChangesAsync();
+                await EnsureWordGroup(context);
             }
-        }
-
-        private static async Task EnsureText(ApplicationDbContext context)
-        {
-            var count = await context.Text.CountAsync();
-            if (count != 0)
-            {
-                return;
-            }
-            string line;
-            float maxRarity = 1f;
-            var splitter = new Regex(@"^(\d+\.\d+)\t(.+)$", RegexOptions.Compiled);
-            var wordCounter = new Regex(@"(?: |\\n)+", RegexOptions.Compiled);
-            var file = new StreamReader(@"Data/HandWritingPhrases.txt");
-            while ((line = await file.ReadLineAsync()) is not null)
-            {
-                var match = splitter.Match(line);
-                var text = new Text
-                {
-                    Rarity = float.Parse(match.Groups[1].Value) / maxRarity,
-                    Content = match.Groups[2].Value
-                };
-                text.WordCount = wordCounter.Matches(text.Content).Count + 1;
-
-                if (maxRarity == 1f)
-                {
-                    maxRarity = text.Rarity;
-                    text.Rarity = 1f;
-                }
-
-                context.Text.Add(text);
-            }
-            file.Close();
         }
 
         private static async Task<string> EnsureUser(IServiceProvider serviceProvider, string UserPw, string Email)
@@ -117,6 +83,97 @@ namespace FProject.Server.Data
             IR = await userManager.AddToRoleAsync(user, role);
 
             return IR;
+        }
+
+        private static async Task EnsureText(ApplicationDbContext context)
+        {
+            var count = await context.Text
+                .Where(t => t.Type == TextType.Text)
+                .CountAsync();
+            if (count != 0)
+            {
+                return;
+            }
+
+            string line;
+            float maxRarity = 1f;
+            var splitter = new Regex(@"^(\d+\.\d+)\t(.+)$", RegexOptions.Compiled);
+            var wordCounter = new Regex(@"(?: |\\n)+", RegexOptions.Compiled);
+            var file = new StreamReader(@"Data/HandWritingPhrases.txt");
+            while ((line = await file.ReadLineAsync()) is not null)
+            {
+                var match = splitter.Match(line);
+                var text = new Text
+                {
+                    Rarity = float.Parse(match.Groups[1].Value) / maxRarity,
+                    Content = match.Groups[2].Value
+                };
+                text.WordCount = wordCounter.Matches(text.Content).Count + 1;
+
+                if (maxRarity == 1f)
+                {
+                    maxRarity = text.Rarity;
+                    text.Rarity = 1f;
+                }
+
+                context.Text.Add(text);
+            }
+            file.Close();
+
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task EnsureWordGroup(ApplicationDbContext context)
+        {
+            var count = await context.Text
+                .Where(t => t.Type == TextType.WordGroup)
+                .CountAsync();
+            if (count != 0)
+            {
+                return;
+            }
+
+            var allText = await context.Text
+                .Where(t => t.Type == TextType.Text)
+                .ToListAsync();
+            foreach (var text in allText)
+            {
+                var rnd = new Random();
+                var words = text.Content.Split(" ").OrderBy(w => rnd.Next()).ToList();
+                var batches = words.Batch(7, e => e.ToList()).ToList();
+                var lastBatch = batches.Last();
+                if (lastBatch.Count < 7
+                    && batches.Count > 1
+                    && lastBatch.Count / (batches.Count - 1) <= 3) // Optimum: 7, Minimum: 4, Maximum: 10
+                {
+                    var i = batches.Count - 1;
+                    while (lastBatch.Any())
+                    {
+                        batches[i].Add(lastBatch.Last());
+                        lastBatch.RemoveAt(lastBatch.Count - 1);
+                        i--;
+                        if (i < 0)
+                        {
+                            i = batches.Count - 1;
+                        }
+                    }
+                    batches.RemoveAt(batches.Count - 1);
+                }
+                foreach (var batch in batches)
+                {
+                    context.Text.Add(
+                        new Text
+                        {
+                            Rarity = text.Rarity,
+                            Type = TextType.WordGroup,
+                            WordCount = batch.Count,
+                            Content = string.Join(" ", batch)
+                        }
+                    );
+                }
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }

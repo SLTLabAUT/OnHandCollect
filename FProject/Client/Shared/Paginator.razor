@@ -1,11 +1,11 @@
-﻿<BFUStack Horizontal=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
-    <BFUStackItem>
+﻿<Stack Horizontal=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
+    <StackItem>
         <MyBFUIconButton Disabled=NextDisabled IconName="Back" OnClick=@(args => OnClickHandler(true)) />
-    </BFUStackItem>
-    <BFUStackItem Style="margin:0 10px;">
-        <BFUText>@Page</BFUText>
-    </BFUStackItem>
-    <BFUStackItem>
+    </StackItem>
+    <StackItem Style="margin:0 10px;">
+        <MyBFUText>@Page</MyBFUText>
+    </StackItem>
+    <StackItem>
         <MyBFUIconButton Disabled=BackDisabled IconName="Forward" OnClick=@(args => OnClickHandler(false)) />
-    </BFUStackItem>
-</BFUStack>
+    </StackItem>
+</Stack>

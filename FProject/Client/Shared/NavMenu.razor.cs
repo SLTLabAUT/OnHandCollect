@@ -19,12 +19,12 @@ namespace FProject.Client.Shared
         [Parameter]
         public string Style { get; set; }
         [Parameter]
-        public EventCallback<BFUNavLink> OnLinkClicked { get; set; }
+        public EventCallback<BlazorFluentUI.Routing.NavLink> OnLinkClicked { get; set; }
 
         private async Task BeginSignOut()
         {
             await AuthorizeApi.Logout();
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/index");
         }
     }
 }

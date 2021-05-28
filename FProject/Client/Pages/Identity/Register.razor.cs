@@ -21,7 +21,8 @@ namespace FProject.Client.Pages.Identity
         [Inject]
         AuthorizeApi AuthorizeApi { get; set; }
 
-        IEnumerable<IBFUDropdownOption> SexOptions { get; set; }
+        IEnumerable<IDropdownOption> SexOptions { get; set; }
+        IEnumerable<IDropdownOption> EducationOptions { get; set; }
         RegisterModel Model { get; set; }
         EditContext EditContext { get; set; }
         ValidationMessageStore Errors { get; set; }
@@ -31,7 +32,13 @@ namespace FProject.Client.Pages.Identity
         protected override Task OnInitializedAsync()
         {
             SexOptions = Enum.GetValues<Sex>()
-                .Select(p => new BFUDropdownOption
+                .Select(p => new DropdownOption
+                {
+                    Text = p.GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)p).ToString()
+                });
+            EducationOptions = Enum.GetValues<Education>()
+                .Select(p => new DropdownOption
                 {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
@@ -46,10 +53,6 @@ namespace FProject.Client.Pages.Identity
             EditContext = new EditContext(Model);
 
             Errors = new ValidationMessageStore(EditContext);
-            EditContext.OnValidationRequested += (sender, eventArgs) =>
-            {
-                Errors.Clear();
-            };
             EditContext.OnFieldChanged += (sender, eventArgs) =>
             {
                 Errors.Clear();
@@ -111,10 +114,12 @@ namespace FProject.Client.Pages.Identity
             [Display(Name = "شماره‌ی تلفن همراه")]
             public string PhoneNumber { get; set; }
             [Display(Name = "جنسیت")]
-            public IBFUDropdownOption Sex { get; set; }
-            [DataType(DataType.Date)]
-            [Display(Name = "تاریخ تولد")]
-            public DateTime BirthDate { get; set; }
+            public IDropdownOption Sex { get; set; }
+            [Range(1200, 1400, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+            [Display(Name = "سال تولد")]
+            public short? BirthYear { get; set; }
+            [Display(Name = "سطح تحصیلات")]
+            public IDropdownOption Education { get; set; }
 
             public static explicit operator RegisterDTO(RegisterModel model)
             {
@@ -125,7 +130,8 @@ namespace FProject.Client.Pages.Identity
                     AcceptTerms = model.AcceptTerms,
                     PhoneNumber = model.PhoneNumber,
                     Sex = model.Sex is null ? null : Enum.Parse<Sex>(model.Sex.Key),
-                    BirthDate = model.BirthDate.Ticks == 0 ? null : model.BirthDate
+                    BirthYear = model.BirthYear,
+                    Education = model.Education is null ? null : Enum.Parse<Education>(model.Education.Key),
                 };
             }
         }

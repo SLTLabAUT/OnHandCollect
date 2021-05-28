@@ -10,7 +10,8 @@ namespace FProject.Server.Models
     public class ApplicationUser : IdentityUser
     {
         public Sex? Sex { get; set; }
-        public DateTime? BirthDate { get; set; }
+        public short? BirthYear { get; set; }
+        public Education? Education { get; set; }
 
         public ICollection<Writepad> Writepads { get; set; }
 
@@ -21,7 +22,8 @@ namespace FProject.Server.Models
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Sex = model.Sex,
-                BirthDate = model.BirthDate
+                BirthYear = model.BirthYear,
+                Education = model.Education
             };
         }
     }

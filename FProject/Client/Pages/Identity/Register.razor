@@ -5,50 +5,49 @@
         <IdentityTemplate Title="ثبت‌نام">
             <EditForm EditContext=EditContext OnValidSubmit=RegisterHandler>
                 <DataAnnotationsValidator />
-                <BFUValidationSummary />
+                <FluentUIValidationSummary />
                 @if (Done)
                 {
-                    <BFUMessageBar MessageBarType="MessageBarType.Success" IsMultiline="false">
-                        حساب کاربری شما با موفقیت ایجاد گردید. لینک تایید به رایانامه‌تان ارسال شده است. جهت تکمیل فرآیند ثبت‌نام به رایانامه‌ی خود مراجعه کنید.
-                    </BFUMessageBar>
+                    <MessageBar MessageBarType="MessageBarType.Success">
+                        حساب کاربری شما با موفقیت ایجاد گردید. لینک تایید به رایانامه‌تان ارسال شده است. جهت تکمیل فرآیند ثبت‌نام به رایانامه‌ی خود مراجعه کنید و روی لینک ارسال‌شده کلیک کنید.
+                    </MessageBar>
                 }
-                <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Email)) @bind-Value=@Model.Email Required=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
-                <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Password)) InputType=@InputType.Password @bind-Value=@Model.Password Required=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
-                <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.ConfirmPassword)) InputType=@InputType.Password @bind-Value=@Model.ConfirmPassword Required=true ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
-                <BFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+                <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Email)) @bind-Value=@Model.Email @bind-Value:event="OnChange" Required=true />
+                <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Password)) InputType=@InputType.Password @bind-Value=@Model.Password @bind-Value:event="OnChange" Required=true />
+                <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.ConfirmPassword)) InputType=@InputType.Password @bind-Value=@Model.ConfirmPassword @bind-Value:event="OnChange" Required=true />
+                <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
                 <MyBFUDropdown ItemsSource=SexOptions
-                               Placeholder="یک گزینه را برگزینید..."
-                               @bind-SelectedOption=Model.Sex
-                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex)) />
-                <MyBFUDatePicker @bind-Value=Model.BirthDate
-                                 ShowMonthPickerAsOverlay="true"
-                                 FirstDayOfWeek=DayOfWeek.Saturday
-                                 ShowCloseButton=true
-                                 Label=@(Utils.GetDisplayName<RegisterModel, DateTime>(b => b.BirthDate))
-                                 InitialPickerDate=@(DateTime.Parse("1-1-2000"))
-                                 Placeholder="تاریخ مورد نظر خود را برگزینید..." />
+                          Placeholder="یک گزینه را برگزینید..."
+                          @bind-SelectedOption=Model.Sex
+                          Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex)) />
+                <MyBFUNumericTextField TValue="short?" Label=@(Utils.GetDisplayName<RegisterModel, short?>(b => b.BirthYear)) @bind-Value=@Model.BirthYear @bind-Value:event="OnChange" ParsingErrorMessage="مقدار {0} باید مقداری عددی در محدوده‌ی مجاز باشد." />
+                <MyBFUDropdown ItemsSource=EducationOptions
+                          Placeholder="یک گزینه را برگزینید..."
+                          @bind-SelectedOption=Model.Education
+                          Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Education)) />
                 <MyBFUCheckbox Label=@(Utils.GetDisplayName<RegisterModel, bool>(m => m.AcceptTerms)) @bind-Checked=@Model.AcceptTerms OnLabelTextClick=@ShowHideTerms />
-                <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
-                    <BFUStackItem Align=Alignment.Center>
-                        <BFUSubmitButton Text="ثبت‌نام" />
-                    </BFUStackItem>
-                </BFUStack>
+                <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                    <StackItem Align=Alignment.Center>
+                        <SubmitButton Text="ثبت‌نام" />
+                    </StackItem>
+                </Stack>
             </EditForm>
         </IdentityTemplate>
 
-        <BFUDialog Title="شرایط استفاده"
-                    IsOpen=@TermsDialogOpen
-                    OnDismiss=@(args => TermsDialogOpen=false)
-                    Style="text-align: right;">
+        <MyBFUDialog Title="شرایط استفاده"
+                IsOpen=@TermsDialogOpen
+                OnDismiss=@(args => TermsDialogOpen=false)
+                CloseButtonAriaLabel="بستن"
+                Style="text-align: right;">
             <ChildContent>
                 <p>داده‌های نوشتاری به‌دست‌آمده در این سامانه، در آینده بدون اعلام هویت افراد در دسترس عموم قرارخواهدگرفت.</p>
             </ChildContent>
             <FooterTemplate></FooterTemplate>
-        </BFUDialog>
+        </MyBFUDialog>
     </NotAuthorized>
     <Authorized>
         @{
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/index");
         }
     </Authorized>
 </AuthorizeView>

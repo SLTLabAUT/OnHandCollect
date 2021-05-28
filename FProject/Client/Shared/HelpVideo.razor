@@ -1,0 +1,9 @@
+﻿<video controls preload="metadata" @attributes=AdditionalAttributes>
+    <source src="/asset/help.mp4" type="video/mp4">
+    <p>مرورگر شما قابلیت پخش ویدیو را ندارد. با کلیک بر روی <a href="/asset/help.mp4">این لینک</a> می‌توانید ویدیو را دانلود نمایید.</p>
+</video>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+}

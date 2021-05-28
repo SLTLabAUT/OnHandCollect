@@ -1,0 +1,131 @@
+﻿@page
+@model FProject.Server.Pages.IndexModel
+
+<!DOCTYPE html>
+<html dir="rtl">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport"
+                content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</title>
+        <base href="/" />
+        <link href="/asset/IRANSans/WebFonts/css/fontiran.css" rel="stylesheet" />
+        <link href="/css/fabric.min.css" rel="stylesheet" />
+        <link href="/css/app.css" rel="stylesheet" />
+        <link href="/sass/index.css" rel="stylesheet" />
+    </head>
+    <body>
+        <section class="main">
+            <div class="container ms-depth-64">
+                <h1>سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</h1>
+                <hr />
+                <div class="description">
+                    <p>
+                        سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی به هدف ایجاد پایگاه
+                        داده‌ای استاندارد از دست‌نوشته‌های برخط ایجاد شده است. از کاربردهای مهم چنین
+                        پایگاه داده‌ای می‌توان به تشخیص دست‌خط در زبان فارسی و تبدیل دست‌نوشته‌ی
+                        دیجیتال فارسی به نوشتار اشاره کرد. امید است که بتوان با کمک شما فارسی‌زبانان
+                        عزیز، قدم مهمی در زمینه‌ی هوش مصنوعی و ابزارهای کاربردی زبان فارسی برداشت.
+                        <br />
+                        برای مشارکت در این پروژه، پس از ثبت‌نام در سامانه می‌توانید با استفاده از
+                        <strong>لمس، قلم دیجیتالی، موس و تاچ‌پد</strong> به نوشتن
+                        <strong>متن‌های کوتاه، گروه کلمات و امضا</strong> بپردازید.
+                        <br />
+                        نوشته‌های بیشتر باعث غنی‌تر شدن پایگاه داده خواهد شد.
+                    </p>
+                    <button class="ms-Button ms-Button--primary help">
+                        <span class="ms-Button-flexContainer">
+                            <i class="ms-Icon ms-Icon--MSNVideosSolid ms-Button-icon" role="presentation"></i>
+                            <span class="ms-Button-textContainer">
+                                <span class="ms-Button-label">مشاهده‌ی ویدیوی راهنمای سامانه</span>
+                            </span>
+                        </span>
+                    </button>
+                </div>
+                <div class="navigation">
+                    <a class="ms-Button ms-Button--default" href="/identity/register">
+                        <span class="ms-Button-flexContainer">
+                            <span class="ms-Button-textContainer">
+                                <span class="ms-Button-label">ثبت‌نام</span>
+                            </span>
+                        </span>
+                    </a>
+                    <a class="ms-Button ms-Button--primary" href="/identity/login">
+                        <span class="ms-Button-flexContainer">
+                            <span class="ms-Button-textContainer">
+                                <span class="ms-Button-label">ورود</span>
+                            </span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <div class="ms-LayerHost">
+            <span class="ms-Layer mediumFont ms-Layer--fixed">
+                <div class="ms-Layer-content">
+                    <div id="help-dialog" style="display: none;" role="dialog" aria-labelledby="ویدیوی راهنمای سامانه">
+                        <div class="mediumFont ms-Modal isOpen ms-Dialog" style="text-align: right">
+                            <div class="mediumFont ms-Overlay ms-Overlay--light"></div>
+                            <div class="ms-Modal-main ms-Dialog-main-3-0">
+                                <div style="pointer-events: none; position: fixed" tabindex="0"></div>
+                                <div class="ms-Modal-scrollableContent">
+                                    <div class="mediumFont ms-Dialog-content">
+                                        <div class="ms-Dialog-header">
+                                            <h2 class="xlargeFont ms-Dialog-title" role="heading" aria-level="2">
+                                                ویدیوی راهنمای سامانه
+                                            </h2>
+                                            <div class="ms-Dialog-topButton">
+                                                <button class="ms-Button ms-Button--default ms-Dialog-button ms-Button--icon">
+                                                    <span class="ms-Button-flexContainer">
+                                                        <i class="ms-Icon ms-Icon--Cancel ms-Button-icon" role="presentation"></i>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="ms-Dialog-inner">
+                                            <div class="ms-Dialog-innerContent">
+                                                <video controls preload="metadata">
+                                                    <source src="/asset/help.mp4" type="video/mp4">
+                                                    <p>مرورگر شما قابلیت پخش ویدیو را ندارد. با کلیک بر روی <a href="/asset/help.mp4">این لینک</a> می‌توانید ویدیو را دانلود نمایید.</p>
+                                                </video>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="pointer-events: none; position: fixed" tabindex="0"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </span>
+        </div>
+        <script>
+            let showHelpDialog = false;
+            let helpDialog = document.getElementById("help-dialog");
+            let video = document.querySelector("#help-dialog video");
+            helpDialog.addEventListener("animationend", function() {
+                if (showHelpDialog) {
+                    helpDialog.classList.remove("ms-motion-fadeIn");
+                } else {
+                    helpDialog.style = "display: none;";
+                    helpDialog.classList.remove("ms-motion-fadeOut");
+                }
+            })
+            document.querySelectorAll(".help").forEach(e => {
+                e.addEventListener("click", function() {
+                    showHelpDialog = true;
+                    helpDialog.classList.add("ms-motion-fadeIn");
+                    helpDialog.style = "";
+                });
+            });
+            document.querySelectorAll(".ms-Dialog-button").forEach(e => {
+                e.addEventListener("click", function() {
+                    video.pause();
+
+                    showHelpDialog = false;
+                    helpDialog.classList.add("ms-motion-fadeOut");
+                });
+            });
+        </script>
+    </body>
+</html>

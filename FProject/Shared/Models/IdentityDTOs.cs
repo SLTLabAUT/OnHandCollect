@@ -17,8 +17,9 @@ namespace FProject.Shared.Models
         [RegularExpression(@"^(?:\+98|0)\d{10}$", ErrorMessageResourceName = "PhoneNumber", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         public string PhoneNumber { get; set; }
         public Sex? Sex { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? BirthDate { get; set; }
+        [Range(1200, 1400, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        public short? BirthYear { get; set; }
+        public Education? Education { get; set; }
     }
 
     public class ForgotPasswordDTO
@@ -77,8 +78,9 @@ namespace FProject.Shared.Models
         [RegularExpression(@"^(?:\+98|0)\d{10}$", ErrorMessageResourceName = "PhoneNumber", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         public string PhoneNumber { get; set; }
         public Sex? Sex { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? BirthDate { get; set; }
+        [Range(1200, 1400, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        public short? BirthYear { get; set; }
+        public Education? Education { get; set; }
     }
 
     public class LoginResponse
@@ -120,6 +122,26 @@ namespace FProject.Shared.Models
         Man,
         [Display(Name = "زن")]
         Woman
+    }
+
+    public enum Education
+    {
+        [Display(Name = "بدون تحصیلات رسمی")]
+        None,
+        [Display(Name = "ابتدایی")]
+        Primary,
+        [Display(Name = "متوسطه‌ی اول")]
+        LowerSecondary,
+        [Display(Name = "متوسطه‌ی دوم")]
+        UpperSecondary,
+        [Display(Name = "کاردانی")]
+        ShortCycleTertiary,
+        [Display(Name = "کارشناسی")]
+        Bachelor,
+        [Display(Name = "کارشناسی ارشد")]
+        Master,
+        [Display(Name = "دکترا")]
+        Doctoral
     }
 
     public static class IdentityRoleConstants

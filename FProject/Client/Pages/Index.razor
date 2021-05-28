@@ -1,15 +1,15 @@
-﻿@page "/"
+﻿@page "/index"
 @inject NavigationManager Navigation
 
 <AuthorizeView>
     <NotAuthorized>
         @{
-            Navigation.NavigateTo("identity/login");
+            Navigation.NavigateTo("/identity/login");
         }
     </NotAuthorized>
     <Authorized>
         @{
-            Navigation.NavigateTo("writepads");
+            Navigation.NavigateTo("/writepads");
         }
     </Authorized>
 </AuthorizeView>

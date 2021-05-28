@@ -1,13 +1,13 @@
 ﻿<div class="identity-template">
-    <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
-        <BFUStackItem Align=Alignment.Center>
-            <BFUText Variant=@TextType.XxLarge>@Title</BFUText>
-        </BFUStackItem>
+    <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+        <StackItem Align=Alignment.Center>
+            <MyBFUText Variant=@TextType.XxLarge>@Title</MyBFUText>
+        </StackItem>
         <Hr />
-        <BFUStackItem ClassName="content" Align=Alignment.Center>
+        <StackItem ClassName="content" Align=Alignment.Center>
             @ChildContent
-        </BFUStackItem>
-    </BFUStack>
+        </StackItem>
+    </Stack>
 </div>
 
 @code {

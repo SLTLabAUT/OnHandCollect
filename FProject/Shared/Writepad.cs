@@ -1,4 +1,5 @@
-﻿using FProject.Shared.Resources;
+﻿using FProject.Shared.Models;
+using FProject.Shared.Resources;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,14 +12,17 @@ namespace FProject.Shared
 {
     public class WritepadDTO
     {
+        public int Id { get; set; }
         public PointerType PointerType { get; set; }
         public DateTimeOffset LastModified { get; set; }
         public WritepadStatus Status { get; set; }
-        public TextType Type { get; set; }
+        public WritepadType Type { get; set; }
         public int SpecifiedNumber { get; set; }
 
         public int? TextId { get; set; }
         public Text Text { get; set; }
+
+        public UserDTO Owner { get; set; }
 
         public ICollection<DrawingPoint> Points { get; set; }
     }
@@ -34,7 +38,7 @@ namespace FProject.Shared
         [Display(Name = "نوع ورودی")]
         public PointerType PointerType { get; set; }
         [Display(Name = "نوع داده")]
-        public TextType TextType { get; set; }
+        public WritepadType Type { get; set; }
         [Range(1, 25, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Display(Name = "تعداد")]
         public int Number { get; set; } = 1;
@@ -55,11 +59,23 @@ namespace FProject.Shared
     public enum WritepadStatus
     {
         [Display(Name = "پیش‌نویس")]
-        Editing,
+        Draft,
         [Display(Name = "منتظر تأیید")]
         WaitForAcceptance,
         [Display(Name = "تأیید شده")]
-        Accepted
+        Accepted,
+        [Display(Name = "نیازمند اصلاح")]
+        NeedEdit
+    }
+
+    public enum WritepadType
+    {
+        [Display(Name = "متن")]
+        Text,
+        [Display(Name = "گروه کلمات")]
+        WordGroup,
+        [Display(Name = "امضا")]
+        Sign
     }
 
     public enum DrawingMode

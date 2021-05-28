@@ -1,0 +1,13 @@
+.ms-Layer--fixed {
+    position: fixed;
+    z-index: var(--zIndex-Layer);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    visibility: hidden;
+}
+
+.ms-LayerHost .ms-Layer-content {
+    visibility: visible;
+}

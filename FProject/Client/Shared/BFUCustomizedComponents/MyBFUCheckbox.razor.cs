@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FProject.Client.Shared
 {
-    public partial class MyBFUCheckbox : BFUComponentBase
+    public partial class MyBFUCheckbox : FluentUIComponentBase
     {
         [Parameter]
         public int? AriaPositionInSet { get; set; }

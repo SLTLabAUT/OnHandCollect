@@ -1,86 +1,67 @@
 ﻿@using System.Security.Claims
 
 <div class="sidebar" style="@Style">
-    <BFUStack VerticalFill="true" Style="overflow-y:auto;" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 }, Padding = "5px 5px" })>
-        <BFUStackItem VerticalFill="false" Align="Alignment.Center" Style="text-align: center;">
-            <BFUStack HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 20 }, Padding = "50px 0" })>
-                <BFUStackItem><BFUText Variant=TextType.XxLarge><a href="/" style="text-decoration:none;color:inherit;">سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</a></BFUText></BFUStackItem>
+    <Stack VerticalFill="true" Style="overflow-y:auto;" Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 }, Padding = "5px 5px" })>
+        <StackItem VerticalFill="false" Align="Alignment.Center" Style="text-align: center;">
+            <Stack HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new StackTokens { ChildrenGap = new double[] { 20 }, Padding = "50px 0" })>
+                <StackItem><MyBFUText Variant=TextType.XxLarge><a href="/index" style="text-decoration:none;color:inherit;">سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</a></MyBFUText></StackItem>
                 <AuthorizeView>
                     <Authorized>
-                        <BFUStackItem>
-                            <BFUText Variant=TextType.Large>
-                                <BFUIcon IconName="Contact" /> @context.User.FindFirstValue(ClaimTypes.Email)
-                            </BFUText>
-                        </BFUStackItem>
+                        <StackItem>
+                            <MyBFUText Variant=TextType.Large>
+                                <Icon IconName="Contact" /> @context.User.FindFirstValue(ClaimTypes.Email)
+                            </MyBFUText>
+                        </StackItem>
                     </Authorized>
                 </AuthorizeView>
-                @*<BFUStackItem>
-                    امتیازات کسب شده
-                    <br />
-                    <BFURating ReadOnly="true" Rating="0" />
-                </BFUStackItem>
-                <BFUStack Horizontal="true" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } }) Style="direction: ltr;">
-                    <BFUStackItem>
-                        <BFUIcon IconName="ButtonControl" />
-                        <br />
-                        23
-                    </BFUStackItem>
-                    <BFUStackItem>
-                        <BFUIcon IconName="RadioBtnOn" />
-                        <br />
-                        20
-                    </BFUStackItem>
-                    <BFUStackItem>
-                        <BFUIcon IconName="CheckboxComposite" />
-                        <br />
-                        30
-                    </BFUStackItem>
-                </BFUStack>*@
-            </BFUStack>
-        </BFUStackItem>
+            </Stack>
+        </StackItem>
         <Hr />
 
         <AuthorizeView>
             <Authorized Context="NavMenu">
-                <BFUStackItem VerticalFill="false" Grow="1">
-                    <BFUNav>
-                        <BFUNavLinkGroup>
-                            <BFUNavLink Name="تخته‌ها" Url="writepads" Id="writepads" Icon="WhiteBoardApp32" OnClick=@OnLinkClicked />
+                <StackItem VerticalFill="false" Grow="1">
+                    <BlazorFluentUI.Routing.Nav>
+                        <BlazorFluentUI.Routing.NavLinkGroup>
+                            <BlazorFluentUI.Routing.NavLink Name="تخته‌ها" Url="writepads" Id="writepads" IconName="WhiteBoardApp32" OnClick=@OnLinkClicked />
                             <AuthorizeView Roles="@IdentityRoleConstants.Admin">
                                 <Authorized>
-                                    <BFUNavLink Name="تخته‌ها (صفحه‌ی مدیر)" Url="writepadsadmin" Id="writepadsadmin" Icon="WhiteBoardApp32" OnClick=@OnLinkClicked />
+                                    <BlazorFluentUI.Routing.NavLink Name="تخته‌ها (صفحه‌ی مدیر)" Url="writepadsadmin" Id="writepadsadmin" IconName="WhiteBoardApp32" OnClick=@OnLinkClicked />
                                 </Authorized>
                             </AuthorizeView>
-                            <BFUNavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" Icon="Contact" OnClick=@OnLinkClicked />
-                            @*<BFUNavLink Name="اطلاعیه‌ها" Url="notifications" Id="notifications" Icon="Mail" OnClick=@OnLinkClicked />*@
-                            <BFUNavLink Name="خروج" Id="logout" Icon="SignOut" OnClick=@BeginSignOut />
-                        </BFUNavLinkGroup>
-                    </BFUNav>
-                </BFUStackItem>
+                            <BlazorFluentUI.Routing.NavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" IconName="Contact" OnClick=@OnLinkClicked />
+                            <BlazorFluentUI.Routing.NavLink Name="راهنما" Url="help" Id="help" IconName="HelpMirrored" OnClick=@OnLinkClicked />
+                            <BlazorFluentUI.Routing.NavLink Name="خروج" Id="logout" IconName="SignOut" OnClick=@BeginSignOut />
+                        </BlazorFluentUI.Routing.NavLinkGroup>
+                    </BlazorFluentUI.Routing.Nav>
+                </StackItem>
             </Authorized>
 
             <NotAuthorized>
-                <BFUStack VerticalFill="false" Grow="1" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 25 } })>
-                    <BFUStackItem Align="Alignment.Center" VerticalFill="false">
-                        <BFUPrimaryButton Text="ورود" Href="identity/login" />
-                    </BFUStackItem>
-                    <BFUStackItem Align="Alignment.Center" VerticalFill="false">
-                        <BFUDefaultButton Text="ثبت‌نام" Href="identity/register" />
-                    </BFUStackItem>
-                </BFUStack>
+                <Stack VerticalFill="false" Grow="1" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new StackTokens { ChildrenGap = new double[] { 25 } })>
+                    <StackItem Align="Alignment.Center" VerticalFill="false">
+                        <PrimaryButton Text="ورود" Href="identity/login" />
+                    </StackItem>
+                    <StackItem Align="Alignment.Center" VerticalFill="false">
+                        <DefaultButton Text="ثبت‌نام" Href="identity/register" />
+                    </StackItem>
+                </Stack>
             </NotAuthorized>
         </AuthorizeView>
 
         <Hr />
-        <BFUStackItem VerticalFill="false" Align="Alignment.Center">
-            <BFUText Block=true Style="text-align:center;">
-                <BFUIcon IconName="Phone" Style="transform:rotate(-90deg);" /> <BFULink Href="mailto:info@farsihandwriting.ir">info@farsihandwriting.ir</BFULink>
+        <StackItem VerticalFill="false" Align="Alignment.Center">
+            <MyBFUText Block=true Style="text-align:center;">
+                <DefaultButton ClassName="home" Href="/" IconName="Home" Text="بازگشت به صفحه‌ی معرفی"  />
                 <br />
-                @{ 
+                <br />
+                <Icon IconName="Mail" /> <BlazorFluentUI.Link Href="mailto:info@farsihandwriting.ir">info@farsihandwriting.ir</BlazorFluentUI.Link>
+                <br />
+                @{
                     var version = typeof(Program).Assembly.GetName().Version;
                 }
-            <BFULink Href="/">v@(version.Major).@(version.Minor).@(version.Build)</BFULink>
-            </BFUText>
-        </BFUStackItem>
-    </BFUStack>
+                <MyBFUText Variant="TextType.Small"><BlazorFluentUI.Link Href="/index">v@(version.Major).@(version.Minor).@(version.Build)</BlazorFluentUI.Link></MyBFUText>
+            </MyBFUText>
+        </StackItem>
+    </Stack>
 </div>

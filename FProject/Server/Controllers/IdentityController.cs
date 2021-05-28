@@ -71,7 +71,8 @@ namespace FProject.Server.Controllers
             }
             user.PhoneNumber = userInfo.PhoneNumber;
             user.Sex = userInfo.Sex;
-            user.BirthDate = userInfo.BirthDate;
+            user.BirthYear = userInfo.BirthYear;
+            user.Education = userInfo.Education;
 
             var result = await _signInManager.UserManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -98,7 +99,8 @@ namespace FProject.Server.Controllers
                 Email = registerDTO.Email,
                 PhoneNumber = registerDTO.PhoneNumber,
                 Sex = registerDTO.Sex,
-                BirthDate = registerDTO.BirthDate
+                BirthYear = registerDTO.BirthYear,
+                Education = registerDTO.Education
             };
             var result = await _signInManager.UserManager.CreateAsync(newUser, registerDTO.Password);
 

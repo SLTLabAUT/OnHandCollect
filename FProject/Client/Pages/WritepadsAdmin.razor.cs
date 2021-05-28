@@ -31,8 +31,8 @@ namespace FProject.Client.Pages
         int AllCount { get; set; }
         bool DeleteDialogOpen { get; set; }
         List<WritepadDTO> WritepadList { get; set; }
-        IEnumerable<IBFUDropdownOption> PointerTypes { get; set; }
-        IEnumerable<IBFUDropdownOption> TextTypes { get; set; }
+        IEnumerable<IDropdownOption> PointerTypes { get; set; }
+        IEnumerable<IDropdownOption> TextTypes { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
 
         bool HaveNextPage => Page * 10 < AllCount;
@@ -40,12 +40,12 @@ namespace FProject.Client.Pages
         protected override Task OnInitializedAsync()
         {
             PointerTypes = Enum.GetValues<PointerType>()
-                .Select(p => new BFUDropdownOption {
+                .Select(p => new DropdownOption {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int) p).ToString()
                 });
-            TextTypes = Enum.GetValues<FProject.Shared.TextType>()
-                .Select(p => new BFUDropdownOption
+            TextTypes = Enum.GetValues<FProject.Shared.WritepadType>()
+                .Select(p => new DropdownOption
                 {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
@@ -93,7 +93,7 @@ namespace FProject.Client.Pages
         {
             try
             {
-                await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.SpecifiedNumber}&admin=true");
+                await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.Id}&admin=true");
                 WritepadList.Remove(CurrentWritepad);
                 AllCount--;
             }
@@ -106,7 +106,7 @@ namespace FProject.Client.Pages
 
         async Task Approve(MouseEventArgs args, WritepadDTO writepad)
         {
-            var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.Accepted}&admin=true", null);
+            var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.Accepted}&admin=true", null);
             if (response.IsSuccessStatusCode)
             {
                 writepad.Status = WritepadStatus.Accepted;
@@ -115,10 +115,10 @@ namespace FProject.Client.Pages
 
         async Task Reject(MouseEventArgs args, WritepadDTO writepad)
         {
-            var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.Editing}&admin=true", null);
+            var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.NeedEdit}&admin=true", null);
             if (response.IsSuccessStatusCode)
             {
-                writepad.Status = WritepadStatus.Editing;
+                writepad.Status = WritepadStatus.NeedEdit;
             }
         }
 

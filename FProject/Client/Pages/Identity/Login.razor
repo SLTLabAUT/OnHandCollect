@@ -5,29 +5,29 @@
         <IdentityTemplate Title="ورود">
             <EditForm EditContext=EditContext OnValidSubmit=LoginHandler>
                 <DataAnnotationsValidator />
-                <BFUValidationSummary />
+                <FluentUIValidationSummary />
                 @if (EmailNotConfirmed)
                 {
-                    <BFUMessageBar MessageBarType="MessageBarType.Error" IsMultiline="false" OnDismiss="DismissMessagebarHandler">
+                    <MessageBar MessageBarType="MessageBarType.Error" OnDismiss="DismissMessagebarHandler">
                         <Actions>
-                            <BFUMessageBarButton Text="درخواست دوباره‌ی لینک تایید رایانامه" Href="/identity/resendconfirmationemail" />
+                            <MessageBarButton Text="درخواست دوباره‌ی لینک تایید رایانامه" Href="/identity/resendconfirmationemail" />
                         </Actions>
                         <ChildContent>
                             رایانامه‌ی شما تایید نشده است. لطفا اقدام به تایید آن نمایید.
                         </ChildContent>
-                    </BFUMessageBar>
+                    </MessageBar>
                 }
-                <BFUTextField Label=@(Utils.GetDisplayName<LoginDTO>(m => m.Email)) @bind-Value=@LoginDTO.Email ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
-                <BFUTextField Label=@(Utils.GetDisplayName<LoginDTO>(m => m.Password)) InputType=@InputType.Password @bind-Value=@LoginDTO.Password ValidateOnLoad=false ValidateOnFocusOut=true ValidateOnFocusIn=true />
+                <MyBFUTextField Label=@(Utils.GetDisplayName<LoginDTO>(m => m.Email)) @bind-Value=@LoginDTO.Email @bind-Value:event="OnChange" AdditionalAttributes=@(new Dictionary<string, object>() { { "name", "username" } }) />
+                <MyBFUTextField Label=@(Utils.GetDisplayName<LoginDTO>(m => m.Password)) InputType=@InputType.Password @bind-Value=@LoginDTO.Password @bind-Value:event="OnChange" AdditionalAttributes=@(new Dictionary<string, object>() { { "name", "password" } }) />
                 <MyBFUCheckbox Label=@(Utils.GetDisplayName<LoginDTO, bool>(m => m.RememberMe)) @bind-Checked=@LoginDTO.RememberMe />
-                <BFUStack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new BFUStackTokens { ChildrenGap = new double[] { 10 } })>
-                    <BFUStackItem Align=Alignment.Center>
-                        <BFUSubmitButton Text="ورود" />
-                    </BFUStackItem>
-                    <BFUStackItem Align=Alignment.Center>
-                        <BFULink Href="/identity/forgotpassword">فراموشی رمز عبور</BFULink>
-                    </BFUStackItem>
-                </BFUStack>
+                <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                    <StackItem Align=Alignment.Center>
+                        <SubmitButton Text="ورود" />
+                    </StackItem>
+                    <StackItem Align=Alignment.Center>
+                        <BlazorFluentUI.Link Href="/identity/forgotpassword">فراموشی رمز عبور</BlazorFluentUI.Link>
+                    </StackItem>
+                </Stack>
             </EditForm>
         </IdentityTemplate>
     </NotAuthorized>

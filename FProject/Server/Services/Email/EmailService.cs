@@ -38,6 +38,7 @@ namespace FProject.Server.Services
             builder.HtmlBody = message.Body;
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
+            smtp.ServerCertificateValidationCallback = (_, _, _, _) => true;
             smtp.Connect(_options.SmtpServer, _options.Port);
             smtp.Authenticate(_options.Username, _options.Password);
             if (_signer is not null)

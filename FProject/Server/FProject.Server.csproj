@@ -38,6 +38,8 @@
 
   <ItemGroup>
     <Content Include="Data\HandWritingPhrases.txt" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="cert.pfx" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="dkim-key.pem" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   
 </Project>

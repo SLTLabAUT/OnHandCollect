@@ -1,6 +1,7 @@
 ﻿using BlazorFluentUI;
 using FProject.Client.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,15 @@ namespace FProject.Client.Shared
         [Parameter]
         public EventCallback<BlazorFluentUI.Routing.NavLink> OnLinkClicked { get; set; }
 
+        private async Task OnLinkClickHandler(MouseEventArgs args)
+        {
+            await OnLinkClicked.InvokeAsync();
+        }
+
         private async Task BeginSignOut()
         {
             await AuthorizeApi.Logout();
+            await OnLinkClicked.InvokeAsync();
             Navigation.NavigateTo("/index");
         }
     }

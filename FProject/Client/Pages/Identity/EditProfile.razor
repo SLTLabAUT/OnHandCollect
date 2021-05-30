@@ -1,8 +1,8 @@
 ﻿@page "/identity/profile"
 @using FProject.Shared.Resources
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authorization
+@using FProject.Client.Services
 @attribute [Authorize]
 
 <IdentityTemplate Title="تغییرات اطلاعات کاربری">
@@ -49,6 +49,8 @@
 @code {
     [Inject]
     HttpClient Http { get; set; }
+    [Inject]
+    AuthorizeApi AuthorizeApi { get; set; }
 
     IEnumerable<IDropdownOption> SexOptions { get; set; }
     IEnumerable<IDropdownOption> EducationOptions { get; set; }
@@ -91,6 +93,7 @@
 
         var result = await Http.PostAsJsonAsync($"api/Identity/UpdateProfile", (UserDTO)Model);
         result.EnsureSuccessStatusCode();
+        await AuthorizeApi.UpdateToken(await result.Content.ReadAsStringAsync());
 
         Done = true;
     }

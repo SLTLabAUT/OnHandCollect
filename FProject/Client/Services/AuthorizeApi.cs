@@ -37,6 +37,16 @@ namespace FProject.Client.Services
             return response;
         }
 
+        public async Task UpdateToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new ArgumentNullException();
+            }
+
+            await _authenticationStateProvider.MarkUserAsAuthenticated(token);
+        }
+
         public async Task Logout()
         {
             var result = await _httpClient.PostAsync("api/Identity/Logout", null);

@@ -81,7 +81,7 @@ namespace FProject.Server.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return Ok(await GenerateJwtToken(user));
         }
 
         [HttpPost]
@@ -137,28 +137,9 @@ namespace FProject.Server.Controllers
                 _logger.LogInformation("User logged in.");
 
                 var user = await _signInManager.UserManager.FindByEmailAsync(loginDTO.Email);
-                var roles = await _signInManager.UserManager.GetRolesAsync(user);
-                var claims = new List<Claim>();
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                claims.Add(new Claim(ClaimTypes.Email, user.Email));
-                claims.Add(new Claim(ClaimTypeConstants.Handedness, user.Handedness.ToString()));
-                foreach (var role in roles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                }
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtToken:JwtSecurityKey"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var expiry = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JwtToken:JwtExpiryInDays"]));
-                var token = new JwtSecurityToken(
-                    _configuration["JwtToken:JwtIssuer"],
-                    _configuration["JwtToken:JwtAudience"],
-                    claims,
-                    expires: expiry,
-                    signingCredentials: creds
-                );
 
                 response.LoggedIn = true;
-                response.AccessToken = new JwtSecurityTokenHandler().WriteToken(token);
+                response.AccessToken = await GenerateJwtToken(user);
                 return Ok(response);
             }
             else if (result.IsLockedOut)
@@ -175,6 +156,31 @@ namespace FProject.Server.Controllers
             }
 
             return BadRequest(response);
+        }
+
+        protected async Task<string> GenerateJwtToken(ApplicationUser user)
+        {
+            var roles = await _signInManager.UserManager.GetRolesAsync(user);
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            claims.Add(new Claim(ClaimTypeConstants.Handedness, user.Handedness.ToString()));
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtToken:JwtSecurityKey"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expiry = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JwtToken:JwtExpiryInDays"]));
+            var token = new JwtSecurityToken(
+                _configuration["JwtToken:JwtIssuer"],
+                _configuration["JwtToken:JwtAudience"],
+                claims,
+                expires: expiry,
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         [HttpPost]

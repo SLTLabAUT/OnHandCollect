@@ -37,7 +37,7 @@ namespace FProject.Client.Pages
 
         bool HaveNextPage => Page * 10 < AllCount;
 
-        protected override Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             PointerTypes = Enum.GetValues<PointerType>()
                 .Select(p => new DropdownOption {
@@ -50,11 +50,9 @@ namespace FProject.Client.Pages
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
                 });
-
-            return base.OnInitializedAsync();
         }
 
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
             var query = new Uri(Navigation.Uri).Query;
             foreach (var queryItem in QueryHelpers.ParseQuery(query))
@@ -66,10 +64,17 @@ namespace FProject.Client.Pages
                         break;
                 }
             }
+        }
 
-            var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}&admin=true");
-            WritepadList = result.Writepads.ToList();
-            AllCount = result.AllCount;
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (WritepadList is null)
+            {
+                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}&admin=true");
+                WritepadList = result.Writepads.ToList();
+                AllCount = result.AllCount;
+                StateHasChanged();
+            }
         }
 
         async Task OnPageChangeHandler(bool isNext)
@@ -101,6 +106,11 @@ namespace FProject.Client.Pages
             {
                 CurrentWritepad = null;
                 DeleteDialogOpen = false;
+            }
+
+            if (WritepadList.Count == 0)
+            {
+                WritepadList = null;
             }
         }
 

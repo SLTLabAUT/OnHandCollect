@@ -38,7 +38,7 @@
                                 var writepad = WritepadList[i];
 
                                 <StackItem>
-                                    <DocumentCard Style="min-width:320px;" OnClickHref=@($"mailto:{writepad.Owner.Email}") OnClickTarget="_self">
+                                    <DocumentCard Style="min-width:320px;">
                                         <Stack Horizontal="true" VerticalAlign=@Alignment.Center Tokens=@(new StackTokens { Padding = "8px 16px" }) Style=@($"font-size:{ThemeProvider.Theme.FontStyle.FontSize.XLarge};")>
                                             <StackItem Grow="1" DisableShrink="true" Tokens=@(new StackItemTokens { Margin = "0 0 0 50px" })>
                                                 <MyBFUText Variant=@TextType.XLarge>تخته‌ی شماره‌ی @writepad.Id</MyBFUText>
@@ -115,7 +115,8 @@
                                             }
                                             شماره‌ی تخته برای کاربر: @writepad.SpecifiedNumber
                                             <br />
-                                            <BlazorFluentUI.Link Href=@($"mailto:{writepad.Owner.Email}")>@writepad.Owner.Email</BlazorFluentUI.Link>
+                                            @*<BlazorFluentUI.Link Href=@($"mailto:{writepad.Owner.Email}")>@writepad.Owner.Email</BlazorFluentUI.Link>*@
+                                            @writepad.Owner.Email
                                             <br />
                                             @text
                                         </MyBFUText>
@@ -149,12 +150,6 @@
                                             </StackItem>
                                             <StackItem>
                                                 <Stack Horizontal="true" Reversed="true">
-                                                    @*<TooltipHost>
-                                                        <TooltipContent>اطلاعات</TooltipContent>
-                                                        <ChildContent>
-                                                            <MyBFUIconButton IconName="InfoSolid" />
-                                                        </ChildContent>
-                                                    </TooltipHost>*@
                                                     @if (writepad.Status == FProject.Shared.WritepadStatus.Accepted)
                                                     {
                                                         <TooltipHost>
@@ -183,6 +178,12 @@
                                                         <TooltipContent>حذف</TooltipContent>
                                                         <ChildContent>
                                                             <MyBFUIconButton OnClick=@(args => DeleteButtonHandler(args, writepad)) IconName="Delete" />
+                                                        </ChildContent>
+                                                    </TooltipHost>
+                                                    <TooltipHost>
+                                                        <TooltipContent>ارسال ایمیل</TooltipContent>
+                                                        <ChildContent>
+                                                            <MyBFUIconButton Href=@($"mailto:{writepad.Owner.Email}") IconName="Mail" />
                                                         </ChildContent>
                                                     </TooltipHost>
                                                 </Stack>

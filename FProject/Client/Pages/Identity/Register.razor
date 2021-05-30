@@ -15,16 +15,21 @@
                 <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Email)) @bind-Value=@Model.Email @bind-Value:event="OnChange" Required=true />
                 <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.Password)) InputType=@InputType.Password @bind-Value=@Model.Password @bind-Value:event="OnChange" Required=true />
                 <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.ConfirmPassword)) InputType=@InputType.Password @bind-Value=@Model.ConfirmPassword @bind-Value:event="OnChange" Required=true />
+                <MyBFUDropdown ItemsSource=HandednessOptions
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=Model.Handedness
+                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Handedness))
+                               Required=true />
                 <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
                 <MyBFUDropdown ItemsSource=SexOptions
-                          Placeholder="یک گزینه را برگزینید..."
-                          @bind-SelectedOption=Model.Sex
-                          Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex)) />
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=Model.Sex
+                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex)) />
                 <MyBFUNumericTextField TValue="short?" Label=@(Utils.GetDisplayName<RegisterModel, short?>(b => b.BirthYear)) @bind-Value=@Model.BirthYear @bind-Value:event="OnChange" ParsingErrorMessage="مقدار {0} باید مقداری عددی در محدوده‌ی مجاز باشد." />
                 <MyBFUDropdown ItemsSource=EducationOptions
-                          Placeholder="یک گزینه را برگزینید..."
-                          @bind-SelectedOption=Model.Education
-                          Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Education)) />
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=Model.Education
+                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Education)) />
                 <MyBFUCheckbox Label=@(Utils.GetDisplayName<RegisterModel, bool>(m => m.AcceptTerms)) @bind-Checked=@Model.AcceptTerms OnLabelTextClick=@ShowHideTerms />
                 <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                     <StackItem Align=Alignment.Center>

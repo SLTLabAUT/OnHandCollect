@@ -107,19 +107,7 @@
                                             </StackItem>
                                         </Stack>
                                         <MyBFUText Block="true" Variant=@TextType.SmallPlus Style="padding:0 16px;min-height:4.847em;display:-webkit-box !important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
-                                            @{ 
-                                                var text = string.Empty;
-                                                if (writepad.Type == FProject.Shared.WritepadType.WordGroup)
-                                                {
-                                                    text = writepad.Text.Content.Replace(" ", " - ");
-                                                }
-                                                else
-                                                {
-                                                    text = writepad.Text?.Content ?? "امضا.";
-                                                }
-                                            }
-
-                                            @text
+                                            @GetWritepadTextContent(writepad)
                                         </MyBFUText>
                                         @{
                                             string statusIcon = string.Empty;
@@ -138,8 +126,15 @@
                                                     statusIcon = "PageEdit";
                                                     break;
                                             }
+                                            string statusClass = writepad.Status switch
+                                            {
+                                                FProject.Shared.WritepadStatus.WaitForAcceptance => "status-waiting",
+                                                FProject.Shared.WritepadStatus.Accepted => "status-accepted",
+                                                FProject.Shared.WritepadStatus.NeedEdit => "status-neededit",
+                                                _ => string.Empty,
+                                            };
                                         }
-                                        <DocumentCardStatus Status=@(writepad.Status.GetAttribute<DisplayAttribute>().Name) StatusIcon=@statusIcon Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold}") />
+                                        <DocumentCardStatus Status=@(writepad.Status.GetAttribute<DisplayAttribute>().Name) StatusIcon=@statusIcon ClassName=@statusClass Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold}") />
                                         <Stack Horizontal="true" VerticalAlign=@Alignment.Center Tokens=@(new StackTokens { Padding = "8px 16px" })>
                                             <StackItem Grow="1" DisableShrink="true">
                                                 <TooltipHost>
@@ -181,6 +176,12 @@
                                                             <MyBFUIconButton OnClick=@(args => DeleteButtonHandler(args, writepad)) IconName="Delete" />
                                                         </ChildContent>
                                                     </TooltipHost>
+                                                    <TooltipHost>
+                                                        <TooltipContent>اطلاعات</TooltipContent>
+                                                        <ChildContent>
+                                                            <MyBFUIconButton OnClick=@(args => InfoButtonHandler(args, writepad)) IconName="Info" />
+                                                        </ChildContent>
+                                                    </TooltipHost>
                                                 </Stack>
                                             </StackItem>
                                         </Stack>
@@ -216,21 +217,29 @@
                 <DataAnnotationsValidator />
                 <FluentUIValidationSummary />
                 <MyBFUDropdown ItemsSource=PointerTypes
-                          Placeholder="یک گزینه را برگزینید..."
-                          @bind-SelectedOption=NewWritepad.PointerType
-                          Label=@(Utils.GetDisplayName<NewWritepadModel, IDropdownOption>(b => b.PointerType))
-                          Required="true" />
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=NewWritepad.PointerType
+                               Label=@(Utils.GetDisplayName<NewWritepadModel, IDropdownOption>(b => b.PointerType))
+                               Required="true" />
                 <MyBFUDropdown ItemsSource=TextTypes
-                          Placeholder="یک گزینه را برگزینید..."
-                          @bind-SelectedOption=NewWritepad.WritepadType
-                          Label=@(Utils.GetDisplayName<NewWritepadModel, IDropdownOption>(b => b.WritepadType))
-                          Required="true"
-                          OnChange="TextTypeChangeHandler" />
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=NewWritepad.WritepadType
+                               Label=@(Utils.GetDisplayName<NewWritepadModel, IDropdownOption>(b => b.WritepadType))
+                               Required="true"
+                               OnChange="TextTypeChangeHandler" />
+                @if (Handedness == Handedness.Both)
+                {
+                    <MyBFUDropdown ItemsSource=HandOptions
+                                   Placeholder="یک گزینه را برگزینید..."
+                                   @bind-SelectedOption=NewWritepad.Hand
+                                   Label=@(Utils.GetDisplayName<NewWritepadModel, IDropdownOption>(b => b.Hand))
+                                   Required="true" />
+                }
                 <Slider Label=@(Utils.GetDisplayName<NewWritepadModel, double>(m => m.Number)) @bind-Value=@NewWritepad.Number Min=1 Max=@(IsSignSelected ? 7 : 25) />
                 @if (IsSignSelected)
                 {
                     <MessageBar>
-                        ایجاد تخته‌ی امضا با نوع ورودی یکسان تنها ۷ عدد هر ۱۲ ساعت مجاز است.
+                        ایجاد تخته‌ی امضا با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.
                     </MessageBar>
                 }
             </EditForm>
@@ -242,15 +251,43 @@
     </Dialog>
 
     <MyBFUDialog Title="تایید حذف تخته"
-            SubText=@($"آیا از حذف تخته‌ی شماره‌ی {CurrentWritepad?.SpecifiedNumber} اطمینان دارید؟")
-            IsOpen=@DeleteDialogOpen
-            OnDismiss=@(args => DeleteDialogOpen=false)
-            CloseButtonAriaLabel="بستن"
-            Style="text-align: right;">
+                 SubText=@($"آیا از حذف تخته‌ی شماره‌ی {CurrentWritepad?.SpecifiedNumber} اطمینان دارید؟")
+                 IsOpen=@DeleteDialogOpen
+                 OnDismiss=@(args => DeleteDialogOpen=false)
+                 CloseButtonAriaLabel="بستن"
+                 Style="text-align: right;">
         <ChildContent></ChildContent>
         <FooterTemplate>
             <DefaultButton Text="لغو" OnClick=@(args => DeleteDialogOpen=false) />
             <PrimaryButton Text="حذف" OnClick=DeleteWritepad />
         </FooterTemplate>
+    </MyBFUDialog>
+
+    <MyBFUDialog Title=@($"اطلاعات تخته‌ی {CurrentWritepad?.SpecifiedNumber}")
+                 IsOpen=@InfoDialogOpen
+                 OnDismiss=@(args => InfoDialogOpen=false)
+                 CloseButtonAriaLabel="بستن"
+                 Style="text-align: right;">
+        <ChildContent>
+            <MyBFUText Block=true>
+                شماره: @CurrentWritepad?.SpecifiedNumber
+                <br />
+                وضعیت: @(CurrentWritepad?.Status.GetAttribute<DisplayAttribute>().Name)
+                <br />
+                نوع ورودی: @(CurrentWritepad?.PointerType.GetAttribute<DisplayAttribute>().Name)
+                <br />
+                نوع: @(CurrentWritepad?.Type.GetAttribute<DisplayAttribute>().Name)
+                <br />
+                نوع دست: @(CurrentWritepad?.Hand.GetAttribute<DisplayAttribute>().Name)
+                <br />
+                آخرین بروزرسانی: @CurrentWritepad?.GetLocalTimeString()
+                <br />
+                @if (CurrentWritepad?.Type != FProject.Shared.WritepadType.Sign)
+                {
+                    @:متن: @GetWritepadTextContent(CurrentWritepad)
+                }
+            </MyBFUText>
+        </ChildContent>
+        <FooterTemplate></FooterTemplate>
     </MyBFUDialog>
 </div>

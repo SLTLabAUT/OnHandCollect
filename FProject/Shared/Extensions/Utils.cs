@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FProject.Shared.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -108,6 +109,16 @@ namespace FProject.Shared.Extensions
             {
                 WritepadType.Text => TextType.Text,
                 WritepadType.WordGroup => TextType.WordGroup,
+                _ => throw new NotSupportedException()
+            };
+        }
+
+        public static Hand ToHand(this Handedness handedness)
+        {
+            return handedness switch
+            {
+                Handedness.Right => Hand.Right,
+                Handedness.Left => Hand.Left,
                 _ => throw new NotSupportedException()
             };
         }

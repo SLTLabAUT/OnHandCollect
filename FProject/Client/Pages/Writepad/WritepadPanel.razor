@@ -1,4 +1,5 @@
-﻿@namespace FProject.Client.Pages
+﻿@using System.ComponentModel.DataAnnotations
+@namespace FProject.Client.Pages
 
 <Stack ClassName=@("panel" + (PanelCollapsed ? " panel-collapsed" : "")) Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
     <StackItem>
@@ -77,18 +78,19 @@
             <StackItem Grow=1 Align=Alignment.Center Style="overflow:auto;">
                 <MyBFUText Block="true" Variant=@TextType.Medium
                            Style=@($"text-align:justify;{(Parent.WritepadInstance.Type != FProject.Shared.WritepadType.Text ? "text-align-last:center;" : "")}")>
-                    @{ 
+                    @{
+                        var hand = Parent.WritepadInstance.Hand.GetAttribute<DisplayAttribute>().Name;
                         var textHeader = string.Empty;
                         switch (Parent.WritepadInstance.Type)
                         {
                             case FProject.Shared.WritepadType.Text:
-                                textHeader = "لطفا متن زیر را عینا در تخته بنویسید:";
+                                textHeader = $"لطفا متن زیر را با {hand} خود عینا در تخته بنویسید:";
                                 break;
                             case FProject.Shared.WritepadType.WordGroup:
-                                textHeader = "لطفا کلمات زیر را با رعایت فاصله‌ی مناسب عینا در تخته بنویسید:";
+                                textHeader = $"لطفا کلمات زیر را با رعایت فاصله‌ی مناسب با {hand} خود عینا در تخته بنویسید:";
                                 break;
                             case FProject.Shared.WritepadType.Sign:
-                                textHeader = "لطفا امضای خود را بکشید. بهتر است که امضای اصلیتان نباشد.";
+                                textHeader = $"لطفا امضایتان را با {hand} خود بکشید. بهتر است که امضای اصلیتان نباشد.";
                                 break;
                         }
                     }
@@ -187,21 +189,21 @@
 </Stack>
 
 <MyBFUDialog Title="عدم امکان ذخیره‌ی امضا"
-        IsOpen=@NotAllowedDialogOpen
-        OnDismiss=@(args => NotAllowedDialogOpen=false)
-        CloseButtonAriaLabel="بستن"
-        Style="text-align: right;">
+             IsOpen=@NotAllowedDialogOpen
+             OnDismiss=@(args => NotAllowedDialogOpen=false)
+             CloseButtonAriaLabel="بستن"
+             Style="text-align: right;">
     <ChildContent>
-        <p>نوشتن تخته‌ی امضا با نوع ورودی یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.</p>
+        <p>نوشتن تخته‌ی امضا با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.</p>
     </ChildContent>
     <FooterTemplate></FooterTemplate>
 </MyBFUDialog>
 
 <MyBFUDialog Title="تایید ترک تخته بدون ذخیره‌ی آخرین تغییرات"
-        IsOpen=@LeaveConfirmDialogOpen
-        OnDismiss=@(args => LeaveConfirmDialogOpen=false)
-        CloseButtonAriaLabel="بستن"
-        Style="text-align: right;">
+             IsOpen=@LeaveConfirmDialogOpen
+             OnDismiss=@(args => LeaveConfirmDialogOpen=false)
+             CloseButtonAriaLabel="بستن"
+             Style="text-align: right;">
     <ChildContent>
         <p>آیا از ترک تخته بدون ذخیره‌ی آخرین تغییرات اطمینان دارید؟</p>
     </ChildContent>
@@ -212,11 +214,11 @@
 </MyBFUDialog>
 
 <MyBFUDialog Title="ویدیوی راهنمای سامانه"
-        IsOpen=@HelpDialogOpen
-        OnDismiss=HelpDismissHandler
-        CloseButtonAriaLabel="بستن"
-        Style="text-align:right;"
-        ContainerClass="help-dialog">
+             IsOpen=@HelpDialogOpen
+             OnDismiss=HelpDismissHandler
+             CloseButtonAriaLabel="بستن"
+             Style="text-align:right;"
+             ContainerClass="help-dialog">
     <ChildContent>
         <HelpVideo id="video" />
     </ChildContent>

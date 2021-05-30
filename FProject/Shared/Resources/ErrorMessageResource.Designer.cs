@@ -97,7 +97,7 @@ namespace FProject.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to مقدار {0} باید بین {1} و {2} باشد..
+        ///   Looks up a localized string similar to مقدار «{0}» باید بین {1} و {2} باشد..
         /// </summary>
         public static string Range {
             get {
@@ -106,7 +106,7 @@ namespace FProject.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ورود {0} اجباری است..
+        ///   Looks up a localized string similar to ورود «{0}» اجباری است..
         /// </summary>
         public static string Required {
             get {

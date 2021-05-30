@@ -17,6 +17,7 @@ namespace FProject.Shared
         public DateTimeOffset LastModified { get; set; }
         public WritepadStatus Status { get; set; }
         public WritepadType Type { get; set; }
+        public Hand Hand { get; set; }
         public int SpecifiedNumber { get; set; }
 
         public int? TextId { get; set; }
@@ -39,6 +40,8 @@ namespace FProject.Shared
         public PointerType PointerType { get; set; }
         [Display(Name = "نوع داده")]
         public WritepadType Type { get; set; }
+        [Display(Name = "نوع دست")]
+        public Hand Hand { get; set; }
         [Range(1, 25, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Display(Name = "تعداد")]
         public int Number { get; set; } = 1;
@@ -78,6 +81,14 @@ namespace FProject.Shared
         Sign
     }
 
+    public enum Hand
+    {
+        [Display(Name = "دست راست")]
+        Right,
+        [Display(Name = "دست چپ")]
+        Left,
+    }
+
     public enum DrawingMode
     {
         Non,
@@ -89,7 +100,7 @@ namespace FProject.Shared
     public enum WritepadCreationError
     {
         NoReason,
-        SignNotAllowed
+        SignNotAllowed,
     }
 
     public enum WritepadEditionError

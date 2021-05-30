@@ -130,10 +130,10 @@
     <value>شماره‌ی تلفن همراه وارد شده صحیح نمی‌باشد.</value>
   </data>
   <data name="Range" xml:space="preserve">
-    <value>مقدار {0} باید بین {1} و {2} باشد.</value>
+    <value>مقدار «{0}» باید بین {1} و {2} باشد.</value>
   </data>
   <data name="Required" xml:space="preserve">
-    <value>ورود {0} اجباری است.</value>
+    <value>ورود «{0}» اجباری است.</value>
   </data>
   <data name="Terms" xml:space="preserve">
     <value>پذیرفتن شرایط الزامی است.</value>

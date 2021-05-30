@@ -17,6 +17,7 @@ namespace FProject.Server.Models
         public DateTimeOffset? LastCheck { get; set; }
         public WritepadStatus Status { get; set; }
         public WritepadType Type { get; set; }
+        public Hand Hand { get; set; }
         public int UserSpecifiedNumber { get; set; }
 
         public int? TextId { get; set; }
@@ -35,6 +36,7 @@ namespace FProject.Server.Models
                 SpecifiedNumber = writepad.UserSpecifiedNumber,
                 PointerType = writepad.PointerType,
                 Type = writepad.Type,
+                Hand = writepad.Hand,
                 LastModified = writepad.LastModified,
                 Status = writepad.Status,
                 TextId = writepad.TextId,
@@ -51,6 +53,7 @@ namespace FProject.Server.Models
                 SpecifiedNumber = writepad.UserSpecifiedNumber,
                 PointerType = writepad.PointerType,
                 Type = writepad.Type,
+                Hand = writepad.Hand,
                 LastModified = writepad.LastModified,
                 Status = writepad.Status,
                 TextId = writepad.TextId,

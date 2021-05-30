@@ -115,8 +115,8 @@
                                             }
                                             شماره‌ی تخته برای کاربر: @writepad.SpecifiedNumber
                                             <br />
-                                            @*<BlazorFluentUI.Link Href=@($"mailto:{writepad.Owner.Email}")>@writepad.Owner.Email</BlazorFluentUI.Link>*@
-                                            @writepad.Owner.Email
+                                            @*کاربر: <BlazorFluentUI.Link Href=@($"mailto:{writepad.Owner.Email}")>@writepad.Owner.Email</BlazorFluentUI.Link>*@
+                                            کاربر: @writepad.Owner.Email
                                             <br />
                                             @text
                                         </MyBFUText>
@@ -137,8 +137,15 @@
                                                     statusIcon = "PageEdit";
                                                     break;
                                             }
+                                            string statusClass = writepad.Status switch
+                                            {
+                                                FProject.Shared.WritepadStatus.WaitForAcceptance => "status-waiting",
+                                                FProject.Shared.WritepadStatus.Accepted => "status-accepted",
+                                                FProject.Shared.WritepadStatus.NeedEdit => "status-neededit",
+                                                _ => string.Empty,
+                                            };
                                         }
-                                        <DocumentCardStatus Status=@(writepad.Status.GetAttribute<DisplayAttribute>().Name) StatusIcon=@statusIcon Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold}") />
+                                        <DocumentCardStatus Status=@(writepad.Status.GetAttribute<DisplayAttribute>().Name) StatusIcon=@statusIcon ClassName=@statusClass Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold}") />
                                         <Stack Horizontal="true" VerticalAlign=@Alignment.Center Tokens=@(new StackTokens { Padding = "8px 16px" })>
                                             <StackItem Grow="1" DisableShrink="true">
                                                 <TooltipHost>
@@ -197,13 +204,6 @@
                     <StackItem VerticalFill=false Align=Alignment.Center>
                         <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
                     </StackItem>
-                    @*<StackItem>
-                        <MessageBar>
-                            پس از تکمیل هر تخته، با استفاده از دکمه‌ی <Icon IconName="Accept" /> آن را جهت بررسی و تایید ارسال‌کنید.
-                            <br />
-                            تخته‌های تاییدشده امتیاز شما را بالا برده و شانس برنده‌شدن در قرعه‌کشیتان را افزایش‌می‌دهد.
-                        </MessageBar>
-                    </StackItem>*@
                 </Stack>
             }
         </StackItem>

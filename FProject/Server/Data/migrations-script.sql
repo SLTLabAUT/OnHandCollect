@@ -278,3 +278,34 @@ VALUES ('20210527142018_TextType', '5.0.6');
 
 COMMIT;
 
+START TRANSACTION;
+
+ALTER TABLE "AspNetUsers" ADD "Handedness" integer NOT NULL DEFAULT 0;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20210530023534_Handedness', '5.0.6');
+
+COMMIT;
+
+START TRANSACTION;
+
+ALTER TABLE "Writepads" ADD "Hand" integer NULL;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20210530051306_Hand', '5.0.6');
+
+COMMIT;
+
+START TRANSACTION;
+
+UPDATE "Writepads" SET "Hand" = 0
+WHERE "Hand" IS NULL;
+
+ALTER TABLE "Writepads" ALTER COLUMN "Hand" SET NOT NULL;
+ALTER TABLE "Writepads" ALTER COLUMN "Hand" SET DEFAULT 0;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20210530062438_HandRequired', '5.0.6');
+
+COMMIT;
+

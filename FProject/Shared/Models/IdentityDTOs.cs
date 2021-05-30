@@ -20,6 +20,7 @@ namespace FProject.Shared.Models
         [Range(1200, 1400, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         public short? BirthYear { get; set; }
         public Education? Education { get; set; }
+        public Handedness Handedness { get; set; }
     }
 
     public class ForgotPasswordDTO
@@ -81,6 +82,7 @@ namespace FProject.Shared.Models
         [Range(1200, 1400, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         public short? BirthYear { get; set; }
         public Education? Education { get; set; }
+        public Handedness Handedness { get; set; }
     }
 
     public class LoginResponse
@@ -144,9 +146,24 @@ namespace FProject.Shared.Models
         Doctoral
     }
 
+    public enum Handedness
+    {
+        [Display(Name = "راست‌دست")]
+        Right,
+        [Display(Name = "چپ‌دست")]
+        Left,
+        [Display(Name = "یکسان‌دست")]
+        Both,
+    }
+
     public static class IdentityRoleConstants
     {
         public const string User = "User";
         public const string Admin = "Admin";
+    }
+
+    public static class ClaimTypeConstants
+    {
+        public const string Handedness = "Handedness";
     }
 }

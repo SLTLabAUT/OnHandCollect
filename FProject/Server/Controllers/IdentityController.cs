@@ -73,6 +73,7 @@ namespace FProject.Server.Controllers
             user.Sex = userInfo.Sex;
             user.BirthYear = userInfo.BirthYear;
             user.Education = userInfo.Education;
+            user.Handedness = userInfo.Handedness;
 
             var result = await _signInManager.UserManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -100,7 +101,8 @@ namespace FProject.Server.Controllers
                 PhoneNumber = registerDTO.PhoneNumber,
                 Sex = registerDTO.Sex,
                 BirthYear = registerDTO.BirthYear,
-                Education = registerDTO.Education
+                Education = registerDTO.Education,
+                Handedness = registerDTO.Handedness,
             };
             var result = await _signInManager.UserManager.CreateAsync(newUser, registerDTO.Password);
 
@@ -139,6 +141,7 @@ namespace FProject.Server.Controllers
                 var claims = new List<Claim>();
                 claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
+                claims.Add(new Claim(ClaimTypeConstants.Handedness, user.Handedness.ToString()));
                 foreach (var role in roles)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, role));

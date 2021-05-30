@@ -26,6 +26,7 @@ namespace FProject.Server.Services
                 maxUser = await _context.Writepads
                     .Where(w => w.OwnerId == userId
                         && w.PointerType == newWritepad.PointerType
+                        && w.Hand == newWritepad.Hand
                         && w.Type == newWritepad.Type)
                     .GroupBy(w => w.TextId)
                     .MaxAsync(e => e.Count());
@@ -48,6 +49,7 @@ namespace FProject.Server.Services
             var userTextCount = _context.Writepads
                 .Where(w => w.OwnerId == userId
                     && w.PointerType == newWritepad.PointerType
+                    && w.Hand == newWritepad.Hand
                     && w.Type == newWritepad.Type)
                 .GroupBy(w => w.TextId)
                 .Select(g => new { g.Key, Count = (float?)g.Count() });

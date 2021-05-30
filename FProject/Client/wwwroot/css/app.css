@@ -53,6 +53,18 @@ video {
     flex-grow: 1;
 }
 
+.status-waiting {
+    background-color: #8AC1FF !important;
+}
+
+.status-accepted {
+    background-color: #8AFF8E !important;
+}
+
+.status-neededit {
+    background-color: #FFC88A !important;
+}
+
 .ms-Panel-content {
     height: 100%;
     padding: 0 !important;

@@ -23,13 +23,14 @@ namespace FProject.Client.Pages.Identity
 
         IEnumerable<IDropdownOption> SexOptions { get; set; }
         IEnumerable<IDropdownOption> EducationOptions { get; set; }
+        IEnumerable<IDropdownOption> HandednessOptions { get; set; }
         RegisterModel Model { get; set; }
         EditContext EditContext { get; set; }
         ValidationMessageStore Errors { get; set; }
         bool TermsDialogOpen { get; set; }
         bool Done { get; set; }
 
-        protected override Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             SexOptions = Enum.GetValues<Sex>()
                 .Select(p => new DropdownOption
@@ -43,11 +44,15 @@ namespace FProject.Client.Pages.Identity
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
                 });
-
-            return base.OnInitializedAsync();
+            HandednessOptions = Enum.GetValues<Handedness>()
+                .Select(p => new DropdownOption
+                {
+                    Text = p.GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)p).ToString()
+                });
         }
 
-        protected override Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
             Model = new RegisterModel();
             EditContext = new EditContext(Model);
@@ -57,8 +62,6 @@ namespace FProject.Client.Pages.Identity
             {
                 Errors.Clear();
             };
-
-            return base.OnParametersSetAsync();
         }
 
         async Task RegisterHandler()
@@ -120,6 +123,9 @@ namespace FProject.Client.Pages.Identity
             public short? BirthYear { get; set; }
             [Display(Name = "سطح تحصیلات")]
             public IDropdownOption Education { get; set; }
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+            [Display(Name = "راست‌دستی و چپ‌دستی")]
+            public IDropdownOption Handedness { get; set; }
 
             public static explicit operator RegisterDTO(RegisterModel model)
             {
@@ -132,6 +138,7 @@ namespace FProject.Client.Pages.Identity
                     Sex = model.Sex is null ? null : Enum.Parse<Sex>(model.Sex.Key),
                     BirthYear = model.BirthYear,
                     Education = model.Education is null ? null : Enum.Parse<Education>(model.Education.Key),
+                    Handedness = Enum.Parse<Handedness>(model.Handedness.Key),
                 };
             }
         }

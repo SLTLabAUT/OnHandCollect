@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.Components.Web;
 using FProject.Shared.Resources;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Web;
+using Microsoft.AspNetCore.Components.Authorization;
+using FProject.Shared.Models;
+using System.Security.Claims;
 
 namespace FProject.Client.Pages
 {
@@ -27,12 +30,17 @@ namespace FProject.Client.Pages
         [Inject]
         NavigationManager Navigation { get; set; }
 
+        [CascadingParameter]
+        Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
         int Page { get; set; } = 1;
         int AllCount { get; set; }
         bool CreateDialogOpen { get; set; }
         bool DeleteDialogOpen { get; set; }
+        bool InfoDialogOpen { get; set; }
         bool SubmitDisabled { get; set; }
         bool IsSignSelected { get; set; }
+        Handedness Handedness { get; set; }
         NewWritepadModel NewWritepad { get; set; }
         ValidationMessageStore CreateErrors { get; set; }
         EditContext EditContext { get; set; }
@@ -40,6 +48,7 @@ namespace FProject.Client.Pages
         CommandBarItem[] Items { get; set; }
         IEnumerable<IDropdownOption> PointerTypes { get; set; }
         IEnumerable<IDropdownOption> TextTypes { get; set; }
+        IEnumerable<IDropdownOption> HandOptions { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
 
         bool HaveNextPage => Page * 10 < AllCount;
@@ -60,11 +69,29 @@ namespace FProject.Client.Pages
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
                 });
+            HandOptions = Enum.GetValues<Hand>()
+                .Select(p => new DropdownOption
+                {
+                    Text = p.GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)p).ToString()
+                });
         }
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
-            NewWritepad = new NewWritepadModel();
+            if (Enum.TryParse<Handedness>((await AuthenticationStateTask).User.FindFirstValue(ClaimTypeConstants.Handedness), out var handedness))
+            {
+                Handedness = handedness;
+            }
+
+            NewWritepad = new NewWritepadModel()
+            {
+                Hand = Handedness == Handedness.Both ? null : new DropdownOption
+                {
+                    Text = Handedness.ToHand().GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)Handedness.ToHand()).ToString()
+                }
+            };
             EditContext = new EditContext(NewWritepad);
             CreateErrors = new ValidationMessageStore(EditContext);
             EditContext.OnValidationStateChanged += (sender, eventArgs) =>
@@ -77,12 +104,10 @@ namespace FProject.Client.Pages
                 {
                     SubmitDisabled = true;
                 }
-                Console.WriteLine("OnValidationStateChanged");
             };
             EditContext.OnFieldChanged += (sender, eventArgs) =>
             {
                 CreateErrors.Clear();
-                Console.WriteLine("OnFieldChanged");
             };
 
             var query = new Uri(Navigation.Uri).Query;
@@ -106,6 +131,26 @@ namespace FProject.Client.Pages
                 AllCount = result.AllCount;
                 StateHasChanged();
             }
+        }
+
+        protected string GetWritepadTextContent(WritepadDTO writepad)
+        {
+            var text = string.Empty;
+
+            if (writepad is null)
+            {
+                return text;
+            }
+
+            if (writepad.Type == WritepadType.WordGroup)
+            {
+                text = writepad.Text.Content.Replace(" ", " - ");
+            }
+            else
+            {
+                text = writepad.Text?.Content ?? "امضا.";
+            }
+            return text;
         }
 
         async Task OnPageChangeHandler(bool isNext)
@@ -151,13 +196,24 @@ namespace FProject.Client.Pages
                     break;
                 case System.Net.HttpStatusCode.BadRequest:
                     var error = await result.Content.ReadFromJsonAsync<WritepadCreationError>();
-                    if (error == WritepadCreationError.SignNotAllowed)
+                    var errorText = error switch
                     {
-                        CreateErrors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "ایجاد تخته‌ی امضا با نوع ورودی یکسان تنها ۷ عدد هر ۱۲ ساعت مجاز است.");
+                        WritepadCreationError.SignNotAllowed => "ایجاد تخته‌ی امضا با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.",
+                        _ => null,
+                    };
+                    if (errorText is not null)
+                    {
+                        CreateErrors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), errorText);
                         EditContext.NotifyValidationStateChanged();
                     }
                     break;
             }
+        }
+
+        void InfoButtonHandler(MouseEventArgs args, WritepadDTO writepad)
+        {
+            CurrentWritepad = writepad;
+            InfoDialogOpen = true;
         }
 
         void DeleteButtonHandler(MouseEventArgs args, WritepadDTO writepad)
@@ -232,6 +288,9 @@ namespace FProject.Client.Pages
             [Display(Name = "نوع داده")]
             public IDropdownOption WritepadType { get; set; }
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+            [Display(Name = "نوع دست")]
+            public IDropdownOption Hand { get; set; }
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Range(1, 25, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "تعداد")]
             public double Number { get; set; } = 1;
@@ -242,6 +301,7 @@ namespace FProject.Client.Pages
                 {
                     PointerType = Enum.Parse<PointerType>(model.PointerType.Key),
                     Type = Enum.Parse<WritepadType>(model.WritepadType.Key),
+                    Hand = Enum.Parse<Hand>(model.Hand.Key),
                     Number = (int)model.Number
                 };
             }

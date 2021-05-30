@@ -22,16 +22,21 @@
                 </MessageBar>
             }
             <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.Email)) @bind-Value=@Model.Email Disabled=true @bind-Value:event="OnChange" AdditionalAttributes=@(new Dictionary<string, object>() { { "name", "username" } }) />
+            <MyBFUDropdown ItemsSource=HandednessOptions
+                           Placeholder="یک گزینه را برگزینید..."
+                           @bind-SelectedOption=Model.Handedness
+                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Handedness))
+                           Required=true />
             <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
             <MyBFUDropdown ItemsSource=SexOptions
-                      Placeholder="یک گزینه را برگزینید..."
-                      @bind-SelectedOption=Model.Sex
-                      Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex)) />
+                           Placeholder="یک گزینه را برگزینید..."
+                           @bind-SelectedOption=Model.Sex
+                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex)) />
             <MyBFUNumericTextField TValue="short?" Label=@(Utils.GetDisplayName<ProfileModel, short?>(b => b.BirthYear)) @bind-Value=@Model.BirthYear @bind-Value:event="OnChange" ParsingErrorMessage="مقدار {0} باید مقداری عددی در محدوده‌ی مجاز باشد." />
             <MyBFUDropdown ItemsSource=EducationOptions
-                      Placeholder="یک گزینه را برگزینید..."
-                      @bind-SelectedOption=Model.Education
-                      Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Education)) />
+                           Placeholder="یک گزینه را برگزینید..."
+                           @bind-SelectedOption=Model.Education
+                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Education)) />
             <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                 <StackItem Align=Alignment.Center>
                     <SubmitButton Text="اعمال تغییرات" />
@@ -47,39 +52,37 @@
 
     IEnumerable<IDropdownOption> SexOptions { get; set; }
     IEnumerable<IDropdownOption> EducationOptions { get; set; }
+    IEnumerable<IDropdownOption> HandednessOptions { get; set; }
     bool Done { get; set; }
     ProfileModel Model { get; set; }
     EditContext EditContext { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         SexOptions = Enum.GetValues<Sex>()
-                .Select(p => new DropdownOption
-                {
-                    Text = p.GetAttribute<DisplayAttribute>().Name,
-                    Key = ((int)p).ToString()
-                });
+            .Select(p => new DropdownOption
+            {
+                Text = p.GetAttribute<DisplayAttribute>().Name,
+                Key = ((int)p).ToString()
+            });
         EducationOptions = Enum.GetValues<Education>()
-                .Select(p => new DropdownOption
-                {
-                    Text = p.GetAttribute<DisplayAttribute>().Name,
-                    Key = ((int)p).ToString()
-                });
-
-        return base.OnInitializedAsync();
+            .Select(p => new DropdownOption
+            {
+                Text = p.GetAttribute<DisplayAttribute>().Name,
+                Key = ((int)p).ToString()
+            });
+        HandednessOptions = Enum.GetValues<Handedness>()
+            .Select(p => new DropdownOption
+            {
+                Text = p.GetAttribute<DisplayAttribute>().Name,
+                Key = ((int)p).ToString()
+            });
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        try
-        {
-            Model = (ProfileModel)await Http.GetFromJsonAsync<UserDTO>("api/Identity/UserInfo");
-            EditContext = new EditContext(Model);
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
+        Model = (ProfileModel)await Http.GetFromJsonAsync<UserDTO>("api/Identity/UserInfo");
+        EditContext = new EditContext(Model);
     }
 
     async Task FormHandler()
@@ -113,6 +116,9 @@
         public short? BirthYear { get; set; }
         [Display(Name = "سطح تحصیلات")]
         public IDropdownOption Education { get; set; }
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [Display(Name = "راست‌دستی و چپ‌دستی")]
+        public IDropdownOption Handedness { get; set; }
 
         public static explicit operator UserDTO(ProfileModel model)
         {
@@ -123,6 +129,7 @@
                 Sex = model.Sex is null ? null : Enum.Parse<Sex>(model.Sex.Key),
                 BirthYear = model.BirthYear,
                 Education = model.Education is null ? null : Enum.Parse<Education>(model.Education.Key),
+                Handedness = Enum.Parse<Handedness>(model.Handedness.Key),
             };
         }
 
@@ -142,6 +149,11 @@
                 {
                     Text = model.Education.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)model.Education).ToString()
+                },
+                Handedness = new DropdownOption
+                {
+                    Text = model.Handedness.GetAttribute<DisplayAttribute>().Name,
+                    Key = ((int)model.Handedness).ToString()
                 },
             };
         }

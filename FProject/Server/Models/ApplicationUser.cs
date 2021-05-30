@@ -12,6 +12,7 @@ namespace FProject.Server.Models
         public Sex? Sex { get; set; }
         public short? BirthYear { get; set; }
         public Education? Education { get; set; }
+        public Handedness Handedness { get; set; }
 
         public ICollection<Writepad> Writepads { get; set; }
 
@@ -23,7 +24,8 @@ namespace FProject.Server.Models
                 PhoneNumber = model.PhoneNumber,
                 Sex = model.Sex,
                 BirthYear = model.BirthYear,
-                Education = model.Education
+                Education = model.Education,
+                Handedness = model.Handedness,
             };
         }
     }

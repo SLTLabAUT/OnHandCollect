@@ -163,7 +163,8 @@ namespace FProject.Server.Controllers
                 var newSignCount = (await _context.Writepads
                     .Where(w => w.OwnerId == userId
                         && w.Type == WritepadType.Sign
-                        && w.PointerType == newWritepad.PointerType)
+                        && w.PointerType == newWritepad.PointerType
+                        && w.Hand == newWritepad.Hand)
                     .OrderByDescending(w => w.LastModified)
                     .Take(7)
                     .ToListAsync())
@@ -201,6 +202,7 @@ namespace FProject.Server.Controllers
                 PointerType = newWritepad.PointerType,
                 LastModified = DateTimeOffset.UtcNow,
                 Type = newWritepad.Type,
+                Hand = newWritepad.Hand,
                 TextId = t.Id == 0 ? null : t.Id,
                 OwnerId = userId
             }).ToList();
@@ -237,6 +239,7 @@ namespace FProject.Server.Controllers
                     .Where(w => w.OwnerId == userId
                         && w.Type == WritepadType.Sign
                         && w.PointerType == writepad.PointerType
+                        && w.Hand == writepad.Hand
                         && w.UserSpecifiedNumber != id)
                     .OrderByDescending(w => w.LastModified)
                     .Skip(6)

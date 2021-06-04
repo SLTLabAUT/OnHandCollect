@@ -1,0 +1,14 @@
+﻿<div>
+    @foreach (var comment in Comments.Reverse())
+    {
+    <MyBFUText Block="true" Style=@($"text-align:{(comment.FromAdmin ? "left" : "right")};")>
+        @{
+            var owner = comment.FromAdmin ? "مدیر سامانه" : "کاربر";
+        }
+        <MyBFUText Block="true" Style=@($"direction:{(comment.FromAdmin ? "ltr" : "rtl")};")>
+            @comment.CreatedAt.GetLocalTimeString() - @owner:
+        </MyBFUText>
+        @comment.Text
+    </MyBFUText>
+    }
+</div>

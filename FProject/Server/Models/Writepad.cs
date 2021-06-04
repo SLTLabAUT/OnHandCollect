@@ -19,11 +19,13 @@ namespace FProject.Server.Models
         public WritepadType Type { get; set; }
         public Hand Hand { get; set; }
         public int UserSpecifiedNumber { get; set; }
+        public WritepadCommentsStatus CommentsStatus { get; set; }
 
         public int? TextId { get; set; }
         public Text Text { get; set; }
 
         public ICollection<DrawingPoint> Points { get; set; }
+        public ICollection<Comment> Comments { get; set; }
 
         public string OwnerId { get; set; }
         public ApplicationUser Owner { get; set; }
@@ -42,7 +44,8 @@ namespace FProject.Server.Models
                 TextId = writepad.TextId,
                 Text = writepad.Text,
                 Points = writepad.Points,
-                Owner = (UserDTO) writepad.Owner
+                Owner = (UserDTO) writepad.Owner,
+                CommentsStatus = writepad.CommentsStatus,
             };
         }
 
@@ -58,7 +61,8 @@ namespace FProject.Server.Models
                 Status = writepad.Status,
                 TextId = writepad.TextId,
                 Text = writepad.Text,
-                Points = writepad.Points
+                Points = writepad.Points,
+                CommentsStatus = writepad.CommentsStatus,
             };
         }
     }

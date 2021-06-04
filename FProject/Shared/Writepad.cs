@@ -19,6 +19,7 @@ namespace FProject.Shared
         public WritepadType Type { get; set; }
         public Hand Hand { get; set; }
         public int SpecifiedNumber { get; set; }
+        public WritepadCommentsStatus CommentsStatus { get; set; }
 
         public int? TextId { get; set; }
         public Text Text { get; set; }
@@ -26,6 +27,7 @@ namespace FProject.Shared
         public UserDTO Owner { get; set; }
 
         public ICollection<DrawingPoint> Points { get; set; }
+        public ICollection<CommentDTO> Comments { get; set; }
     }
 
     public class WritepadsDTO
@@ -89,6 +91,13 @@ namespace FProject.Shared
         Right,
         [Display(Name = "دست چپ")]
         Left,
+    }
+
+    public enum WritepadCommentsStatus
+    {
+        None,
+        NewFromUser,
+        NewFromAdmin,
     }
 
     public enum DrawingMode

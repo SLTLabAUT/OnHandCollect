@@ -155,7 +155,7 @@
                                                 <TooltipHost>
                                                     <TooltipContent>آخرین بروزرسانی</TooltipContent>
                                                     <ChildContent>
-                                                        <MyBFUText Variant=@TextType.Small>آ.ب: @writepad.GetLocalTimeString()</MyBFUText>
+                                                        <MyBFUText Variant=@TextType.Small>آ.ب: @writepad.LastModified.GetLocalTimeString()</MyBFUText>
                                                     </ChildContent>
                                                 </TooltipHost>
                                             </StackItem>
@@ -191,6 +191,16 @@
                                                             <MyBFUIconButton OnClick=@(args => DeleteButtonHandler(args, writepad)) IconName="Delete" />
                                                         </ChildContent>
                                                     </TooltipHost>
+                                                    @{
+                                                        string commentsIcon =
+                                                            writepad.CommentsStatus == FProject.Shared.WritepadCommentsStatus.NewFromUser ? "CommentActive" : "Comment";
+                                                    }
+                                                    <TooltipHost>
+                                                        <TooltipContent>پیام‌ها</TooltipContent>
+                                                        <ChildContent>
+                                                            <MyBFUIconButton OnClick=@(args => CommentsButtonHandler(args, writepad)) IconName=@commentsIcon />
+                                                        </ChildContent>
+                                                    </TooltipHost>
                                                     <TooltipHost>
                                                         <TooltipContent>ارسال ایمیل</TooltipContent>
                                                         <ChildContent>
@@ -214,15 +224,43 @@
     </Stack>
 
     <MyBFUDialog Title="تایید حذف تخته"
-            SubText=@($"آیا از حذف تخته‌ی شماره‌ی {CurrentWritepad?.Id} اطمینان دارید؟")
-            IsOpen=@DeleteDialogOpen
-            OnDismiss=@(args => DeleteDialogOpen=false)
-            CloseButtonAriaLabel="بستن"
-            Style="text-align: right;">
+                 SubText=@($"آیا از حذف تخته‌ی شماره‌ی {CurrentWritepad?.Id} اطمینان دارید؟")
+                 IsOpen=@DeleteDialogOpen
+                 OnDismiss=@(args => DeleteDialogOpen=false)
+                 CloseButtonAriaLabel="بستن"
+                 Style="text-align: right;">
         <ChildContent></ChildContent>
         <FooterTemplate>
             <DefaultButton Text="لغو" OnClick=@(args => DeleteDialogOpen=false) />
             <PrimaryButton Text="حذف" OnClick=DeleteWritepad />
         </FooterTemplate>
+    </MyBFUDialog>
+
+    <MyBFUDialog Title=@($"پیام‌های تخته‌ی {CurrentWritepad?.Id}")
+                 IsOpen=@CommentsDialogOpen
+                 OnDismiss=@(args => CommentsDialogOpen=false)
+                 CloseButtonAriaLabel="بستن"
+                 Style="text-align: right;">
+        <ChildContent>
+            <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                @if (CurrentWritepad?.Comments.Count > 0)
+                {
+                    <StackItem Align=Alignment.Center Style="width:100%">
+                        <CommentSection Comments="CurrentWritepad?.Comments" />
+                    </StackItem>
+                    <Hr />
+                }
+                <StackItem Align=Alignment.Center Style="width:100%">
+                    <EditForm EditContext=CommentEditContext OnValidSubmit=SendCommentHandler>
+                        <DataAnnotationsValidator />
+                        <FluentUIValidationSummary />
+
+                        <MyBFUTextField Multiline=true Label="متن پیام جدید" DisplayName="متن پیام جدید" @bind-Value=@CommentDTO.Text @bind-Value:event="OnChange" />
+                        <SubmitButton Text="ارسال پیام" />
+                    </EditForm>
+                </StackItem>
+            </Stack>
+        </ChildContent>
+        <FooterTemplate></FooterTemplate>
     </MyBFUDialog>
 </div>

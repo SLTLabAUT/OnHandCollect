@@ -30,10 +30,14 @@ namespace FProject.Client.Pages
         int Page { get; set; } = 1;
         int AllCount { get; set; }
         bool DeleteDialogOpen { get; set; }
+        bool CommentsDialogOpen { get; set; }
         List<WritepadDTO> WritepadList { get; set; }
         IEnumerable<IDropdownOption> PointerTypes { get; set; }
         IEnumerable<IDropdownOption> TextTypes { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
+
+        CommentDTO CommentDTO { get; set; }
+        EditContext CommentEditContext { get; set; }
 
         bool HaveNextPage => Page * 10 < AllCount;
 
@@ -86,6 +90,35 @@ namespace FProject.Client.Pages
             Navigation.NavigateTo(QueryHelpers.AddQueryString(uri.AbsolutePath, dic));
             WritepadList = null;
             await OnParametersSetAsync();
+        }
+
+        async Task SendCommentHandler()
+        {
+            var result = await Http.PostAsJsonAsync($"api/Comment?admin=true", CommentDTO);
+            result.EnsureSuccessStatusCode();
+            CurrentWritepad.CommentsStatus = WritepadCommentsStatus.NewFromAdmin;
+
+            CommentsDialogOpen = false;
+        }
+
+        async Task CommentsButtonHandler(MouseEventArgs args, WritepadDTO writepad)
+        {
+            CurrentWritepad = writepad;
+
+            var comments = await Http.GetFromJsonAsync<ICollection<CommentDTO>>($"api/Comment?writepadId={writepad.Id}&admin=true");
+            writepad.Comments = comments;
+            if (writepad.CommentsStatus == WritepadCommentsStatus.NewFromUser)
+            {
+                writepad.CommentsStatus = WritepadCommentsStatus.None;
+            }
+
+            CommentDTO = new CommentDTO()
+            {
+                WritepadId = writepad.Id,
+            };
+            CommentEditContext = new EditContext(CommentDTO);
+
+            CommentsDialogOpen = true;
         }
 
         void DeleteButtonHandler(MouseEventArgs args, WritepadDTO writepad)

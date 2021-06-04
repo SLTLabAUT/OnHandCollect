@@ -32,8 +32,7 @@
                 <textarea id=@id
                           @ref=@Element
                           style=@(autoAdjustedHeight != -1 ? $"height:{autoAdjustedHeight}px;" : "")
-                          @bind-value=@CurrentValue
-                          @bind-value:event="oninput"
+                          value=@CurrentValue
                           @onchange=@OnChangeHandler
                           @attributes="@AdditionalAttributes"
                           class="mediumFont ms-TextField-field"

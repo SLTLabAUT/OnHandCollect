@@ -96,11 +96,12 @@ namespace FProject.Shared.Extensions
             return attribute.Name;
         }
 
-        public static string GetLocalTimeString(this WritepadDTO writepadDTO)
+        public static string GetLocalTimeString(this DateTimeOffset dateTimeOffset)
         {
             var pc = new PersianCalendar();
-            var lm = writepadDTO.LastModified.LocalDateTime;
-            return string.Format("{3:00}:{4:00} {0}/{1:00}/{2:00}", pc.GetYear(lm), pc.GetMonth(lm), pc.GetDayOfMonth(lm), pc.GetHour(lm), pc.GetMinute(lm));
+            var dateTime = dateTimeOffset.LocalDateTime;
+            return string.Format("{3:00}:{4:00} {0}/{1:00}/{2:00}",
+                pc.GetYear(dateTime), pc.GetMonth(dateTime), pc.GetDayOfMonth(dateTime), pc.GetHour(dateTime), pc.GetMinute(dateTime));
         }
 
         public static TextType ToTextType(this WritepadType type)

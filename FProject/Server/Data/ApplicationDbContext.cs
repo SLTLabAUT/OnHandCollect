@@ -24,6 +24,7 @@ namespace FProject.Server.Data
         public DbSet<Text> Text { get; set; }
         public DbSet<Writepad> Writepads { get; set; }
         public DbSet<DrawingPoint> Points { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         //public DbSet<DeletedDrawing> DeletedDrawings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -35,6 +36,8 @@ namespace FProject.Server.Data
 
             builder.Entity<DrawingPoint>().HasKey(p => new { p.WritepadId, p.Number });
             builder.Entity<DrawingPoint>().HasQueryFilter(p => !p.IsDeleted);
+
+            builder.Entity<Comment>().HasQueryFilter(p => !p.IsDeleted);
 
             builder.Entity<Writepad>().HasIndex(w => new { w.UserSpecifiedNumber, w.OwnerId });
             builder.Entity<Writepad>().HasQueryFilter(w => !w.IsDeleted);

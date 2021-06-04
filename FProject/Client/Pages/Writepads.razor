@@ -144,7 +144,7 @@
                                                 <TooltipHost>
                                                     <TooltipContent>آخرین بروزرسانی</TooltipContent>
                                                     <ChildContent>
-                                                        <MyBFUText Variant=@TextType.Small>آ.ب: @writepad.GetLocalTimeString()</MyBFUText>
+                                                        <MyBFUText Variant=@TextType.Small>آ.ب: @writepad.LastModified.GetLocalTimeString()</MyBFUText>
                                                     </ChildContent>
                                                 </TooltipHost>
                                             </StackItem>
@@ -187,6 +187,16 @@
                                                         <TooltipContent>حذف</TooltipContent>
                                                         <ChildContent>
                                                             <MyBFUIconButton OnClick=@(args => DeleteButtonHandler(args, writepad)) IconName="Delete" />
+                                                        </ChildContent>
+                                                    </TooltipHost>
+                                                    @{
+                                                        string commentsIcon =
+                                                            writepad.CommentsStatus == FProject.Shared.WritepadCommentsStatus.NewFromAdmin ? "CommentActive" : "Comment";
+                                                    }
+                                                    <TooltipHost>
+                                                        <TooltipContent>پیام‌ها</TooltipContent>
+                                                        <ChildContent>
+                                                            <MyBFUIconButton OnClick=@(args => CommentsButtonHandler(args, writepad)) IconName=@commentsIcon />
                                                         </ChildContent>
                                                     </TooltipHost>
                                                     <TooltipHost>
@@ -276,6 +286,34 @@
         </FooterTemplate>
     </MyBFUDialog>
 
+    <MyBFUDialog Title=@($"پیام‌های تخته‌ی {CurrentWritepad?.SpecifiedNumber}")
+                 IsOpen=@CommentsDialogOpen
+                 OnDismiss=@(args => CommentsDialogOpen=false)
+                 CloseButtonAriaLabel="بستن"
+                 Style="text-align: right;">
+        <ChildContent>
+            <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                @if (CurrentWritepad?.Comments.Count > 0)
+                {
+                    <StackItem Align=Alignment.Center Style="width:100%">
+                        <CommentSection Comments="CurrentWritepad?.Comments" />
+                    </StackItem>
+                    <Hr />
+                }
+                <StackItem Align=Alignment.Center Style="width:100%">
+                    <EditForm EditContext=CommentEditContext OnValidSubmit=SendCommentHandler>
+                        <DataAnnotationsValidator />
+                        <FluentUIValidationSummary />
+
+                        <MyBFUTextField Multiline=true Label="متن پیام جدید" DisplayName="متن پیام جدید" @bind-Value=@CommentDTO.Text @bind-Value:event="OnChange" />
+                        <SubmitButton Text="ارسال پیام" />
+                    </EditForm>
+                </StackItem>
+            </Stack>
+        </ChildContent>
+        <FooterTemplate></FooterTemplate>
+    </MyBFUDialog>
+
     <MyBFUDialog Title=@($"اطلاعات تخته‌ی {CurrentWritepad?.SpecifiedNumber}")
                  IsOpen=@InfoDialogOpen
                  OnDismiss=@(args => InfoDialogOpen=false)
@@ -293,7 +331,7 @@
                 <br />
                 نوع دست: @(CurrentWritepad?.Hand.GetAttribute<DisplayAttribute>().Name)
                 <br />
-                آخرین بروزرسانی: @CurrentWritepad?.GetLocalTimeString()
+                آخرین بروزرسانی: @CurrentWritepad?.LastModified.GetLocalTimeString()
                 <br />
                 @if (CurrentWritepad?.Type != FProject.Shared.WritepadType.Sign)
                 {

@@ -95,12 +95,45 @@ namespace FProject.Server.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("FProject.Server.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("FromAdmin")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("WritepadId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WritepadId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("FProject.Server.Models.Writepad", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CommentsStatus")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Hand")
                         .HasColumnType("integer");
@@ -469,6 +502,17 @@ namespace FProject.Server.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("FProject.Server.Models.Comment", b =>
+                {
+                    b.HasOne("FProject.Server.Models.Writepad", "Writepad")
+                        .WithMany("Comments")
+                        .HasForeignKey("WritepadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Writepad");
+                });
+
             modelBuilder.Entity("FProject.Server.Models.Writepad", b =>
                 {
                     b.HasOne("FProject.Server.Models.ApplicationUser", "Owner")
@@ -551,6 +595,8 @@ namespace FProject.Server.Data.Migrations
 
             modelBuilder.Entity("FProject.Server.Models.Writepad", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Points");
                 });
 #pragma warning restore 612, 618

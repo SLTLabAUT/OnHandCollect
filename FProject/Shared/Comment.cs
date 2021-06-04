@@ -14,6 +14,7 @@ namespace FProject.Shared
         public DateTimeOffset CreatedAt { get; set; }
         public bool FromAdmin { get; set; }
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [Display(Name = "متن پیام")]
         public string Text { get; set; }
 
         public int? WritepadId { get; set; }

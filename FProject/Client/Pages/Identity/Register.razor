@@ -20,7 +20,6 @@
                                @bind-SelectedOption=Model.Handedness
                                Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Handedness))
                                Required=true />
-                <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
                 <MyBFUDropdown ItemsSource=SexOptions
                                Placeholder="یک گزینه را برگزینید..."
                                @bind-SelectedOption=Model.Sex
@@ -30,7 +29,8 @@
                                Placeholder="یک گزینه را برگزینید..."
                                @bind-SelectedOption=Model.Education
                                Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Education)) />
-                <MyBFUCheckbox Label=@(Utils.GetDisplayName<RegisterModel, bool>(m => m.AcceptTerms)) @bind-Checked=@Model.AcceptTerms OnLabelTextClick=@ShowHideTerms />
+                <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
+                <MyBFUCheckbox Label=@(Utils.GetDisplayName<RegisterModel, bool>(m => m.AcceptTerms)) @bind-Checked=@Model.AcceptTerms OnLabelTextClick=@ShowHideTerms Required=true />
                 <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                     <StackItem Align=Alignment.Center>
                         <SubmitButton Text="ثبت‌نام" />
@@ -43,9 +43,28 @@
                 IsOpen=@TermsDialogOpen
                 OnDismiss=@(args => TermsDialogOpen=false)
                 CloseButtonAriaLabel="بستن"
-                Style="text-align: right;">
+                ClassName="terms">
             <ChildContent>
-                <p>داده‌های نوشتاری به‌دست‌آمده در این سامانه، در آینده بدون اعلام هویت افراد در دسترس عموم قرارخواهدگرفت.</p>
+                با شرکت در این پروژه شما می‌پذیرید که:
+                <br />
+                <br />
+                <ol>
+                    <li>
+                        در آینده داده‌های دست‌نوشته‌ی به‌دست‌آمده از این پروژه بدون اعلام هویت افراد (ناشناس) و به‌صورت متن‌باز در دسترس
+                        عموم
+                        قرار خواهد گرفت.
+                    </li>
+                    <li>
+                        جهت جلوگیری از سوء استفاده و اطمینان خود، برای مشارکت در بخش امضاء، حتماً از امضای دوم خود و یا یک امضای جعلی
+                        استفاده کنید.
+                    </li>
+                    <li>
+                        داده‌های امضاء فقط در اختیار دانشگاه‌ها و بعد از امضای تعهدنامه قرار خواهد گرفت.
+                    </li>
+                    <li>
+                        برای بخش امضاء، حتماً تمام نمونه امضاها یکسان باشند.
+                    </li>
+                </ol>
             </ChildContent>
             <FooterTemplate></FooterTemplate>
         </MyBFUDialog>

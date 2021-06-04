@@ -284,7 +284,8 @@ const enum PointerType {
     Mouse,
     Touchpad,
     Pen,
-    Touch
+    Touch,
+    TouchPen
 }
 
 const enum PointType {
@@ -393,7 +394,9 @@ function detectPointerType(type: string): PointerType {
                 return writepad.PointerType;
             else return PointerType.Mouse;
         case "touch":
-            return PointerType.Touch;
+            if (writepad.PointerType == PointerType.Touch || writepad.PointerType == PointerType.TouchPen)
+                return writepad.PointerType;
+            else return PointerType.Touch;
         case "pen":
             return PointerType.Pen;
         default:
@@ -401,6 +404,7 @@ function detectPointerType(type: string): PointerType {
     }
 }
 // TODO: Check touchpad and mouse at the beginning https://stackoverflow.com/questions/10744645/detect-touchpad-vs-mouse-in-javascript/62415754#62415754
+// TODO: Distinguish Touch and TouchPen
 
 function detectMode(event: PointerEvent): Mode {
     if (defaultMode != Mode.Non) {
@@ -417,6 +421,8 @@ function detectMode(event: PointerEvent): Mode {
 }
 
 function onPointerDown(event: PointerEvent) {
+    event.preventDefault();
+
     if (isMiddleOfDrawing) {
         return;
     }
@@ -454,6 +460,8 @@ async function draw(startX, startY, endX, endY) {
 }
 
 function onPointerMove(event: PointerEvent) {
+    event.preventDefault();
+
     if (pointerId != event.pointerId || !isMiddleOfDrawing)
         return;
 
@@ -486,6 +494,8 @@ function onPointerMove(event: PointerEvent) {
 }
 
 function onPointerUp(event: PointerEvent) {
+    event.preventDefault();
+
     if (pointerId != event.pointerId || !isMiddleOfDrawing)
         return;
 

@@ -53,6 +53,9 @@ namespace FProject.Client.Shared
         public bool Disabled { get; set; }
 
         [Parameter]
+        public bool Required { get; set; }
+
+        [Parameter]
         public bool ValidateOnLoad { get; set; }
 
         /// <summary>

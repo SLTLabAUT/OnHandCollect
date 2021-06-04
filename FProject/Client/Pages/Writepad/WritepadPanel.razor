@@ -37,6 +37,10 @@
                                     pointerTypeTooltip = "لمس";
                                     pointerTypeIconName = "Touch";
                                     break;
+                                case FProject.Shared.PointerType.TouchPen:
+                                    pointerTypeTooltip = "قلم لمسی";
+                                    pointerTypeIconName = "EditMirrored";
+                                    break;
                             }
 
                             string textTypeTooltip = string.Empty;
@@ -52,7 +56,7 @@
                                     textTypeIconName = "TextBox";
                                     break;
                                 case FProject.Shared.WritepadType.Sign:
-                                    textTypeTooltip = "امضا";
+                                    textTypeTooltip = "امضاء";
                                     textTypeIconName = "InsertSignatureLine";
                                     break;
                             }
@@ -84,13 +88,13 @@
                         switch (Parent.WritepadInstance.Type)
                         {
                             case FProject.Shared.WritepadType.Text:
-                                textHeader = $"لطفا متن زیر را با {hand} خود عینا در تخته بنویسید:";
+                                textHeader = $"لطفا متن زیر را با {hand} خود در تخته بنویسید:";
                                 break;
                             case FProject.Shared.WritepadType.WordGroup:
-                                textHeader = $"لطفا کلمات زیر را با رعایت فاصله‌ی مناسب با {hand} خود عینا در تخته بنویسید:";
+                                textHeader = $"لطفا کلمات زیر را با رعایت فاصله‌ی مناسب با {hand} خود در تخته بنویسید:";
                                 break;
                             case FProject.Shared.WritepadType.Sign:
-                                textHeader = $"لطفا امضایتان را با {hand} خود بکشید. بهتر است که امضای اصلیتان نباشد.";
+                                textHeader = $"لطفا امضایتان را با {hand} خود بکشید. امضای رسم شده نباید با امضاهای قبلی مغایرت داشته باشد و همچنین امضای اصلیتان نباشد.";
                                 break;
                         }
                     }
@@ -188,13 +192,13 @@
     </StackItem>
 </Stack>
 
-<MyBFUDialog Title="عدم امکان ذخیره‌ی امضا"
+<MyBFUDialog Title="عدم امکان ذخیره‌ی امضاء"
              IsOpen=@NotAllowedDialogOpen
              OnDismiss=@(args => NotAllowedDialogOpen=false)
              CloseButtonAriaLabel="بستن"
              Style="text-align: right;">
     <ChildContent>
-        <p>نوشتن تخته‌ی امضا با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.</p>
+        <p>نوشتن تخته‌ی امضاء با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.</p>
     </ChildContent>
     <FooterTemplate></FooterTemplate>
 </MyBFUDialog>

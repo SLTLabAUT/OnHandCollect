@@ -49,6 +49,18 @@ video {
     max-height: 90% !important;
 }
 
+.terms {
+    text-align: right;
+}
+
+.terms ol {
+    list-style-position: inside;
+}
+
+.terms ol > li + li {
+    margin-top: 0.75em;
+}
+
 .ms-Panel-scrollableContent {
     flex-grow: 1;
 }
@@ -87,6 +99,8 @@ video {
 }
 
 .ms-Label--required::after {
+    content: ' *';
+    color: var(--semanticTextColors-ErrorText);
     padding: 0 0 0 12px !important;
 }
 

@@ -66,6 +66,10 @@
                                                                 pointerTypeTooltip = "لمس";
                                                                 pointerTypeIconName = "Touch";
                                                                 break;
+                                                            case FProject.Shared.PointerType.TouchPen:
+                                                                pointerTypeTooltip = "قلم لمسی";
+                                                                pointerTypeIconName = "EditMirrored";
+                                                                break;
                                                         }
 
                                                         string textTypeTooltip = string.Empty;
@@ -81,7 +85,7 @@
                                                                 textTypeIconName = "TextBox";
                                                                 break;
                                                             case FProject.Shared.WritepadType.Sign:
-                                                                textTypeTooltip = "امضا";
+                                                                textTypeTooltip = "امضاء";
                                                                 textTypeIconName = "InsertSignatureLine";
                                                                 break;
                                                         }
@@ -110,7 +114,7 @@
                                                 }
                                                 else
                                                 {
-                                                    text = writepad.Text?.Content ?? "امضا.";
+                                                    text = writepad.Text?.Content ?? "امضاء.";
                                                 }
                                             }
                                             شماره‌ی تخته برای کاربر: @writepad.SpecifiedNumber
@@ -176,9 +180,9 @@
                                                         </TooltipHost>
                                                     }
                                                     <TooltipHost>
-                                                        <TooltipContent>ایجاد تغییرات</TooltipContent>
+                                                        <TooltipContent>بازبینی</TooltipContent>
                                                         <ChildContent>
-                                                            <MyBFUIconButton OnClick=@(args => EditHandler(args, writepad.Id)) IconName="EditSolid12" />
+                                                            <MyBFUIconButton OnClick=@(args => EditHandler(args, writepad.Id)) IconName="View" />
                                                         </ChildContent>
                                                     </TooltipHost>
                                                     <TooltipHost>

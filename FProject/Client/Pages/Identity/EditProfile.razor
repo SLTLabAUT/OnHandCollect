@@ -27,7 +27,6 @@
                            @bind-SelectedOption=Model.Handedness
                            Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Handedness))
                            Required=true />
-            <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
             <MyBFUDropdown ItemsSource=SexOptions
                            Placeholder="یک گزینه را برگزینید..."
                            @bind-SelectedOption=Model.Sex
@@ -37,6 +36,7 @@
                            Placeholder="یک گزینه را برگزینید..."
                            @bind-SelectedOption=Model.Education
                            Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Education)) />
+            <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
             <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                 <StackItem Align=Alignment.Center>
                     <SubmitButton Text="اعمال تغییرات" />

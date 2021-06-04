@@ -32,13 +32,31 @@ html, body {
 }
 
 .container {
-    width: 50%;
+    width: 60%;
     height: 100%;
     background-color: rgba(242, 242, 242, 0.9);
-    padding: 5% 3%;
+    padding: 3% 2%;
     text-align: center;
     display: flex;
     flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    > *:first-child {
+        margin-left: 10px;
+    }
+
+    > *:last-child {
+        margin-right: 10px;
+    }
+
+    img {
+        max-height: 4em;
+    }
 }
 
 .description {
@@ -60,10 +78,6 @@ html, body {
     flex-grow: 1;
 }
 
-.ms-Modal-main {
-    max-width: 86%;
-}
-
 hr {
     margin: 10px 0;
 }
@@ -78,5 +92,6 @@ video {
     }
     .container {
         width: 100%;
+        padding: 5% 3%;
     }
 }

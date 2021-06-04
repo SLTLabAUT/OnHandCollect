@@ -71,6 +71,10 @@
                                                                 pointerTypeTooltip = "لمس";
                                                                 pointerTypeIconName = "Touch";
                                                                 break;
+                                                            case FProject.Shared.PointerType.TouchPen:
+                                                                pointerTypeTooltip = "قلم لمسی";
+                                                                pointerTypeIconName = "EditMirrored";
+                                                                break;
                                                         }
 
                                                         string textTypeTooltip = string.Empty;
@@ -86,7 +90,7 @@
                                                                 textTypeIconName = "TextBox";
                                                                 break;
                                                             case FProject.Shared.WritepadType.Sign:
-                                                                textTypeTooltip = "امضا";
+                                                                textTypeTooltip = "امضاء";
                                                                 textTypeIconName = "InsertSignatureLine";
                                                                 break;
                                                         }
@@ -164,10 +168,19 @@
                                                             </ChildContent>
                                                         </TooltipHost>
                                                     }
+                                                    @{
+                                                        string editIcon = "EditSolid12";
+                                                        string editTooltip = "ایجاد تغییرات";
+                                                        if (writepad.Status == FProject.Shared.WritepadStatus.Accepted)
+                                                        {
+                                                            editIcon = "View";
+                                                            editTooltip = "بازبینی";
+                                                        }
+                                                    }
                                                     <TooltipHost>
-                                                        <TooltipContent>ایجاد تغییرات</TooltipContent>
+                                                        <TooltipContent>@editTooltip</TooltipContent>
                                                         <ChildContent>
-                                                            <MyBFUIconButton OnClick=@(args => EditHandler(args, writepad.SpecifiedNumber)) IconName="EditSolid12" />
+                                                            <MyBFUIconButton OnClick=@(args => EditHandler(args, writepad.SpecifiedNumber)) IconName=@editIcon />
                                                         </ChildContent>
                                                     </TooltipHost>
                                                     <TooltipHost>
@@ -239,7 +252,7 @@
                 @if (IsSignSelected)
                 {
                     <MessageBar>
-                        ایجاد تخته‌ی امضا با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.
+                        ایجاد تخته‌ی امضاء با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.
                     </MessageBar>
                 }
             </EditForm>

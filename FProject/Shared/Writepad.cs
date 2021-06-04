@@ -56,7 +56,9 @@ namespace FProject.Shared
         [Display(Name = "قلم")]
         Pen,
         [Display(Name = "لمس")]
-        Touch
+        Touch,
+        [Display(Name = "قلم لمسی")]
+        TouchPen
     }
 
     public enum WritepadStatus
@@ -77,7 +79,7 @@ namespace FProject.Shared
         Text,
         [Display(Name = "گروه کلمات")]
         WordGroup,
-        [Display(Name = "امضا")]
+        [Display(Name = "امضاء")]
         Sign
     }
 

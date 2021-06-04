@@ -16,16 +16,18 @@
            aria-describedby=@AriaDescribedBy
            aria-posinset=@AriaPositionInSet
            aria-setsize=@AriaSetSize />
-    <label class=@($"ms-Checkbox-label")
+    <label class=@($"ms-Checkbox-label {(Required ? "ms-Label--required" : "")}")
            for="@Id">
         <div class=@($"ms-Checkbox-checkbox")>
             <i class=@($"ms-Checkbox-checkmark ms-Icon ms-Icon--CheckMark") aria-hidden="true"></i>
         </div>
         @if (OnLabelTextClick.HasDelegate)
         {
-<a class=@($"ms-Link ms-Checkbox-text") @onclick="OnLabelTextClick">@Label</a> }
-            else
-            {
-<span class=@($"ms-Checkbox-text")>@Label</span>}
+            <a class=@($"ms-Link ms-Checkbox-text") @onclick="OnLabelTextClick">@Label</a>
+        }
+        else
+        {
+            <span class=@($"ms-Checkbox-text")>@Label</span>
+        }
     </label>
 </div>

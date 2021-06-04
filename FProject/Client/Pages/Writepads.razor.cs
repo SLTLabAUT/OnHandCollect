@@ -148,7 +148,7 @@ namespace FProject.Client.Pages
             }
             else
             {
-                text = writepad.Text?.Content ?? "امضا.";
+                text = writepad.Text?.Content ?? "امضاء.";
             }
             return text;
         }
@@ -198,7 +198,7 @@ namespace FProject.Client.Pages
                     var error = await result.Content.ReadFromJsonAsync<WritepadCreationError>();
                     var errorText = error switch
                     {
-                        WritepadCreationError.SignNotAllowed => "ایجاد تخته‌ی امضا با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.",
+                        WritepadCreationError.SignNotAllowed => "ایجاد تخته‌ی امضاء با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.",
                         _ => null,
                     };
                     if (errorText is not null)

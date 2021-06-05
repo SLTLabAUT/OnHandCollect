@@ -89,7 +89,7 @@ namespace FProject.Client.Pages
             var dic = queries.AllKeys.ToDictionary(k => k, k => queries[k]);
             Navigation.NavigateTo(QueryHelpers.AddQueryString(uri.AbsolutePath, dic));
             WritepadList = null;
-            await OnParametersSetAsync();
+            OnParametersSet();
         }
 
         async Task SendCommentHandler()
@@ -131,7 +131,7 @@ namespace FProject.Client.Pages
         {
             try
             {
-                var result = await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.Id}&admin=true");
+                var result = await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.Id}?admin=true");
                 result.EnsureSuccessStatusCode();
                 WritepadList.Remove(CurrentWritepad);
                 AllCount--;

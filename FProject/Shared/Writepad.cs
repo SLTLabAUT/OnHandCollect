@@ -55,7 +55,7 @@ namespace FProject.Shared
         Mouse,
         [Display(Name = "تاچ‌پد")]
         Touchpad,
-        [Display(Name = "قلم")]
+        [Display(Name = "قلم دیجیتالی")]
         Pen,
         [Display(Name = "لمس")]
         Touch,

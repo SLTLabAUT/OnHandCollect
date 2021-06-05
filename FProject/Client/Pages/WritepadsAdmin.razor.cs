@@ -131,7 +131,8 @@ namespace FProject.Client.Pages
         {
             try
             {
-                await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.Id}&admin=true");
+                var result = await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.Id}&admin=true");
+                result.EnsureSuccessStatusCode();
                 WritepadList.Remove(CurrentWritepad);
                 AllCount--;
             }

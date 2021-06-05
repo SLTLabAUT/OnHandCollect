@@ -44,10 +44,11 @@ namespace FProject.Server.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
+            var adminMode = admin && isAdmin;
 
             IQueryable<Writepad> writepadsQuery = _context.Writepads
                 .Include(w => w.Text);
-            if (admin && isAdmin)
+            if (adminMode)
             {
                 var customOrder = new WritepadStatus[] {
                     WritepadStatus.WaitForAcceptance,
@@ -80,7 +81,7 @@ namespace FProject.Server.Controllers
                 .ToListAsync();
 
             var allCount = 0;
-            if (admin && isAdmin)
+            if (adminMode)
             {
                 allCount = await _context.Writepads
                     .CountAsync();
@@ -92,7 +93,7 @@ namespace FProject.Server.Controllers
                    .CountAsync();
             }
 
-            return new WritepadsDTO { Writepads = writepads.Select(w => admin && isAdmin ? Writepad.ToAdminWritepadDTO(w) : (WritepadDTO)w),
+            return new WritepadsDTO { Writepads = writepads.Select(w => adminMode ? Writepad.ToAdminWritepadDTO(w) : (WritepadDTO)w),
                 AllCount = allCount };
         }
 

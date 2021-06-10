@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   fproject.server:
-    image: fprojectserver:1.2.1.1
+    image: fprojectserver:1.2.1.2
     build:
       context: .
       dockerfile: FProject/Server/Dockerfile

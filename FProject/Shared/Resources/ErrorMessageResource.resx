@@ -118,16 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConfirmPassword" xml:space="preserve">
-    <value>رمز عبور و تکرار رمز عبور باید یکی باشند.</value>
+    <value>«رمز عبور» و «تکرار رمز عبور» باید یکی باشند.</value>
   </data>
   <data name="EmailAddress" xml:space="preserve">
     <value>رایانامه‌ی وارد شده معتبر نیست.</value>
+  </data>
+  <data name="MinLength" xml:space="preserve">
+    <value>{0} باید حداقل دارای {1} کاراکتر باشد.</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>رمز عبور باید حداقل دارای ۸ کاراکتر باشد؛ یکی از حروف a تا z، یکی از حروف A تا Z و دست‌کم یک رقم نیز داشته باشد.</value>
   </data>
   <data name="PhoneNumber" xml:space="preserve">
-    <value>شماره‌ی تلفن همراه وارد شده صحیح نمی‌باشد.</value>
+    <value>«شماره‌ی تلفن همراه» وارد شده صحیح نمی‌باشد.</value>
   </data>
   <data name="Range" xml:space="preserve">
     <value>مقدار «{0}» باید بین {1} و {2} باشد.</value>
@@ -136,6 +139,6 @@
     <value>ورود «{0}» اجباری است.</value>
   </data>
   <data name="Terms" xml:space="preserve">
-    <value>پذیرفتن شرایط الزامی است.</value>
+    <value>«پذیرش شرایط استفاده» الزامی می‌باشد.</value>
   </data>
 </root>

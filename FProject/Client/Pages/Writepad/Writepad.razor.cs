@@ -100,7 +100,7 @@ namespace FProject.Client.Pages
         {
             if (!IsSaving)
             {
-                JSRef.InvokeVoidAsync("save");
+                Task.Factory.StartNew(() => JSRef.InvokeVoidAsync("save"), TaskCreationOptions.LongRunning);
             }
         }
 

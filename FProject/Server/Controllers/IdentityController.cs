@@ -69,7 +69,7 @@ namespace FProject.Server.Controllers
             {
                 return BadRequest();
             }
-            user.PhoneNumber = userInfo.PhoneNumber;
+            user.PhoneNumber = userInfo.PhoneNumber.Trim();
             user.Sex = userInfo.Sex;
             user.BirthYear = userInfo.BirthYear;
             user.Education = userInfo.Education;
@@ -96,9 +96,9 @@ namespace FProject.Server.Controllers
 
             var newUser = new ApplicationUser
             {
-                UserName = registerDTO.Email,
-                Email = registerDTO.Email,
-                PhoneNumber = registerDTO.PhoneNumber,
+                UserName = registerDTO.Email.Trim(),
+                Email = registerDTO.Email.Trim(),
+                PhoneNumber = registerDTO.PhoneNumber.Trim(),
                 Sex = registerDTO.Sex,
                 BirthYear = registerDTO.BirthYear,
                 Education = registerDTO.Education,
@@ -124,6 +124,8 @@ namespace FProject.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
+            loginDTO.Email = loginDTO.Email.Trim();
+
             var response = new LoginResponse();
 
             if (!ModelState.IsValid)
@@ -158,7 +160,7 @@ namespace FProject.Server.Controllers
             return BadRequest(response);
         }
 
-        protected async Task<string> GenerateJwtToken(ApplicationUser user)
+        private async Task<string> GenerateJwtToken(ApplicationUser user)
         {
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
             var claims = new List<Claim>();
@@ -199,7 +201,7 @@ namespace FProject.Server.Controllers
                 return BadRequest();
             }
 
-            var user = await _signInManager.UserManager.FindByEmailAsync(dto.Email);
+            var user = await _signInManager.UserManager.FindByEmailAsync(dto.Email.Trim());
             if (user is null)
             {
                 return Ok();
@@ -224,7 +226,7 @@ namespace FProject.Server.Controllers
                 return BadRequest(response);
             }
 
-            var user = await _signInManager.UserManager.FindByEmailAsync(dto.Email);
+            var user = await _signInManager.UserManager.FindByEmailAsync(dto.Email.Trim());
             if (user is null)
             {
                 return Ok(response);
@@ -242,7 +244,7 @@ namespace FProject.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> ResendConfirmationEmail(string email)
         {
-            var user = await _signInManager.UserManager.FindByEmailAsync(email);
+            var user = await _signInManager.UserManager.FindByEmailAsync(email.Trim());
             if (user is null)
             {
                 return Ok();
@@ -270,6 +272,7 @@ namespace FProject.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
+            email = email.Trim();
             var response = new IdentityErrorsResponse();
             if (token is null || email is null)
             {

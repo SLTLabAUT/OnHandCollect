@@ -35,7 +35,8 @@ namespace FProject.Shared.Models
     {
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$", ErrorMessageResourceName = "Password", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        //[RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$", ErrorMessageResourceName = "Password", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [MinLength(6, ErrorMessageResourceName = "MinLength", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Display(Name = "رمز عبور")]
         public string Password { get; set; }
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
@@ -72,7 +73,8 @@ namespace FProject.Shared.Models
         public string Email { get; set; }
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$", ErrorMessageResourceName = "Password", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        //[RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$", ErrorMessageResourceName = "Password", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [MinLength(6, ErrorMessageResourceName = "MinLength", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         public string Password { get; set; }
         [RegularExpression("True", ErrorMessageResourceName = "Terms", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         public bool AcceptTerms { get; set; }

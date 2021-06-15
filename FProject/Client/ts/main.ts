@@ -4,10 +4,10 @@
     return module;
 }
 
-function Compress(content: string): string {
+async function Compress(content: string): Promise<string> {
     return LZString.compressToBase64(content);
 }
 
-function Decompress(content: string): string {
+async function Decompress(content: string): Promise<string> {
     return LZString.decompressFromBase64(content);
 }

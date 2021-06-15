@@ -1,4 +1,5 @@
-﻿using FProject.Shared;
+﻿using BlazorFluentUI;
+using FProject.Shared;
 using FProject.Shared.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -15,6 +16,8 @@ namespace FProject.Client.Pages
     {
         [Inject]
         NavigationManager Navigation { get; set; }
+        [Inject]
+        ThemeProvider ThemeProvider { get; set; }
 
         [Parameter]
         public Writepad Parent { get; set; }

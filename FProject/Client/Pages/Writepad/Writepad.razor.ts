@@ -29,7 +29,7 @@ let pointerId: number;
 let padRatio: number;
 let padOffset: number;
 
-export function init(compRef, ratio: number, origin: number, writepadCompressedJson: string): void {
+export async function init(compRef, ratio: number, origin: number, writepadCompressedJson: string): Promise<void> {
     timeStampOrigin = origin;
     isSaving = false;
     isMiddleOfDrawing = false;
@@ -48,9 +48,9 @@ export function init(compRef, ratio: number, origin: number, writepadCompressedJ
     padRatio = ratio;
     let writepadReceived: Writepad;
     if (writepadCompressedJson) {
-        writepadReceived = JSON.parse(Decompress(writepadCompressedJson));
+        writepadReceived = JSON.parse(await Decompress(writepadCompressedJson));
     } else {
-        writepadReceived = JSON.parse(Decompress(document.getElementById("data").innerHTML.slice(8)));
+        writepadReceived = JSON.parse(await Decompress(document.getElementById("data").innerHTML.slice(8)));
     }
     writepad = {
         LastModified: writepadReceived.LastModified,
@@ -158,8 +158,8 @@ export async function save(): Promise<void> {
             DeletedDrawings: validDeletedDrawings
         };
         let rawData = JSON.stringify(savePointsDTO);
-        let data = Compress(rawData);
-        console.log(data.length / rawData.length);
+        let data = await Compress(rawData);
+        //console.log(data.length / rawData.length);
         let response: SaveResponseDTO = await componentRef.invokeMethodAsync("Save", data);
         //let response: SaveResponseDTO = await componentRef.invokeMethodAsync("Save", writepad.LastModified, newDrawings, validDeletedDrawings);
         switch (response.statusCode) {
@@ -321,13 +321,14 @@ export function redraw(): void {
     let minY = - canvas.height;
     let maxY = 2 * canvas.height;
     let isInside: boolean;
+    let lastP: Point;
     let lastX: number;
     let lastY: number;
 
     context.clearRect(0, 0, canvas.width, canvas.height);
-    for (let d of writepad.Points) {
-        let screenX = toScreenX(d.X);
-        let screenY = toScreenY(d.Y);
+    for (let p of writepad.Points) {
+        let screenX = toScreenX(p.X);
+        let screenY = toScreenY(p.Y);
 
         if (!isInside &&
             screenX > minX && screenX < maxX &&
@@ -335,9 +336,8 @@ export function redraw(): void {
             isInside = true;
         }
 
-        switch (d.Type) {
+        switch (p.Type) {
             case PointType.Starting:
-                isInside = false;
                 context.beginPath();
                 context.moveTo(screenX, screenY);
                 break;
@@ -347,16 +347,25 @@ export function redraw(): void {
                 }
                 break;
             case PointType.Ending:
-                if (lastX != screenX || lastY != screenY) {
-                    context.lineTo(screenX, screenY);
+                if (isInside) {
+                    let isDot = lastP.Type == PointType.Starting;
+                    if (isDot) {
+                        context.fillRect(screenX, screenY, 1, 1);
+                    }
+                    else {
+                        if (lastX != screenX || lastY != screenY) {
+                            context.lineTo(screenX, screenY);
+                        }
+                        context.stroke();
+                    }
+                    isInside = false;
                 }
-                if (isInside)
-                    context.stroke();
                 break;
         }
 
         lastX = screenX;
         lastY = screenY;
+        lastP = p;
     }
 }
 
@@ -411,9 +420,9 @@ function detectMode(event: PointerEvent): Mode {
         return defaultMode;
     }
 
-    if (event.button == 0 && event.buttons == 1 && //Left Mouse, Touch Contact, Pen contact
-        detectPointerType(event.pointerType) == writepad.PointerType &&
-        event.isPrimary) {
+    if (event.button == 0 && event.buttons == 1 //Left Mouse, Touch Contact, Pen contact
+        && detectPointerType(event.pointerType) == writepad.PointerType
+        && event.isPrimary) {
         return Mode.Draw;
     } else {
         return Mode.Move;
@@ -452,11 +461,16 @@ function onPointerDown(event: PointerEvent) {
     }
 }
 
-async function draw(startX, startY, endX, endY) {
-    context.beginPath();
-    context.moveTo(startX, startY);
-    context.lineTo(endX, endY);
-    context.stroke();
+async function draw(startX, startY, endX, endY, isDot: boolean = false) {
+    if (isDot && startX == endX && startY == endY) {
+        context.fillRect(endX, endY, 1, 1);
+    }
+    else {
+        context.beginPath();
+        context.moveTo(startX, startY);
+        context.lineTo(endX, endY);
+        context.stroke();
+    }
 }
 
 function onPointerMove(event: PointerEvent) {
@@ -508,8 +522,9 @@ function onPointerUp(event: PointerEvent) {
             const realY = toRealY(pointerY);
             if (lastPoint.Type == PointType.Starting
                 || lastPoint.TimeStamp != event.timeStamp
-                || lastPoint.X != realX || lastPoint.Y != realY) {
-                draw(prevPointerX, prevPointerY, pointerX, pointerY);
+                || lastPoint.X != realX
+                || lastPoint.Y != realY) {
+                draw(prevPointerX, prevPointerY, pointerX, pointerY, lastPoint.Type == PointType.Starting);
                 addToDrawings(event, PointType.Ending, realX, realY);
             } else {
                 lastPoint.Type = PointType.Ending;

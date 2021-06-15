@@ -63,15 +63,15 @@
                         }
                         <MyBFUText Variant=@TextType.Large>
                             <TooltipHost>
-                                <TooltipContent>@pointerTypeTooltip</TooltipContent>
-                                <ChildContent>
-                                    <Icon IconName=@pointerTypeIconName />
-                                </ChildContent>
-                            </TooltipHost>
-                            <TooltipHost>
                                 <TooltipContent>@textTypeTooltip</TooltipContent>
                                 <ChildContent>
                                     <Icon IconName=@textTypeIconName />
+                                </ChildContent>
+                            </TooltipHost>
+                            <TooltipHost>
+                                <TooltipContent>@pointerTypeTooltip</TooltipContent>
+                                <ChildContent>
+                                    <Icon IconName=@pointerTypeIconName />
                                 </ChildContent>
                             </TooltipHost>
                         </MyBFUText>
@@ -84,24 +84,38 @@
                            Style=@($"text-align:justify;{(Parent.WritepadInstance.Type != FProject.Shared.WritepadType.Text ? "text-align-last:center;" : "")}")>
                     @{
                         var hand = Parent.WritepadInstance.Hand.GetAttribute<DisplayAttribute>().Name;
+                        var pointerType = Parent.WritepadInstance.PointerType.GetAttribute<DisplayAttribute>().Name;
                         var textHeader = string.Empty;
                         switch (Parent.WritepadInstance.Type)
                         {
                             case FProject.Shared.WritepadType.Text:
-                                textHeader = $"لطفا متن زیر را با {hand} خود در تخته بنویسید:";
+                                textHeader = $"لطفا متن زیر را با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
                                 break;
                             case FProject.Shared.WritepadType.WordGroup:
-                                textHeader = $"لطفا کلمات زیر را هرکدام در خطی جداگانه و با رعایت فاصله‌ی مناسب از هم، با {hand} خود در تخته بنویسید:";
+                                textHeader = $"لطفا کلمات زیر را هرکدام در <strong>خطی جداگانه</strong> و با رعایت <strong>فاصله‌ی مناسب از هم</strong>، با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
                                 break;
                             case FProject.Shared.WritepadType.Sign:
-                                textHeader = $"لطفا امضایتان را با {hand} خود بکشید. امضای رسم شده نباید با امضاهای قبلی مغایرت داشته باشد و همچنین امضای اصلیتان نباشد.";
+                                textHeader = $"لطفا امضایتان را با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود بکشید.<br />امضای رسم شده نباید با امضاهای قبلی مغایرت داشته باشد و همچنین امضای اصلیتان نباشد.";
                                 break;
                         }
                     }
-                    @textHeader
+                    @((MarkupString) textHeader)
                     <br />
                     <br />
                     @((MarkupString) (Parent.WritepadInstance.Text?.Content ?? string.Empty))
+                </MyBFUText>
+            </StackItem>
+            <Hr />
+            <StackItem VerticalFill=false Align=Alignment.Center Style="text-align:justify;">
+                <MyBFUText Block="true" Variant=@TextType.MediumPlus Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold};text-align:center;margin-bottom:7px;")>
+                    راهنمای سریع
+                </MyBFUText>
+                <MyBFUText Block="true" Variant=@TextType.SmallPlus>
+                    <ul>
+                        <li>
+                            با استفاده از <b>نوع ورودی متفاوت از نوع ورودی تخته</b>، <b>کلیک راست موس</b> یا <b>دو انگشت همزمان</b> می‌توانید تخته را تکان دهید.
+                        </li>
+                    </ul>
                 </MyBFUText>
             </StackItem>
             <Hr />

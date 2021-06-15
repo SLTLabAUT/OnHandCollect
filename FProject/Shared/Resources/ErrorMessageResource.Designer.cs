@@ -61,7 +61,7 @@ namespace FProject.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to رمز عبور و تکرار رمز عبور باید یکی باشند..
+        ///   Looks up a localized string similar to «رمز عبور» و «تکرار رمز عبور» باید یکی باشند..
         /// </summary>
         public static string ConfirmPassword {
             get {
@@ -79,6 +79,15 @@ namespace FProject.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} باید حداقل دارای {1} کاراکتر باشد..
+        /// </summary>
+        public static string MinLength {
+            get {
+                return ResourceManager.GetString("MinLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to رمز عبور باید حداقل دارای ۸ کاراکتر باشد؛ یکی از حروف a تا z، یکی از حروف A تا Z و دست‌کم یک رقم نیز داشته باشد..
         /// </summary>
         public static string Password {
@@ -88,7 +97,7 @@ namespace FProject.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to شماره‌ی تلفن همراه وارد شده صحیح نمی‌باشد..
+        ///   Looks up a localized string similar to «شماره‌ی تلفن همراه» وارد شده صحیح نمی‌باشد..
         /// </summary>
         public static string PhoneNumber {
             get {
@@ -115,7 +124,7 @@ namespace FProject.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to پذیرفتن شرایط الزامی است..
+        ///   Looks up a localized string similar to «پذیرش شرایط استفاده» الزامی می‌باشد..
         /// </summary>
         public static string Terms {
             get {

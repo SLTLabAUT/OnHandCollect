@@ -48,12 +48,12 @@ namespace FProject.Server
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.User.RequireUniqueEmail = true;
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
                 options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(1);
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(6);
                 options.Tokens.EmailConfirmationTokenProvider = "EmailConfirmation";
             })
                 .AddRoles<IdentityRole>()

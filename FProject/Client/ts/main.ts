@@ -1,5 +1,15 @@
 ﻿async function ImportGlobal(name: string, uri: string) {
-    const module = await import(uri);
+    let url: URL;
+    if (uri.startsWith("/")) {
+        url = new URL(window.location.origin + uri);
+    }
+    else {
+        url = new URL(window.location.origin + window.location.pathname + "/" + uri);
+    }
+    if (!url.searchParams.has("version")) {
+        url.searchParams.set("version", window.VERSION);
+    }
+    const module = await import(url.pathname + url.search);
     window[name] = module;
     return module;
 }

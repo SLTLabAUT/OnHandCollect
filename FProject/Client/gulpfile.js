@@ -4,7 +4,11 @@ const sourcemaps = require("gulp-sourcemaps");
 const terser = require("gulp-terser");
 const ts = require("gulp-typescript");
 const pathResolver = require("gulp-typescript-path-resolver");
-const sass = require("gulp-sass")
+const sass = require("gulp-sass");
+const preprocess = require("gulp-preprocess");
+var rename = require("gulp-rename");
+
+require("dotenv").config({ path: "../../.env" });
 
 const tsProject = ts.createProject("tsconfig.json")
 
@@ -38,7 +42,15 @@ function buildTs() {
         .pipe(gulp.dest(tsProject.config.compilerOptions.outDir, { sourcemaps: "." }));
 }
 
-exports.default = gulp.series(clean, gulp.parallel(buildSass, buildTs));
+function release() {
+    return gulp.src("wwwroot/index.extended.html")
+        .pipe(preprocess())
+        .pipe(rename("wwwroot/index.html"))
+        .pipe(gulp.dest("."));
+}
+
+exports.default = gulp.series(clean, gulp.parallel(buildSass, buildTs, release));
 exports.buildTs = buildTs;
 exports.buildSass = buildSass;
+exports.release = release;
 exports.clean = clean;

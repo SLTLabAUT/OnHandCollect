@@ -117,7 +117,7 @@ namespace FProject.Server
                 {
                     if (!env.IsDevelopment())
                     {
-                        ctx.Context.Response.Headers.Append(HeaderNames.CacheControl, $"max-age={TimeSpan.FromDays(1).TotalSeconds}");
+                        ctx.Context.Response.Headers.Append(HeaderNames.CacheControl, $"max-age={TimeSpan.FromDays(5).TotalSeconds}");
                     }
                 }
             });

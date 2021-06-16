@@ -1,0 +1,3 @@
+﻿interface Window {
+    VERSION: string
+}

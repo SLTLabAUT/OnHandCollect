@@ -3,7 +3,7 @@
 
 <Stack ClassName=@("panel" + (PanelCollapsed ? " panel-collapsed" : "")) Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
     <StackItem>
-        <Stack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+        <Stack VerticalFill=true HorizontalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
             <StackItem VerticalFill=false Align=Alignment.Center Style="width: 100%;">
                 <Stack Reversed=true Horizontal=true VerticalAlign=Alignment.Center>
                     <StackItem>
@@ -80,47 +80,51 @@
             </StackItem>
             <Hr />
             <StackItem Grow=1 Align=Alignment.Center Style="overflow:auto;">
-                <MyBFUText Block="true" Variant=@TextType.Medium
-                           Style=@($"text-align:justify;{(Parent.WritepadInstance.Type != FProject.Shared.WritepadType.Text ? "text-align-last:center;" : "")}")>
-                    @{
-                        var hand = Parent.WritepadInstance.Hand.GetAttribute<DisplayAttribute>().Name;
-                        var pointerType = Parent.WritepadInstance.PointerType.GetAttribute<DisplayAttribute>().Name;
-                        var textHeader = string.Empty;
-                        switch (Parent.WritepadInstance.Type)
-                        {
-                            case FProject.Shared.WritepadType.Text:
-                                textHeader = $"لطفا متن زیر را با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
-                                break;
-                            case FProject.Shared.WritepadType.WordGroup:
-                                textHeader = $"لطفا کلمات زیر را هرکدام در <strong>خطی جداگانه</strong> و با رعایت <strong>فاصله‌ی مناسب از هم</strong>، با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
-                                break;
-                            case FProject.Shared.WritepadType.Sign:
-                                textHeader = $"لطفا امضایتان را با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود بکشید.<br />امضای رسم شده نباید با امضاهای قبلی مغایرت داشته باشد و همچنین امضای اصلیتان نباشد.";
-                                break;
-                        }
-                    }
-                    @((MarkupString) textHeader)
-                    <br />
-                    <br />
-                    @((MarkupString) (Parent.WritepadInstance.Text?.Content ?? string.Empty))
-                </MyBFUText>
-            </StackItem>
-            <Hr />
-            <StackItem VerticalFill=false Align=Alignment.Center Style="text-align:justify;">
-                <MyBFUText Block="true" Variant=@TextType.MediumPlus Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold};text-align:center;margin-bottom:7px;")>
-                    راهنمای سریع
-                </MyBFUText>
-                <MyBFUText Block="true" Variant=@TextType.SmallPlus>
-                    <ul>
-                        <li>
-                            با استفاده از <b>نوع ورودی متفاوت از نوع ورودی تخته</b>، <b>کلیک راست موس</b> یا <b>دو انگشت همزمان</b> می‌توانید تخته را تکان دهید.
-                        </li>
-                    </ul>
-                </MyBFUText>
+                <Stack VerticalFill="true" HorizontalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                    <StackItem VerticalFill="false" Grow=1 Align=Alignment.Center>
+                        <MyBFUText Block="true" Variant=@TextType.Medium
+                                   Style=@($"text-align:justify;{(Parent.WritepadInstance.Type != FProject.Shared.WritepadType.Text ? "text-align-last:center;" : "")}")>
+                            @{
+                                var hand = Parent.WritepadInstance.Hand.GetAttribute<DisplayAttribute>().Name;
+                                var pointerType = Parent.WritepadInstance.PointerType.GetAttribute<DisplayAttribute>().Name;
+                                var textHeader = string.Empty;
+                                switch (Parent.WritepadInstance.Type)
+                                {
+                                    case FProject.Shared.WritepadType.Text:
+                                        textHeader = $"لطفا متن زیر را با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
+                                        break;
+                                    case FProject.Shared.WritepadType.WordGroup:
+                                        textHeader = $"لطفا کلمات زیر را هرکدام در <strong>خطی جداگانه</strong> و با رعایت <strong>فاصله‌ی مناسب از هم</strong>، با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
+                                        break;
+                                    case FProject.Shared.WritepadType.Sign:
+                                        textHeader = $"لطفا امضایتان را با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود بکشید.<br />امضای رسم شده نباید با امضاهای قبلی مغایرت داشته باشد و همچنین امضای اصلیتان نباشد.";
+                                        break;
+                                }
+                            }
+                            @((MarkupString) textHeader)
+                            <br />
+                            <br />
+                            @((MarkupString) (Parent.WritepadInstance.Text?.Content ?? string.Empty))
+                        </MyBFUText>
+                    </StackItem>
+                    <Hr />
+                    <StackItem VerticalFill=false Align=Alignment.Center Style="text-align:justify;">
+                        <MyBFUText Block="true" Variant=@TextType.MediumPlus Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold};text-align:center;margin-bottom:7px;")>
+                            نکات راهنما
+                        </MyBFUText>
+                        <MyBFUText Block="true" Variant=@TextType.SmallPlus>
+                            <ul>
+                                <li>
+                                    با استفاده از <b>نوع ورودی متفاوت از نوع ورودی تخته</b>، <b>کلیک راست موس</b> یا <b>دو انگشت همزمان</b> می‌توانید تخته را تکان دهید.
+                                </li>
+                            </ul>
+                        </MyBFUText>
+                    </StackItem>
+                </Stack>
             </StackItem>
             <Hr />
             <StackItem VerticalFill=false Align=Alignment.Center Style="width: 100%;">
-                <Stack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
+                <Stack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.Center>
                     <StackItem Grow=1>
                         <Stack>
                             <StackItem>

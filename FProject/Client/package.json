@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "eruda": "^2.4.1",
     "lodash": "^4.17.20",
     "lodash-es": "^4.17.20",
     "lz-string": "^1.4.4",

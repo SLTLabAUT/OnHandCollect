@@ -1,0 +1,49 @@
+{
+  "_from": "eruda",
+  "_id": "eruda@2.4.1",
+  "_inBundle": false,
+  "_integrity": "sha512-rI16JoCsyy/pzXbPo7X6EMSUrhbtKZeFZGopiqrmCKxA8GlH61IXjlQAk1SWGpVpkJ6A1z7leuF8EmhFsU+OXQ==",
+  "_location": "/eruda",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "eruda",
+    "name": "eruda",
+    "escapedName": "eruda",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/eruda/-/eruda-2.4.1.tgz",
+  "_shasum": "dedc9b78546feb827d6ccafbfd7dae480509d2a2",
+  "_spec": "eruda",
+  "_where": "D:\\MEGA\\Shared\\RiderProjects\\FProject\\FProject\\Client",
+  "author": {
+    "name": "redhoodsu"
+  },
+  "bugs": {
+    "url": "https://github.com/liriliri/eruda/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Console for Mobile Browsers",
+  "homepage": "https://eruda.liriliri.io/",
+  "keywords": [
+    "console",
+    "mobile",
+    "debug"
+  ],
+  "license": "MIT",
+  "main": "eruda.js",
+  "name": "eruda",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liriliri/eruda.git"
+  },
+  "version": "2.4.1"
+}

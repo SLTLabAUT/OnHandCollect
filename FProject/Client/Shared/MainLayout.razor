@@ -2,26 +2,15 @@
 
 <div class="main-container">
     <Stack Horizontal="true" Style="width:100%;">
-        <StackItem ClassName="ms-hiddenMdDown" Grow=1 Style="overflow:hidden;max-width:20%;min-width:20%;">
+        <StackItem ClassName="ms-hiddenMdDown" Style="max-width:25%;min-width:20%;">
             <NavMenu />
         </StackItem>
 
-        <Panel ClassName="ms-hiddenMdUp" Type=@PanelType.SmallFixedFar HasCloseButton=false OnDismiss=@HideMenu IsOpen=@isPanelOpen IsLightDismiss="true">
-            <NavigationTemplate>
-                <MyBFUIconButton OnClick=HideMenu IconName="GlobalNavButtonActive" />
-            </NavigationTemplate>
-            <ChildContent>
-                <NavMenu OnLinkClicked=@OnNavLinkClick Style="box-shadow:none;" />
-            </ChildContent>
-        </Panel>
-
-        <StackItem Grow=7 Style="overflow:hidden">
+        <StackItem Grow=1>
             <Stack VerticalFill="true" Style="width:100%;">
-                <ResponsiveLayout MaxWidth="ResponsiveMode.Medium.ToMaxCssValue()">
-                    <StackItem VerticalFill="false">
-                        <MyBFUIconButton IconName="GlobalNavButton" OnClick=@ShowMenu />
-                    </StackItem>
-                </ResponsiveLayout>
+                <StackItem VerticalFill="false" ClassName="ms-hiddenLgUp">
+                    <MyBFUIconButton IconName="GlobalNavButton" OnClick=@ShowMenu />
+                </StackItem>
 
                 <StackItem ClassName="main" Grow="1" Tokens="new StackItemTokens { Padding = ((int)CurrentMode <= (int)ResponsiveMode.Medium ? 10 : 0) }" Style="overflow-y:auto;">
                     @Body
@@ -29,4 +18,13 @@
             </Stack>
         </StackItem>
     </Stack>
+
+    <Panel ClassName="ms-hiddenLgUp" Type=@PanelType.SmallFixedFar HasCloseButton=false OnDismiss=@HideMenu IsOpen=@isPanelOpen IsLightDismiss="true">
+        <NavigationTemplate>
+            <MyBFUIconButton OnClick=HideMenu IconName="GlobalNavButtonActive" />
+        </NavigationTemplate>
+        <ChildContent>
+            <NavMenu OnLinkClicked=@OnNavLinkClick Style="box-shadow:none;" />
+        </ChildContent>
+    </Panel>
 </div>

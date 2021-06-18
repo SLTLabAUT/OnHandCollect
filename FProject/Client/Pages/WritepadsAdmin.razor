@@ -3,8 +3,8 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = IdentityRoleConstants.Admin)]
 
-<div style="height:100%;overflow:auto;">
-    <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+<div style="height:100%;">
+    <Stack VerticalFill="true" HorizontalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
         <StackItem VerticalFill=false Style="width:100%;">
             <Stack Horizontal="true" Wrap="true" Reversed="true" VerticalAlign=Alignment.Center Style="width:100%;">
                 <StackItem>
@@ -16,19 +16,19 @@
             </Stack>
         </StackItem>
         <Hr />
-        <StackItem Grow=1 Style="width:100%">
+        <StackItem VerticalFill="false" Grow=1 Style="width:100%;overflow:auto;">
             @if (WritepadList is null)
             {
                 <Spinner Size=@SpinnerSize.Large />
             }
             else
             {
-                <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                <Stack VerticalFill="true" HorizontalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                     <StackItem VerticalFill=false Align=Alignment.Center>
                         <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
                     </StackItem>
-                    <StackItem Grow=1 Style="width:100%;">
-                        <Stack Horizontal="true" Wrap="true" HorizontalAlign=Alignment.SpaceEvenly Tokens=@(new StackTokens { ChildrenGap = new double[] { 50 } }) Style="margin:0;">
+                    <StackItem VerticalFill="false" Style="width:100%;">
+                        <Stack VerticalFill="true" Horizontal="true" Wrap="true" HorizontalAlign=Alignment.SpaceEvenly Tokens=@(new StackTokens { ChildrenGap = new double[] { 50 } }) Style="margin:0;">
                             @if (AllCount == 0)
                             {
                                 <MyBFUText>تخته‌ای وجود ندارد.</MyBFUText>
@@ -37,7 +37,7 @@
                             {
                                 var writepad = WritepadList[i];
 
-                                <StackItem>
+                                <StackItem VerticalFill="false">
                                     <DocumentCard Style="min-width:320px;">
                                         <Stack Horizontal="true" VerticalAlign=@Alignment.Center Tokens=@(new StackTokens { Padding = "8px 16px" }) Style=@($"font-size:{ThemeProvider.Theme.FontStyle.FontSize.XLarge};")>
                                             <StackItem Grow="1" DisableShrink="true" Tokens=@(new StackItemTokens { Margin = "0 0 0 50px" })>

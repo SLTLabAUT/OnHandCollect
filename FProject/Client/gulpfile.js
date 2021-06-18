@@ -6,11 +6,16 @@ const ts = require("gulp-typescript");
 const pathResolver = require("gulp-typescript-path-resolver");
 const sass = require("gulp-sass");
 const preprocess = require("gulp-preprocess");
-var rename = require("gulp-rename");
+const rename = require("gulp-rename");
 
 require("dotenv").config({ path: "../../.env" });
 
-const tsProject = ts.createProject("tsconfig.json")
+const launchSettings = require("./Properties/launchSettings.json");
+const tsProject = ts.createProject("tsconfig.json");
+
+process.env.ASPNETCORE_ENVIRONMENT =
+    process.env.ASPNETCORE_ENVIRONMENT
+    || (launchSettings && launchSettings.profiles["IIS Express"].environmentVariables.ASPNETCORE_ENVIRONMENT);
 
 function clean() {
     return del([

@@ -1,10 +1,10 @@
 ﻿<div class="identity-template">
-    <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
-        <StackItem Align=Alignment.Center>
+    <Stack VerticalFill="true" HorizontalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+        <StackItem VerticalFill="false" Align=Alignment.Center>
             <MyBFUText Variant=@TextType.XxLarge>@Title</MyBFUText>
         </StackItem>
         <Hr />
-        <StackItem ClassName="content" Align=Alignment.Center>
+        <StackItem VerticalFill="false" Grow="1" ClassName="content">
             @ChildContent
         </StackItem>
     </Stack>

@@ -1,7 +1,9 @@
 ﻿::deep.identity-template {
     width: 100%;
+    height: 100%;
 
     .content {
         width: 75% !important;
+        overflow: auto;
     }
 }

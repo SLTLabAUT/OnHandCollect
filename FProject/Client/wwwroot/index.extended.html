@@ -21,9 +21,14 @@
         <a href="" class="reload">بازآوری صفحه</a>
         <a class="dismiss">🗙</a>
     </div>
+
+    <!-- @if ASPNETCORE_ENVIRONMENT='Development' -->
+    <script src="/lib/eruda/eruda.js?version=<!-- @echo VERSION -->""></script>
+    <script>eruda.init();</script>
+    <!-- @endif -->
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js?version=<!-- @echo VERSION -->"></script>
     <script src="_framework/blazor.webassembly.js?version=<!-- @echo VERSION -->"></script>
-    <script src="/js/blazorFluentUI.js?version=<!-- @echo VERSION -->"></script>
+    <script src="/ts/Ts/blazorFluentUI.js?version=<!-- @echo VERSION -->"></script>
     <script src="/lib/lz-string/libs/lz-string.min.js?version=<!-- @echo VERSION -->"></script>
     <script src="/ts/Ts/main.js?version=<!-- @echo VERSION -->"></script>
 

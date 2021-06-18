@@ -1,5 +1,6 @@
 ﻿import * as _ from "/lib/lodash-es/lodash.js";
 
+let html: HTMLElement;
 let pad: HTMLElement;
 let panel: HTMLElement;
 let canvas: HTMLCanvasElement;
@@ -27,7 +28,8 @@ let mode: Mode;
 let defaultMode: Mode;
 let pointerId: number;
 let padRatio: number;
-let padOffset: number;
+let horizontalOffset: number;
+let verticalOffset: number;
 
 export async function init(compRef, ratio: number, origin: number, writepadCompressedJson: string): Promise<void> {
     timeStampOrigin = origin;
@@ -67,6 +69,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
         num = lastSavedDrawingNumber + 1;
     }
 
+    html = document.querySelector("html");
     pad = document.querySelector(".pad");
     panel = document.querySelector(".panel-container");
     canvas = <HTMLCanvasElement>document.getElementById("writepad");
@@ -77,6 +80,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     redraw();
 
     window.addEventListener("resize", redraw);
+    document.addEventListener("scroll", onScroll);
 
     canvas.addEventListener("pointerdown", onPointerDown);
     canvas.addEventListener("pointermove", onPointerMove);
@@ -86,7 +90,6 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
 
     let writepadElement = document.querySelector(".writepad");
     writepadElement.addEventListener("contextmenu", e => e.preventDefault());
-    writepadElement.addEventListener("scroll", onScroll);
 
     updateDotNetUndoRedo();
 }
@@ -96,15 +99,15 @@ export function pauseVideo() {
 }
 
 function onScroll(event: Event) {
-    updatePadOffset();
+    updateOffsets();
 }
 
 function updateCanvasSize() {
     //let oldWidth = canvas.width;
     //let oldHeight = canvas.height;
     //if (panel.classList.contains("panel-collapsed")) {
-    canvas.width = Math.trunc(window.innerWidth - panel.scrollWidth);
-    canvas.height = window.innerHeight;
+    canvas.width = Math.trunc(Math.min(window.innerWidth, html.getBoundingClientRect().width) - panel.getBoundingClientRect().width);
+    canvas.height = Math.trunc(Math.min(window.innerHeight, html.getBoundingClientRect().height));
     //} else {
     //    canvas.width = Math.round(window.innerWidth * padRatio);
     //    canvas.height = Math.round(window.innerHeight);
@@ -117,8 +120,9 @@ function updateCanvasSize() {
     //}
 }
 
-function updatePadOffset() {
-    padOffset = window.innerWidth - canvas.width - pad.scrollLeft;
+function updateOffsets() {
+    horizontalOffset = canvas.getBoundingClientRect().left;
+    verticalOffset = canvas.getBoundingClientRect().top;
 }
 
 export function isSaveRequired() {
@@ -315,7 +319,7 @@ function toScreenY(realY: number): number {
 
 export function redraw(): void {
     updateCanvasSize();
-    updatePadOffset();
+    updateOffsets();
     let minX = - canvas.width;
     let maxX = 2 * canvas.width;
     let minY = - canvas.height;
@@ -377,8 +381,8 @@ function toRealY(screenY: number): number {
     return screenY - offsetY;
 }
 
-function addToDrawings(event: PointerEvent, type: PointType, x: number, y: number): void {
-    lastPoint = {
+function createPoint(event: PointerEvent, type: PointType, x: number, y: number, num: number): Point {
+    return {
         Number: num,
         Type: type,
         TimeStamp: toFixedNumber(event.timeStamp, 3) + timeStampOrigin,
@@ -392,8 +396,22 @@ function addToDrawings(event: PointerEvent, type: PointType, x: number, y: numbe
         TiltY: toFixedNumber(event.tiltY, 3),
         Twist: Math.round(event.twist)
     };
-    writepad.Points.push(lastPoint);
+}
+
+function addToDrawings(point: Point): void {
+    writepad.Points.push(point);
     num++;
+}
+
+function addStartingPoint(): void {
+    if (undoStack.length != 0) {
+        undoStack.length = 0;
+        updateDotNetUndoRedo();
+    }
+    addToDrawings(lastPoint);
+    if (writepad.Points.length == 1) {
+        updateDotNetUndoRedo();
+    }
 }
 
 function detectPointerType(type: string): PointerType {
@@ -421,43 +439,15 @@ function detectMode(event: PointerEvent): Mode {
     }
 
     if (event.button == 0 && event.buttons == 1 //Left Mouse, Touch Contact, Pen contact
-        && detectPointerType(event.pointerType) == writepad.PointerType
-        && event.isPrimary) {
-        return Mode.Draw;
-    } else {
+        && detectPointerType(event.pointerType) == writepad.PointerType) {
+        if (event.isPrimary) {
+            return Mode.Draw;
+        }
+        else {
+            return Mode.Move;
+        }
+    } else if (mode == Mode.Non) {
         return Mode.Move;
-    }
-}
-
-function onPointerDown(event: PointerEvent) {
-    event.preventDefault();
-
-    if (isMiddleOfDrawing) {
-        return;
-    }
-
-    mode = detectMode(event);
-
-    isMiddleOfDrawing = true;
-    pointerId = event.pointerId;
-
-    pointerX = prevPointerX = event.clientX - padOffset;
-    pointerY = prevPointerY = event.clientY;
-
-    switch (mode) {
-        case Mode.Draw:
-            if (undoStack.length != 0) {
-                undoStack.length = 0;
-                updateDotNetUndoRedo();
-            }
-            addToDrawings(event, PointType.Starting, toRealX(pointerX), toRealY(pointerY));
-            if (writepad.Points.length == 1) {
-                updateDotNetUndoRedo();
-            }
-            break;
-        case Mode.Move:
-            lastMoveTime = event.timeStamp;
-            break;
     }
 }
 
@@ -473,24 +463,55 @@ async function draw(startX, startY, endX, endY, isDot: boolean = false) {
     }
 }
 
-function onPointerMove(event: PointerEvent) {
+function onPointerDown(event: PointerEvent) {
     event.preventDefault();
 
-    if (pointerId != event.pointerId || !isMiddleOfDrawing)
+    if (isMiddleOfDrawing) {
         return;
+    }
 
-    pointerX = event.clientX - padOffset;
-    pointerY = event.clientY;
+    mode = detectMode(event);
+
+    pointerId = event.pointerId;
+
+    pointerX = prevPointerX = event.clientX - horizontalOffset;
+    pointerY = prevPointerY = event.clientY - verticalOffset;
 
     switch (mode) {
         case Mode.Draw:
+            lastPoint = createPoint(event, PointType.Starting, toRealX(pointerX), toRealY(pointerY), num);
+            break;
+        case Mode.Move:
+            lastMoveTime = event.timeStamp;
+            break;
+    }
+}
+
+function onPointerMove(event: PointerEvent) {
+    event.preventDefault();
+
+    if (pointerId != event.pointerId)
+        return;
+
+    isMiddleOfDrawing = true;
+
+    pointerX = event.clientX - horizontalOffset;
+    pointerY = event.clientY - verticalOffset;
+
+    switch (mode) {
+        case Mode.Draw:
+            if (lastPoint.Type == PointType.Starting) {
+                addStartingPoint();
+            }
+
             if (lastPoint.TimeStamp != event.timeStamp) {
                 const realX = toRealX(pointerX);
                 const realY = toRealY(pointerY);
                 if (lastPoint.X != realX || lastPoint.Y != realY) {
                     draw(prevPointerX, prevPointerY, pointerX, pointerY);
                 }
-                addToDrawings(event, PointType.Middle, realX, realY);
+                lastPoint = createPoint(event, PointType.Middle, realX, realY, num);
+                addToDrawings(lastPoint);
             }
             break;
         case Mode.Move:
@@ -510,14 +531,20 @@ function onPointerMove(event: PointerEvent) {
 function onPointerUp(event: PointerEvent) {
     event.preventDefault();
 
-    if (pointerId != event.pointerId || !isMiddleOfDrawing)
+    if (pointerId != event.pointerId)
         return;
 
-    pointerX = event.clientX - padOffset;
-    pointerY = event.clientY;
+    isMiddleOfDrawing = true;
+
+    pointerX = event.clientX - horizontalOffset;
+    pointerY = event.clientY - verticalOffset;
 
     switch (mode) {
         case Mode.Draw:
+            if (lastPoint.Type == PointType.Starting) {
+                addStartingPoint();
+            }
+
             const realX = toRealX(pointerX);
             const realY = toRealY(pointerY);
             if (lastPoint.Type == PointType.Starting
@@ -525,7 +552,8 @@ function onPointerUp(event: PointerEvent) {
                 || lastPoint.X != realX
                 || lastPoint.Y != realY) {
                 draw(prevPointerX, prevPointerY, pointerX, pointerY, lastPoint.Type == PointType.Starting);
-                addToDrawings(event, PointType.Ending, realX, realY);
+                lastPoint = createPoint(event, PointType.Ending, realX, realY, num);
+                addToDrawings(lastPoint);
             } else {
                 lastPoint.Type = PointType.Ending;
             }
@@ -537,7 +565,9 @@ function onPointerUp(event: PointerEvent) {
     }
 
     mode = defaultMode;
+    pointerId = undefined;
     isMiddleOfDrawing = false;
+
     if (saveInQueue) {
         saveInQueue = false;
         save();

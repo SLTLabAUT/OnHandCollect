@@ -15,6 +15,10 @@
     font-family: IRANSans, Vazir, sans-serif !important;
 }
 
+html {
+    overflow: auto;
+}
+
 html, body {
     height: 100%;
     width: 100%;

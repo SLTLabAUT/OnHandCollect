@@ -171,8 +171,8 @@ var FluentUIBaseComponent;
     function measureScrollDimensions(element) {
         if (element) {
             var dimensions = {
-                scrollHeight: element?.scrollHeight,
-                scrollWidth: element?.scrollWidth,
+                scrollHeight: element.scrollHeight,
+                scrollWidth: element.scrollWidth,
             };
             return dimensions;
         }

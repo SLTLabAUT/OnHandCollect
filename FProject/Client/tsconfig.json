@@ -5,6 +5,7 @@
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
+    "allowJs": true,
     "target": "es6",
     "module": "ESNext",
     "outDir": "wwwroot/ts",

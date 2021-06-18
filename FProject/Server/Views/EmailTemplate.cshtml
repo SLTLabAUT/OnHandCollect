@@ -1,0 +1,1043 @@
+﻿@model FProject.Server.Models.EmailTemplate
+
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <style>
+        .ms-depth-16 {
+            box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132),0 1.2px 3.6px 0 rgba(0,0,0,.108);
+        }
+
+        .ms-depth-64 {
+            box-shadow: 0 25.6px 57.6px 0 rgba(0,0,0,.22),0 4.8px 14.4px 0 rgba(0,0,0,.18);
+        }
+
+        :root {
+            --palette-ThemeDarker: #004578;
+            --palette-ThemeDark: #005a9e;
+            --palette-ThemeDarkAlt: #106ebe;
+            --palette-ThemePrimary: #0078d4;
+            --palette-ThemeSecondary: #2b88d8;
+            --palette-ThemeTertiary: #71afe5;
+            --palette-ThemeLight: #c7e0f4;
+            --palette-ThemeLighter: #deecf9;
+            --palette-ThemeLighterAlt: #eff6fc;
+            --palette-Black: #000000;
+            --palette-BlackTranslucent40: rgba(0, 0, 0, 0.4);
+            --palette-NeutralDark: #201f1e;
+            --palette-NeutralPrimary: #323130;
+            --palette-NeutralPrimaryAlt: #3b3a39;
+            --palette-NeutralSecondary: #605e5c;
+            --palette-NeutralSecondaryAlt: #8a8886;
+            --palette-NeutralTertiary: #a19f9d;
+            --palette-NeutralTertiaryAlt: #c8c6c4;
+            --palette-NeutralQuaternary: #d2d0ce;
+            --palette-NeutralQuaternaryAlt: #e1dfdd;
+            --palette-NeutralLight: #edebe9;
+            --palette-NeutralLighter: #f3f2f1;
+            --palette-NeutralLighterAlt: #faf9f8;
+            --palette-Accent: #0078d4;
+            --palette-White: #ffffff;
+            --palette-WhiteTranslucent40: rgba(255, 255, 255, 0.4);
+            --palette-YellowDark: #d29200;
+            --palette-Yellow: #ffb900;
+            --palette-YellowLight: #fff100;
+            --palette-Orange: #d83b01;
+            --palette-OrangeLight: #ea4300;
+            --palette-OrangeLighter: #ff8c00;
+            --palette-RedDark: #a4262c;
+            --palette-Red: #e81123;
+            --palette-MagentaDark: #5c005c;
+            --palette-Magenta: #b4009e;
+            --palette-MagentaLight: #e3008c;
+            --palette-PurpleDark: #32145a;
+            --palette-Purple: #5c2d91;
+            --palette-PurpleLight: #b4a0ff;
+            --palette-BlueDark: #002050;
+            --palette-BlueMid: #00188f;
+            --palette-Blue: #0078d4;
+            --palette-BlueLight: #00bcf2;
+            --palette-TealDark: #004b50;
+            --palette-Teal: #008272;
+            --palette-TealLight: #00b294;
+            --palette-GreenDark: #004b1c;
+            --palette-Green: #107c10;
+            --palette-GreenLight: #bad80;
+            --semanticColors-BodyBackground: #ffffff;
+            --semanticColors-BodyBackgroundHovered: #f3f2f1;
+            --semanticColors-BodyBackgroundChecked: #edebe9;
+            --semanticColors-BodyStandoutBackground: #faf9f8;
+            --semanticColors-BodyFrameBackground: #ffffff;
+            --semanticColors-BodyFrameDivider: #edebe9;
+            --semanticColors-BodyDivider: #edebe9;
+            --semanticColors-DisabledBackground: #f3f2f1;
+            --semanticColors-DisabledBorder: #c8c6c4;
+            --semanticColors-FocusBorder: #605e5c;
+            --semanticColors-VariantBorder: #edebe9;
+            --semanticColors-VariantBorderHovered: #a19f9d;
+            --semanticColors-DefaultStateBackground: #faf9f8;
+            --semanticColors-ErrorBackground: rgba(245, 135, 145, 0.2);
+            --semanticColors-BlockingBackground: rgba(250, 65, 0, 0.2);
+            --semanticColors-WarningBackground: rgba(255, 200, 10, 0.2);
+            --semanticColors-WarningHighlight: #ffb900;
+            --semanticColors-SuccessBackground: rgba(95, 210, 85, 0.2);
+            --semanticColors-InputBorder: #605e5c;
+            --semanticColors-SmallInputBorder: #605e5c;
+            --semanticColors-InputBorderHovered: #323130;
+            --semanticColors-InputBackground: #ffffff;
+            --semanticColors-InputBackgroundChecked: #0078d4;
+            --semanticColors-InputBackgroundCheckedHovered: #005a9e;
+            --semanticColors-InputPlaceholderBackgroundChecked: #deecf9;
+            --semanticColors-InputForegroundChecked: #ffffff;
+            --semanticColors-InputFocusBorderAlt: #0078d4;
+            --semanticColors-InputIconDisabled: #a19f9d;
+            --semanticColors-InputIcon: #0078d4;
+            --semanticColors-InputIconHovered: #005a9e;
+            --semanticColors-ButtonBackground: #ffffff;
+            --semanticColors-ButtonBackgroundChecked: #c8c6c4;
+            --semanticColors-ButtonBackgroundHovered: #f3f2f1;
+            --semanticColors-ButtonBackgroundCheckedHovered: #edebe9;
+            --semanticColors-ButtonBackgroundDisabled: #f3f2f1;
+            --semanticColors-ButtonBackgroundPressed: #edebe9;
+            --semanticColors-ButtonBorder: #8a8886;
+            --semanticColors-ButtonBorderDisabled: #f3f2f1;
+            --semanticColors-PrimaryButtonBackground: #0078d4;
+            --semanticColors-PrimaryButtonBackgroundHovered: #106ebe;
+            --semanticColors-PrimaryButtonBackgroundPressed: #005a9e;
+            --semanticColors-PrimaryButtonBackgroundDisabled: #f3f2f1;
+            --semanticColors-PrimaryButtonBorder: transparent;
+            --semanticColors-AccentButtonBackground: #0078d4;
+            --semanticColors-MenuBackground: #ffffff;
+            --semanticColors-MenuDivider: #c8c6c4;
+            --semanticColors-MenuIcon: #0078d4;
+            --semanticColors-MenuHeader: #0078d4;
+            --semanticColors-MenuItemBackgroundHovered: #f3f2f1;
+            --semanticColors-MenuItemBackgroundPressed: #edebe9;
+            --semanticColors-ListBackground: #ffffff;
+            --semanticColors-ListItemBackgroundHovered: #f3f2f1;
+            --semanticColors-ListItemBackgroundChecked: #edebe9;
+            --semanticColors-ListItemBackgroundCheckedHovered: #e1dfdd;
+            --semanticColors-ListHeaderBackgroundHovered: #f3f2f1;
+            --semanticColors-ListHeaderBackgroundPressed: #edebe9;
+            --semanticTextColors-BodyText: #323130;
+            --semanticTextColors-BodyTextChecked: #000000;
+            --semanticTextColors-BodySubtext: #605e5c;
+            --semanticTextColors-ActionLink: #323130;
+            --semanticTextColors-ActionLinkHovered: #201f1e;
+            --semanticTextColors-Link: #0078d4;
+            --semanticTextColors-LinkHovered: #004578;
+            --semanticTextColors-DisabledText: #a19f9d;
+            --semanticTextColors-DisabledBodyText: #a19f9d;
+            --semanticTextColors-DisabledSubtext: #d2d0ce;
+            --semanticTextColors-DisabledBodySubtext: #c8c6c4;
+            --semanticTextColors-ErrorText: #a4262c;
+            --semanticTextColors-WarningText: #333333;
+            --semanticTextColors-SuccessText: #107c10;
+            --semanticTextColors-InputText: #323130;
+            --semanticTextColors-InputTextHovered: #201f1e;
+            --semanticTextColors-InputPlaceholderText: #605e5c;
+            --semanticTextColors-ButtonText: #323130;
+            --semanticTextColors-ButtonTextHovered: #201f1e;
+            --semanticTextColors-ButtonTextChecked: #201f1e;
+            --semanticTextColors-ButtonTextCheckedHovered: #000000;
+            --semanticTextColors-ButtonTextPressed: #201f1e;
+            --semanticTextColors-ButtonTextDisabled: #a19f9d;
+            --semanticTextColors-PrimaryButtonText: #ffffff;
+            --semanticTextColors-PrimaryButtonTextHovered: #ffffff;
+            --semanticTextColors-PrimaryButtonTextPressed: #ffffff;
+            --semanticTextColors-PrimaryButtonTextDisabled: #d2d0ce;
+            --semanticTextColors-AccentButtonText: #ffffff;
+            --semanticTextColors-ListText: #323130;
+            --semanticTextColors-MenuItemText: #323130;
+            --semanticTextColors-MenuItemTextHovered: #201f1e;
+            --effects-RoundedCorner2: 2px;
+            --effects-Elevation4: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
+            --effects-Elevation8: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.132), 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.108);
+            --effects-Elevation16: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
+            --effects-Elevation64: 0 25.6px 57.6px 0 rgba(0, 0, 0, 0.22), 0 4.8px 14.4px 0 rgba(0, 0, 0, 0.18);
+            --depths-Depth0: 0 0 0 0 transparent;
+            --depths-Depth4: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
+            --depths-Depth8: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.132), 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.108);
+            --depths-Depth16: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
+            --depths-Depth64: 0 25.6px 57.6px 0 rgba(0, 0, 0, 0.22), 0 4.8px 14.4px 0 rgba(0, 0, 0, 0.18);
+            --animation-Duration1: 0.167s;
+            --animation-Duration2: 0.267s;
+            --animation-Duration3: 0.367s;
+            --animation-Duration4: 0.467s;
+            --animation-EasingFunction1: cubic-bezier(0.1, 0.9, 0.2, 1);
+            --animation-EasingFunction2: cubic-bezier(0.1, 0.25, 0.75, 0.9);
+            --commonStyle-ScreenWidthMinSmall: 320;
+            --commonStyle-ScreenWidthMinMedium: 480;
+            --commonStyle-ScreenWidthMinLarge: 640;
+            --commonStyle-ScreenWidthMinXLarge: 1024;
+            --commonStyle-ScreenWidthMinXXLarge: 1366;
+            --commonStyle-ScreenWidthMinXXXLarge: 1920;
+            --commonStyle-ScreenWidthMaxSmall: 479;
+            --commonStyle-ScreenWidthMaxMedium: 639;
+            --commonStyle-ScreenWidthMaxLarge: 1023;
+            --commonStyle-ScreenWidthMaxXLarge: 1365;
+            --commonStyle-ScreenWidthMaxXXLarge: 1919;
+            --commonStyle-ScreenWidthMinUhfMobile: 768;
+            --fontSize-Tiny: 10px;
+            --fontSize-XSmall: 11px;
+            --fontSize-Small: 12px;
+            --fontSize-SmallPlus: 13px;
+            --fontSize-Medium: 14px;
+            --fontSize-MediumPlus: 15px;
+            --fontSize-Large: 17px;
+            --fontSize-XLarge: 21px;
+            --fontSize-XLargePlus: 24px;
+            --fontSize-XxLarge: 28px;
+            --fontSize-XxLargePlus: 32px;
+            --fontSize-SuperLarge: 42px;
+            --fontSize-Mega: 68px;
+            --fontWeight-Light: 100;
+            --fontWeight-SemiLight: 300;
+            --fontWeight-Regular: 400;
+            --fontWeight-SemiBold: 600;
+            --fontWeight-Bold: 700;
+            --iconFontSize-XSmall: 10px;
+            --iconFontSize-Small: 12px;
+            --iconFontSize-Medium: 16px;
+            --iconFontSize-Large: 20px;
+            --zIndex-FocusStyle: 1;
+            --zIndex-Coachmark: 1000;
+            --zIndex-Layer: 1000000;
+            --zIndex-KeytipLayer: 1000001;
+            --zIndex-Nav: 1;
+        }
+
+        body {
+            color: var(--semanticTextColors-BodyText);
+            background-color: var(--semanticColors-BodyBackground);
+            font-size: 15px;
+            font-family: Segoe UI, SegoeUI, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .mediumFont {
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .largeFont {
+            font-size: 17px;
+            font-weight: 400;
+        }
+
+        .xlargeFont {
+            font-size: 21px;
+            font-weight: 600;
+        }
+
+        .disabledBodyScroll {
+            overflow: hidden !important;
+        }
+
+        .slideDownIn10 {
+            animation: Slide_down_in_10 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .slideDownIn20 {
+            animation: Slide_down_in_20 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .slideRightIn10 {
+            animation: Slide_right_in_10 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .slideRightIn40 {
+            animation: Slide_right_in_40 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .slideUpIn10 {
+            animation: Slide_up_in_10 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .slideLeftIn10 {
+            animation: Slide_left_in_10 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .slideLeftIn40 {
+            animation: Slide_left_in_40 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .slideRightOut40 {
+            animation: Slide_right_out_40 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .slideLeftOut40 {
+            animation: Slide_left_out_40 0.367s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .fadeIn100 {
+            animation: Fade_in 0.167s cubic-bezier(0.1, 0.25, 0.75, 0.9);
+        }
+
+        .fadeOut100 {
+            animation: Fade_out 0.167s cubic-bezier(0.1, 0.25, 0.75, 0.9);
+        }
+
+        .fadeIn200 {
+            animation: Fade_in 0.267s cubic-bezier(0.1, 0.25, 0.75, 0.9);
+        }
+
+        .fadeOut200 {
+            animation: Fade_out 0.267s cubic-bezier(0.1, 0.25, 0.75, 0.9);
+        }
+
+        .fadeIn400 {
+            animation: Fade_in 0.367s cubic-bezier(0.1, 0.25, 0.75, 0.9);
+        }
+
+        .ms-Button {
+            outline: transparent;
+            position: relative;
+            font-size: var(--fontSize-Medium);
+            font-weight: var(--fontWeight-Regular);
+            box-sizing: border-box;
+            border: 1px solid var(--semanticColors-ButtonBorder);
+            user-select: none;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            vertical-align: top;
+            padding: 0 16px;
+            min-width: 80px;
+            height: 32px;
+            border-radius: var(--effects-RoundedCorner2);
+        }
+
+            .ms-Button::-moz-focus-inner {
+                border: 0;
+            }
+
+        .ms-Fabric--isFocusVisible .ms-Button:focus::after {
+            content: "";
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            bottom: 2px;
+            right: 2px;
+            border: 1px solid var(--palette-White);
+            outline: 1px solid var(--palette-NeutralSecondary);
+            z-index: var(--zIndex-FocusStyle);
+        }
+
+        .ms-Button:active > * {
+            position: relative;
+            left: 0;
+            top: 0;
+        }
+
+        .ms-Button.is-disabled {
+            background-color: var(--semanticColors-DisabledBackground);
+            color: var(--semanticTextColors-DisabledText);
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .ms-Button:hover,
+        .ms-Button:focus {
+            text-decoration: none;
+            outline: 0;
+        }
+
+        .ms-Button:link,
+        .ms-Button:visited,
+        .ms-Button:active {
+            text-decoration: none;
+        }
+
+        .ms-Button.ms-Button--default:not(.ms-Button--command).is-expanded {
+            background-color: var(--palette-NeutralLight);
+            color: var(--palette-NeutralDark);
+        }
+
+        .ms-Button.ms-Button--primary.is-expanded {
+            background-color: var(--palette-ThemeDark);
+            color: var(--palette-White);
+        }
+
+        .ms-Button.ms-Button--default:not(.ms-Button--command).is-expanded
+        .ms-Button
+        .ms-Button-icon {
+            color: var(--palette-ThemeDark);
+        }
+
+        .ms-Button.ms-Button--primary.is-expanded .ms-Button .ms-Button-icon {
+            color: var(--palette-White);
+        }
+
+        .ms-Button.ms-Button--default:not(.ms-Button--command).is-expanded
+        .ms-Button
+        .ms-Button-menuIcon {
+            color: var(--palette-NeutralPrimary);
+        }
+
+        .ms-Button.ms-Button--primary.is-expanded .ms-Button .ms-Button-menuIcon {
+            color: var(--palette-White);
+        }
+
+        .ms-Button.ms-Button--default:not(.ms-Button--command).is-expanded:hover {
+            background-color: var(--palette-NeutralQuaternaryAlt);
+        }
+
+        .ms-Button.ms-Button--primary.is-expanded:hover {
+            background-color: var(--palette-ThemeDark);
+        }
+
+        .ms-Button.is-disabled .ms-Button .ms-Button-icon {
+            color: var(--semanticTextColors-DisabledText);
+        }
+
+        .ms-Button.is-disabled .ms-Button .ms-Button-menuIcon {
+            color: var(--semanticTextColors-DisabledText);
+        }
+
+        .ms-Button .ms-Button-flexContainer {
+            display: flex;
+            height: 100%;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ms-Button .ms-Button-textContainer {
+            display: block;
+            flex-grow: 1;
+        }
+
+        .ms-Button .ms-Button-description {
+            display: block;
+            font-size: var(--fontSize-Small);
+            font-weight: var(--fontWeight-Regular);
+        }
+
+        .ms-Button .ms-Button-icon {
+            font-size: var(--fontSize-MediumPlus);
+            margin: 0px 4px;
+            height: 16px;
+            line-height: 16px;
+            text-align: center;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        .ms-Button .ms-Button-menuIcon,
+        .ms-Button .ms-Button-menuIcon .ms-Button-icon {
+            font-size: var(--fontSize-Small);
+            margin: 0px 4px;
+            height: 16px;
+            line-height: 16px;
+            text-align: center;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        .ms-Button .ms-Button-label {
+            font-weight: var(--fontWeight-SemiBold);
+            margin: 0px 4px;
+            line-height: 100%;
+            display: block;
+        }
+
+        .ms-Button .ms-Button-screenReaderText {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0px;
+            border: 0px;
+            overflow: hidden;
+        }
+
+        .ms-Button-splitContainer {
+            display: inline-flex;
+            position: relative;
+        }
+
+            .ms-Button-splitContainer .ms-Button--default:not(.ms-Button-menuIcon) {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                border-right: none;
+            }
+
+            .ms-Button-splitContainer .ms-Button--primary:not(.ms-Button-menuIcon) {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                border: none;
+            }
+
+            .ms-Button-splitContainer .ms-Button-menuIcon {
+                padding: 6px;
+                height: 32px;
+                box-sizing: border-box;
+                border-radius: 0;
+                border-top-right-radius: var(--effects-RoundedCorner2);
+                border-bottom-right-radius: var(--effects-RoundedCorner2);
+                border: 1px solid var(--palette-NeutralSecondaryAlt);
+                border-left: none;
+                outline: transparent;
+                user-select: none;
+                display: inline-block;
+                text-decoration: none;
+                text-align: center;
+                cursor: pointer;
+                vertical-align: top;
+                min-width: 32px;
+                width: 32px;
+                margin-left: -1px;
+                margin-top: 0px;
+                margin-right: 0px;
+                margin-bottom: 0px;
+            }
+
+                .ms-Button-splitContainer .ms-Button-menuIcon.is-disabled {
+                    border-color: var(--palette-NeutralLighter);
+                }
+
+        .ms-Button-divider {
+            position: absolute;
+            width: 1px;
+            right: 31px;
+            top: 8px;
+            bottom: 8px;
+        }
+
+        .ms-Button--primary.ms-Button-divider {
+            background-color: var(--palette-White);
+        }
+
+        .ms-Button--default.ms-Button-divider {
+            background-color: var(--semanticColors-BodyDivider);
+        }
+
+        .ms-Button-divider.disabled {
+            background-color: var(--semanticColors-BodyDivider);
+        }
+
+
+        .ms-Button--primary {
+            color: var(--palette-White);
+            background-color: var(--palette-ThemePrimary);
+            border: none;
+            border-width: 0px;
+        }
+
+        .ms-Fabric--isFocusVisible .ms-Button--primary:focus:after {
+            outline: none;
+            border-color: var(--palette-White);
+        }
+
+        .ms-Button--primary:hover {
+            color: var(--palette-White);
+            background-color: var(--palette-ThemeDarkAlt);
+        }
+
+        .ms-Button--primary:active {
+            color: var(--palette-White);
+            background-color: var(--palette-ThemeDark);
+        }
+
+        .ms-Button--primary.is-checked:not(.is-disabled) {
+            color: var(--palette-White);
+            background-color: var(--palette-ThemeDark);
+            border: none;
+        }
+
+        .ms-Button--primary.is-checked:hover {
+            background-color: var(--palette-ThemePrimary);
+            color: var(--palette-White);
+            border: none;
+        }
+
+
+        .ms-Button--default {
+            color: var(--semanticTextColors-ButtonText);
+            background-color: var(--palette-White);
+            border: 1px solid var(--palette-NeutralSecondaryAlt);
+        }
+
+            .ms-Button--default:hover {
+                color: var(--semanticTextColors-ButtonTextHovered);
+                background-color: var(--palette-NeutralLighter);
+            }
+
+            .ms-Button--default:active {
+                color: var(--semanticTextColors-ButtonTextChecked);
+                background-color: var(--palette-NeutralLight);
+            }
+
+            .ms-Button--default.is-checked:not(.is-disabled) {
+                color: var(--semanticTextColors-ButtonTextChecked);
+                background-color: var(--palette-NeutralLight);
+            }
+
+            .ms-Button--default.is-checked:hover {
+                background-color: var(--palette-NeutralLight);
+            }
+
+            .ms-Button--default.is-disabled {
+                background-color: var(--palette-NeutralLighter);
+                border-color: var(--palette-NeutralLighter);
+            }
+
+
+        .ms-Button--messageBar {
+            height: 24px;
+            border-color: var(--palette-NeutralTertiaryAlt);
+        }
+
+
+        .ms-Button.ms-Button--action {
+            min-width: unset;
+            padding: 0px 4px;
+            height: 40px;
+            color: var(--palette-NeutralPrimary);
+            background-color: transparent;
+            border: 1px solid transparent;
+        }
+
+            .ms-Button.ms-Button--action:hover {
+                color: var(--palette-ThemePrimary);
+            }
+
+            .ms-Button.ms-Button--action .ms-Button .ms-Button-icon:hover {
+                color: var(--palette-ThemePrimary);
+            }
+
+            .ms-Button.ms-Button--action:active {
+                color: var(--palette-Black);
+            }
+
+            .ms-Button.ms-Button--action .ms-Button-icon:active {
+                color: var(--palette-ThemeDarker);
+            }
+
+            .ms-Button.ms-Button--action.is-expanded {
+                color: var(--palette-NeutralLight);
+            }
+
+            .ms-Button.ms-Button--action.is-disabled {
+                color: var(--palette-NeutralTertiary);
+                background-color: transparent;
+            }
+
+            .ms-Button.ms-Button--action.is-checked:not(.is-disabled) {
+                color: var(--palette-Black);
+            }
+
+            .ms-Button.ms-Button--action.is-checked .ms-Button .ms-ButtonIcon {
+                color: var(--palette-ThemeDarker);
+            }
+
+            .ms-Button.ms-Button--action .ms-Button .ms-Button-flexContainer {
+                justify-content: flex-start;
+            }
+
+            .ms-Button.ms-Button--action .ms-Button .ms-Button-icon {
+                color: var(--palette-ThemeDarkAlt);
+            }
+
+            .ms-Button.ms-Button--action.is-disabled .ms-Button .ms-Button-icon {
+                color: inherit;
+            }
+
+            .ms-Button.ms-Button--action .ms-Button .ms-Button-menuIcon {
+                color: var(--palette-NeutralSecondary);
+            }
+
+            .ms-Button.ms-Button--action .ms-Button .ms-Button-textContainer {
+                flex-grow: 0;
+            }
+
+            .ms-Button.ms-Button--action .ms-Button .ms-Button-label {
+                font-weight: var(--fontWeight-Regular);
+            }
+
+
+        .ms-Button.ms-Button--commandBar {
+            min-width: 40px;
+            padding: 0 4px;
+            height: 40px;
+            color: var(--palette-NeutralPrimary);
+            background-color: var(--palette-White);
+            border: none;
+            border-radius: 0;
+        }
+
+            .ms-Button.ms-Button--commandBar:hover {
+                color: var(--palette-NeutralDark);
+                background-color: var(--palette-NeutralLighter);
+            }
+
+                .ms-Button.ms-Button--commandBar:hover .ms-Button .ms-Button-icon {
+                    color: var(--palette-ThemeDarkAlt);
+                }
+
+                .ms-Button.ms-Button--commandBar:hover .ms-Button .ms-Button-menuIcon {
+                    color: var(--palette-NeutralPrimary);
+                }
+
+            .ms-Button.ms-Button--commandBar:active {
+                color: var(--semanticTextColors-Black);
+                background-color: var(--palette-NeutralLight);
+            }
+
+                .ms-Button.ms-Button--commandBar:active .ms-Button .ms-Button-icon {
+                    color: var(--palette-ThemeDarkAlt);
+                }
+
+                .ms-Button.ms-Button--commandBar:active .ms-Button .ms-Button-menuIcon {
+                    color: var(--palette-NeutralPrimary);
+                }
+
+            .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled) {
+                color: var(--Palette-NeutralDark);
+                background-color: var(--palette-NeutralLight);
+            }
+
+                .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled)
+                .ms-Button
+                .ms-Button-icon {
+                    color: var(--Palette-ThemeDark);
+                }
+
+                .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled)
+                .ms-Button
+                .ms-Button-menuIcon {
+                    color: var(--Palette-NeutralDark);
+                    background-color: var(--palette-NeutralPrimary);
+                }
+
+                .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover {
+                    background-color: var(--palette-NeutralQuaternaryAlt);
+                }
+
+                    .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover
+                    .ms-Button
+                    .ms-Button-icon {
+                        color: var(--Palette-ThemeDark);
+                    }
+
+                    .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover
+                    .ms-Button
+                    .ms-Button-menuIcon {
+                        color: var(--Palette-NeutralDark);
+                        background-color: var(--palette-NeutralPrimary);
+                    }
+
+            .ms-Button.ms-Button--commandBar.is-expanded {
+                background-color: var(--palette-NeutralLight);
+                color: var(--palette-NeutralDark);
+            }
+
+                .ms-Button.ms-Button--commandBar.is-expanded .ms-Button .ms-Button-icon {
+                    color: var(--palette-ThemeDark);
+                }
+
+                .ms-Button.ms-Button--commandBar.is-expanded .ms-Button .ms-Button-menuIcon {
+                    color: var(--palette-NeutralPrimary);
+                }
+
+            .ms-Button.ms-Button--commandBar.is-disabled {
+                background-color: var(--palette-White);
+            }
+
+                .ms-Button.ms-Button--commandBar.is-disabled .ms-Button .ms-Button-icon {
+                    color: var(--semanticTextColors-DisabledBodySubtext);
+                }
+
+            .ms-Button.ms-Button--commandBar .ms-Button .ms-Button-icon {
+                color: var(--palette-ThemePrimary);
+            }
+
+            .ms-Button.ms-Button--commandBar .ms-Button .ms-Button-label {
+                font-weight: normal;
+            }
+
+            .ms-Button.ms-Button--commandBar .ms-Button .ms-Button-menuIcon {
+                color: var(--palette-NeutralSecondary);
+            }
+
+
+        .ms-Button--icon {
+            padding: 0 4px;
+            min-width: 32px;
+            height: 32px;
+            background-color: transparent;
+            border: none;
+            color: var(--semanticTextColors-Link);
+        }
+
+            .ms-Button--icon:hover {
+                color: var(--palette-ThemeDarkAlt);
+                background-color: var(--palette-NeutralLighter);
+            }
+
+            .ms-Button--icon:active {
+                color: var(--palette-ThemeDark);
+                background-color: var(--palette-NeutralLight);
+            }
+
+            .ms-Button--icon.is-checked:not(.is-disabled) {
+                color: var(--palette-ThemeDark);
+                background-color: var(--palette-NeutralLight);
+                border: none;
+            }
+
+            .ms-Button--icon.is-checked:hover {
+                background-color: var(--palette-NeutralQuaternaryAlt);
+                color: var(--palette-ThemeDark);
+            }
+
+            .ms-Button--icon.is-disabled {
+                border-color: var(--palette-NeutralQuaternaryAlt);
+            }
+
+
+        .ms-Button.ms-Button--command {
+            min-width: unset;
+            padding: 0px 4px;
+            height: 40px;
+            color: var(--palette-NeutralPrimary);
+            background-color: transparent;
+            border: 1px solid transparent;
+        }
+
+            .ms-Button.ms-Button--command:hover {
+                color: var(--palette-ThemePrimary);
+            }
+
+            .ms-Button.ms-Button--command.is-expanded {
+                color: var(--palette-ThemePrimary);
+            }
+
+            .ms-Button.ms-Button--command .ms-Button .ms-Button-icon:hover {
+                color: var(--palette-ThemePrimary);
+            }
+
+            .ms-Button.ms-Button--command:active {
+                color: var(--palette-Black);
+            }
+
+            .ms-Button.ms-Button--command .ms-Button .ms-Button-icon:active {
+                color: var(--palette-ThemeDarker);
+            }
+
+            .ms-Button.ms-Button--command.is-disabled {
+                color: var(--palette-NeutralTertiary);
+                background-color: transparent;
+            }
+
+            .ms-Button.ms-Button--command.is-checked:not(.is-disabled) {
+                color: var(--palette-Black);
+            }
+
+            .ms-Button.ms-Button--command.is-checked .ms-Button .ms-ButtonIcon {
+                color: var(--palette-ThemeDarker);
+            }
+
+            .ms-Button.ms-Button--command .ms-Button .ms-Button-flexContainer {
+                justify-content: flex-start;
+            }
+
+            .ms-Button.ms-Button--command .ms-Button .ms-Button-icon {
+                color: var(--palette-ThemeDarkAlt);
+            }
+
+            .ms-Button.ms-Button--command.is-disabled .ms-Button .ms-Button-icon {
+                color: inherit;
+            }
+
+            .ms-Button.ms-Button--command .ms-Button .ms-Button-menuIcon {
+                color: var(--palette-NeutralSecondary);
+            }
+
+            .ms-Button.ms-Button--command .ms-Button .ms-Button-textContainer {
+                flex-grow: 0;
+            }
+
+            .ms-Button.ms-Button--command .ms-Button .ms-Button-label {
+                font-weight: var(--fontWeight-Regular);
+            }
+
+
+        .ms-Button.ms-Button--compound {
+            max-width: 280px;
+            min-height: 72px;
+            padding: 16px 12px;
+            height: auto;
+        }
+
+            .ms-Button.ms-Button--compound .ms-Button .ms-Button-flexContainer {
+                flex-direction: row;
+                align-items: flex-start;
+                min-width: 100%;
+                margin: unset;
+            }
+
+            .ms-Button.ms-Button--compound .ms-Button .ms-Button-textContainer {
+                text-align: left;
+            }
+
+            .ms-Button.ms-Button--compound .ms-Button .ms-Button-label {
+                margin: 0 0 5px 0;
+                line-height: 100%;
+                font-weight: var(--fontWeight-SemiBold);
+            }
+
+            .ms-Button.ms-Button--compound .ms-Button .ms-Button-description {
+                line-height: 100%;
+            }
+
+        .ms-Button--default.ms-Button--compound .ms-Button .ms-Button-description {
+            color: var(--palette-NeutralSecondary);
+        }
+
+        .ms-Button--default.ms-Button--compound:hover
+        .ms-Button
+        .ms-Button-description {
+            color: var(--palette-NeutralDark);
+        }
+
+        .ms-Button--default.ms-Button--compound.is-checked
+        .ms-Button
+        .ms-Button-description {
+            color: inherit;
+        }
+
+        .ms-Button--default.ms-Button--compound.is-disabled
+        .ms-Button
+        .ms-Button-description {
+            color: inherit;
+        }
+
+        .ms-Button--primary.ms-Button--compound .ms-Button .ms-Button-description {
+            color: var(--palette-White);
+        }
+
+        .ms-Button--primary.ms-Button--compound:hover
+        .ms-Button
+        .ms-Button-description {
+            color: var(--palette-White);
+        }
+
+        .ms-Button--primary.ms-Button--compound.is-checked
+        .ms-Button
+        .ms-Button-description {
+            color: inherit;
+        }
+
+        .ms-Button--primary.ms-Button--compound.is-disabled
+        .ms-Button
+        .ms-Button-description {
+            color: inherit;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        :not(.ms-Icon) {
+            font-family: IRANSans, Vazir, sans-serif !important;
+        }
+
+        .main {
+            width: 50%;
+            background-color: rgba(242, 242, 242, 0.9);
+            padding: 2% 2%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            margin: 5em auto;
+            flex-grow: 1;
+        }
+
+            .main .title {
+                margin-bottom: 0.25em;
+            }
+
+            .main .description {
+                padding: 1em;
+                flex-grow: 1;
+                overflow: auto;
+                text-align: justify;
+                text-align-last: center;
+            }
+
+                .main .description p {
+                    text-align-last: right;
+                }
+
+                .main .description > :not(:first-child) {
+                    margin-top: 1em;
+                }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1em;
+            background-color: rgba(242, 242, 242, 0.9);
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            padding: 1em;
+            background-color: rgba(242, 242, 242, 0.9);
+        }
+
+        hr {
+            margin: 0.25em 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header ms-depth-16">
+        <h1>سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</h1>
+    </header>
+    <section class="main ms-depth-64">
+        <h1 class="title">
+            @Model.Title
+        </h1>
+        <hr />
+        <div class="description">
+            <p>
+                کاربر گرامی،
+                <br />
+                @Html.Raw(Model.Description)، روی دکمه‌ی زیر کلیک کنید.
+            </p>
+            <a class="ms-Button ms-Button--primary" href="@Model.Uri">
+                <span class="ms-Button-flexContainer">
+                    <span class="ms-Button-textContainer">
+                        <span class="ms-Button-label">@Model.ButtonLabel</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+    </section>
+    <footer class="footer ms-depth-16">
+        <div><a>Unsubscribe</a></div>
+    </footer>
+</body>
+</html>
+

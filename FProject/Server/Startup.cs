@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using Razor.Templating.Core;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -83,13 +84,17 @@ namespace FProject.Server
                     };
                 });
 
-            services.AddControllersWithViews().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation()
+                .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
             services.AddRazorPages();
 
             services.Configure<MailServerOptions>(Configuration.GetSection("MailServerOptions"));
 
             services.AddTransient<TextProvider>();
             services.AddTransient<EmailService>();
+
+            RazorTemplateEngine.Initialize();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

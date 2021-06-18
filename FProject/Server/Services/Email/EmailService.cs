@@ -3,7 +3,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Cryptography;
-using Org.BouncyCastle.Crypto;
+using Razor.Templating.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +35,8 @@ namespace FProject.Server.Services
             email.To.AddRange(message.To);
             email.Subject = message.Subject;
             var builder = new BodyBuilder();
-            builder.HtmlBody = message.Body;
+            builder.TextBody = message.TextBody;
+            builder.HtmlBody = message.HtmlBody;
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
             smtp.ServerCertificateValidationCallback = (_, _, _, _) => true;
@@ -48,6 +49,12 @@ namespace FProject.Server.Services
             }
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
+        }
+
+        public async Task<string> GetContent(EmailTemplate template)
+        {
+            var content = await RazorTemplateEngine.RenderAsync("EmailTemplate", template);
+            return PreMailer.Net.PreMailer.MoveCssInline(content).Html;
         }
     }
 

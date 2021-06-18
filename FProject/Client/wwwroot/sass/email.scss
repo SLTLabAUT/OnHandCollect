@@ -1,0 +1,74 @@
+﻿@import "theme";
+@import "button";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+:not(.ms-Icon) {
+    font-family: IRANSans, Vazir, sans-serif !important;
+}
+
+.main {
+    width: 50%;
+    background-color: rgba(242, 242, 242, 0.9);
+    padding: 2% 2%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: 5em auto;
+    flex-grow: 1;
+
+    .title {
+        margin-bottom: 0.25em;
+    }
+
+    .description {
+        padding: 1em;
+        flex-grow: 1;
+        overflow: auto;
+        text-align: justify;
+        text-align-last: center;
+
+        p {
+            text-align-last: right;
+        }
+
+        > :not(:first-child) {
+            margin-top: 1em;
+        }
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    background-color: rgba(242, 242, 242, 0.9);
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 1em;
+    background-color: rgba(242, 242, 242, 0.9);
+}
+
+hr {
+    margin: 0.25em 0;
+}

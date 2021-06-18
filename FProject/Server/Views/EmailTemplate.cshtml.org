@@ -1,0 +1,38 @@
+﻿@model FProject.Server.Models.EmailTemplate
+
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <link href="/asset/IRANSans/WebFonts/css/fontiran.css" rel="stylesheet" />
+    <link href="/css/fabric.min.css" rel="stylesheet" />
+    <link href="/sass/email.css" rel="stylesheet" />
+</head>
+<body>
+    <header class="header ms-depth-16">
+        <h1>سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</h1>
+    </header>
+    <section class="main ms-depth-64">
+        <h1 class="title">
+            @Model.Title
+        </h1>
+        <hr />
+        <div class="description">
+            <p>
+                کاربر گرامی،
+                <br />
+                @Html.Raw(Model.Description)، روی دکمه‌ی زیر کلیک کنید.
+            </p>
+            <a class="ms-Button ms-Button--primary" href="@Model.Uri">
+                <span class="ms-Button-flexContainer">
+                    <span class="ms-Button-textContainer">
+                        <span class="ms-Button-label">@Model.ButtonLabel</span>
+                    </span>
+                </span>
+            </a>
+        </div>
+    </section>
+    <footer class="footer ms-depth-16">
+        <div><a>Unsubscribe</a></div>
+    </footer>
+</body>
+</html>

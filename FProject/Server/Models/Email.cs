@@ -10,14 +10,24 @@ namespace FProject.Server.Models
     {
         public List<MailboxAddress> To { get; set; }
         public string Subject { get; set; }
-        public string Body { get; set; }
+        public string HtmlBody { get; set; }
+        public string TextBody { get; set; }
 
-        public EmailMessage(IEnumerable<string> to, string subject, string content)
+        public EmailMessage(IEnumerable<string> to, string subject, string textBody = default, string htmlBody = default)
         {
             To = new List<MailboxAddress>();
             To.AddRange(to.Select(x => MailboxAddress.Parse(x)));
             Subject = subject;
-            Body = content;
+            TextBody = textBody;
+            HtmlBody = htmlBody;
         }
+    }
+
+    public class EmailTemplate
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string ButtonLabel { get; set; }
+        public string Uri { get; set; }
     }
 }

@@ -147,8 +147,16 @@ namespace FProject.Server.Controllers
             else if (result.IsLockedOut)
             {
                 var forgotPasswordLink = Url.Link("/identity/forgotpassword", null);
-                var content = $"حساب کاربری شما به دلیل ورود متعدد رمز عبور اشتباه قفل شده است، برای بازنشانی رمز عبور خود بر روی لینک روبرو کلیک کنید: {forgotPasswordLink}";
-                var message = new EmailMessage(new string[] { loginDTO.Email }, "قفل شدن حساب کاربری", content);
+                var template = new EmailTemplate
+                {
+                    Title = "قفل شدن حساب کاربری",
+                    Description = "حساب کاربری شما به دلیل ورود متعدد رمز عبور اشتباه قفل شده است.<br>جهت بازنشانی رمز عبور خود",
+                    ButtonLabel = "بازنشانی رمز عبور",
+                    Uri = forgotPasswordLink
+                };
+                var htmlBody = await _emailService.GetContent(template);
+                var textBody = $"{template.Description.Replace("<br>", "\n")}، وارد لینک زیر بشوید:\n{forgotPasswordLink}";
+                var message = new EmailMessage(new string[] { loginDTO.Email }, template.Title, textBody, htmlBody);
                 await _emailService.SendEmailAsync(message);
             }
             else if (result.IsNotAllowed)
@@ -209,8 +217,16 @@ namespace FProject.Server.Controllers
 
             var token = HttpUtility.UrlEncode(await _signInManager.UserManager.GeneratePasswordResetTokenAsync(user));
             var passwordResetLink = $"{Request.Scheme}://{Request.Host.Value}/identity/resetpassword?token={token}&email={user.Email}";
-
-            var message = new EmailMessage(new string[] { user.Email }, "لینک بازنشانی رمز عبور", passwordResetLink);
+            var template = new EmailTemplate
+            {
+                Title = "بازنشانی رمز عبور",
+                Description = "جهت بازنشانی رمز عبور خود",
+                ButtonLabel = "بازنشانی رمز عبور",
+                Uri = passwordResetLink
+            };
+            var htmlBody = await _emailService.GetContent(template);
+            var textBody = $"{template.Description}، وارد لینک زیر بشوید:\n{passwordResetLink}";
+            var message = new EmailMessage(new string[] { user.Email }, template.Title, textBody, htmlBody);
             await _emailService.SendEmailAsync(message);
 
             return Ok();
@@ -264,8 +280,16 @@ namespace FProject.Server.Controllers
         {
             var token = await _signInManager.UserManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmationLink = $"{Request.Scheme}://{Request.Host.Value}/identity/confirmemail?token={token}&email={user.Email}";
-
-            var message = new EmailMessage(new string[] { user.Email }, "لینک تایید رایانامه", confirmationLink);
+            var template = new EmailTemplate
+            {
+                Title = "تایید رایانامه",
+                Description = "جهت تکمیل فرآیند ثبت‌نام و تایید رایانامه‌ی خود",
+                ButtonLabel = "تایید رایانامه",
+                Uri = confirmationLink
+            };
+            var htmlBody = await _emailService.GetContent(template);
+            var textBody = $"{template.Description}، وارد لینک زیر بشوید:\n{confirmationLink}";
+            var message = new EmailMessage(new string[] { user.Email }, template.Title, textBody, htmlBody);
             await _emailService.SendEmailAsync(message);
         }
 

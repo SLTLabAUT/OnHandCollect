@@ -19,7 +19,7 @@
         <StackItem VerticalFill="false" Grow=1 Style="width:100%;overflow:auto;">
             @if (WritepadList is null)
             {
-                <Spinner Size=@SpinnerSize.Large />
+                <Spinner Size=@SpinnerSize.Large Label="در حال بارگیری اطلاعات..." />
             }
             else
             {
@@ -166,7 +166,7 @@
                                                         <TooltipHost>
                                                             <TooltipContent>رد</TooltipContent>
                                                             <ChildContent>
-                                                                <MyBFUIconButton OnClick=@(args => Reject(args, writepad)) IconName="Cancel" />
+                                                                <Button ButtonType=ButtonType.Icon IsActing=ChangeStatusButtonIsActing OnClick=@(args => Reject(args, writepad)) IconName="Cancel" />
                                                             </ChildContent>
                                                         </TooltipHost>
                                                     }
@@ -175,7 +175,7 @@
                                                         <TooltipHost>
                                                             <TooltipContent>تایید</TooltipContent>
                                                             <ChildContent>
-                                                                <MyBFUIconButton OnClick=@(args => Approve(args, writepad)) IconName="Accept" />
+                                                                <Button ButtonType=ButtonType.Icon IsActing=ChangeStatusButtonIsActing OnClick=@(args => Approve(args, writepad)) IconName="Accept" />
                                                             </ChildContent>
                                                         </TooltipHost>
                                                     }
@@ -232,7 +232,7 @@
         <ChildContent></ChildContent>
         <FooterTemplate>
             <DefaultButton Text="لغو" OnClick=@(args => DeleteDialogOpen=false) />
-            <PrimaryButton Text="حذف" OnClick=DeleteWritepad />
+            <Button ButtonType=ButtonType.Primary IsActing=DeleteButtonIsActing Text="حذف" OnClick=DeleteWritepad />
         </FooterTemplate>
     </MyBFUDialog>
 
@@ -256,7 +256,7 @@
                         <FluentUIValidationSummary />
 
                         <MyBFUTextField Multiline=true Label="متن پیام جدید" @bind-Value=@CommentDTO.Text @bind-Value:event="OnChange" />
-                        <SubmitButton Text="ارسال پیام" />
+                        <Button ButtonType=ButtonType.Submit IsActing=SendCommentButtonIsActing Text="ارسال پیام" />
                     </EditForm>
                 </StackItem>
             </Stack>

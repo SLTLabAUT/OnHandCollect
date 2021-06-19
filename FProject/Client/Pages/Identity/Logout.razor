@@ -1,0 +1,20 @@
+﻿@page "/identity/logout"
+@using Services
+
+<Spinner Size=SpinnerSize.Large Label="در حال خروج از حساب کاربری..." />
+
+@code {
+    [Inject]
+    AuthorizeApi AuthorizeApi { get; set; }
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    [Parameter]
+    public string ReturnUrl { get; set; } = "/index";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthorizeApi.Logout();
+        Navigation.NavigateTo(ReturnUrl, ReturnUrl == "/");
+    }
+}

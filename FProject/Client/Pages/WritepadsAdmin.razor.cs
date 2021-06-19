@@ -31,6 +31,9 @@ namespace FProject.Client.Pages
         int AllCount { get; set; }
         bool DeleteDialogOpen { get; set; }
         bool CommentsDialogOpen { get; set; }
+        bool DeleteButtonIsActing { get; set; }
+        bool SendCommentButtonIsActing { get; set; }
+        bool ChangeStatusButtonIsActing { get; set; }
         List<WritepadDTO> WritepadList { get; set; }
         IEnumerable<IDropdownOption> PointerTypes { get; set; }
         IEnumerable<IDropdownOption> TextTypes { get; set; }
@@ -94,11 +97,19 @@ namespace FProject.Client.Pages
 
         async Task SendCommentHandler()
         {
-            var result = await Http.PostAsJsonAsync($"api/Comment?admin=true", CommentDTO);
-            result.EnsureSuccessStatusCode();
-            CurrentWritepad.CommentsStatus = WritepadCommentsStatus.NewFromAdmin;
+            SendCommentButtonIsActing = true;
+            try
+            {
+                var result = await Http.PostAsJsonAsync($"api/Comment?admin=true", CommentDTO);
+                result.EnsureSuccessStatusCode();
+                CurrentWritepad.CommentsStatus = WritepadCommentsStatus.NewFromAdmin;
 
-            CommentsDialogOpen = false;
+                CommentsDialogOpen = false;
+            }
+            finally
+            {
+                SendCommentButtonIsActing = false;
+            }
         }
 
         async Task CommentsButtonHandler(MouseEventArgs args, WritepadDTO writepad)
@@ -129,6 +140,7 @@ namespace FProject.Client.Pages
 
         async Task DeleteWritepad(MouseEventArgs args)
         {
+            DeleteButtonIsActing = true;
             try
             {
                 var result = await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.Id}?admin=true");
@@ -140,6 +152,7 @@ namespace FProject.Client.Pages
             {
                 CurrentWritepad = null;
                 DeleteDialogOpen = false;
+                DeleteButtonIsActing = false;
             }
 
             if (WritepadList.Count == 0)
@@ -150,19 +163,35 @@ namespace FProject.Client.Pages
 
         async Task Approve(MouseEventArgs args, WritepadDTO writepad)
         {
-            var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.Accepted}&admin=true", null);
-            if (response.IsSuccessStatusCode)
+            ChangeStatusButtonIsActing = true;
+            try
             {
-                writepad.Status = WritepadStatus.Accepted;
+                var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.Accepted}&admin=true", null);
+                if (response.IsSuccessStatusCode)
+                {
+                    writepad.Status = WritepadStatus.Accepted;
+                }
+            }
+            finally
+            {
+                ChangeStatusButtonIsActing = false;
             }
         }
 
         async Task Reject(MouseEventArgs args, WritepadDTO writepad)
         {
-            var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.NeedEdit}&admin=true", null);
-            if (response.IsSuccessStatusCode)
+            ChangeStatusButtonIsActing = true;
+            try
             {
-                writepad.Status = WritepadStatus.NeedEdit;
+                var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.NeedEdit}&admin=true", null);
+                if (response.IsSuccessStatusCode)
+                {
+                    writepad.Status = WritepadStatus.NeedEdit;
+                }
+            }
+            finally
+            {
+                ChangeStatusButtonIsActing = false;
             }
         }
 

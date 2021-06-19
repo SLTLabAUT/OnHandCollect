@@ -26,12 +26,5 @@ namespace FProject.Client.Shared
         {
             await OnLinkClicked.InvokeAsync();
         }
-
-        private async Task BeginSignOut()
-        {
-            await AuthorizeApi.Logout();
-            await OnLinkClicked.InvokeAsync();
-            Navigation.NavigateTo("/index");
-        }
     }
 }

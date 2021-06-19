@@ -29,6 +29,7 @@ namespace FProject.Client.Pages.Identity
         ValidationMessageStore Errors { get; set; }
         bool TermsDialogOpen { get; set; }
         bool Done { get; set; }
+        bool SubmitButtonIsActing { get; set; }
 
         protected override void OnInitialized()
         {
@@ -66,22 +67,30 @@ namespace FProject.Client.Pages.Identity
 
         async Task RegisterHandler()
         {
-            Done = false;
+            SubmitButtonIsActing = true;
+            try
+            {
+                Done = false;
 
-            var registerResponse = await AuthorizeApi.Register((RegisterDTO)Model);
-            if (registerResponse.Registered)
-            {
-                Done = true;
+                var registerResponse = await AuthorizeApi.Register((RegisterDTO)Model);
+                if (registerResponse.Registered)
+                {
+                    Done = true;
+                }
+                else if (registerResponse.Errors.Any(e => e.Code == "DuplicateEmail"))
+                {
+                    Errors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "شما قبلا ثبت‌نام کرده‌اید.");
+                    EditContext.NotifyValidationStateChanged();
+                }
+                else
+                {
+                    Errors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "رایانامه یا رمز عبور وارد شده شرایط کافی را ندارد.");
+                    EditContext.NotifyValidationStateChanged();
+                }
             }
-            else if (registerResponse.Errors.Any(e => e.Code == "DuplicateEmail"))
+            finally
             {
-                Errors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "شما قبلا ثبت‌نام کرده‌اید.");
-                EditContext.NotifyValidationStateChanged();
-            }
-            else
-            {
-                Errors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "رایانامه یا رمز عبور وارد شده شرایط کافی را ندارد.");
-                EditContext.NotifyValidationStateChanged();
+                SubmitButtonIsActing = false;
             }
         }
 

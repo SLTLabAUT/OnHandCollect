@@ -27,6 +27,7 @@ namespace FProject.Client.Pages.Identity
         EditContext EditContext { get; set; }
         ValidationMessageStore Errors { get; set; }
         bool EmailNotConfirmed { get; set; }
+        bool SubmitButtonIsActing { get; set; }
 
         protected override void OnParametersSet()
         {
@@ -42,20 +43,28 @@ namespace FProject.Client.Pages.Identity
 
         async Task LoginHandler()
         {
-            EmailNotConfirmed = false;
-            var loginResponse = await AuthorizeApi.Login(LoginDTO);
-            if (loginResponse.LoggedIn)
+            SubmitButtonIsActing = true;
+            try
             {
-                NavigateToReturnUrl();
+                EmailNotConfirmed = false;
+                var loginResponse = await AuthorizeApi.Login(LoginDTO);
+                if (loginResponse.LoggedIn)
+                {
+                    NavigateToReturnUrl();
+                }
+                else if (loginResponse.NeedEmailConfirm)
+                {
+                    EmailNotConfirmed = true;
+                }
+                else
+                {
+                    Errors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "رایانامه یا رمز عبور وارد شده اشتباه است.");
+                    EditContext.NotifyValidationStateChanged();
+                }
             }
-            else if (loginResponse.NeedEmailConfirm)
+            finally
             {
-                EmailNotConfirmed = true;
-            }
-            else
-            {
-                Errors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), "رایانامه یا رمز عبور وارد شده اشتباه است.");
-                EditContext.NotifyValidationStateChanged();
+                SubmitButtonIsActing = false;
             }
         }
 

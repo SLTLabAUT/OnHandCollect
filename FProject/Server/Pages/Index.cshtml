@@ -48,17 +48,25 @@
                 </div>
                 <hr />
                 <div class="navigation">
-                    <a class="ms-Button ms-Button--default" href="/identity/register">
+                    <a class="ms-Button ms-Button--default anonymous" href="/identity/register">
                         <span class="ms-Button-flexContainer">
                             <span class="ms-Button-textContainer">
                                 <span class="ms-Button-label">ثبت‌نام</span>
                             </span>
                         </span>
                     </a>
-                    <a class="ms-Button ms-Button--primary" href="/identity/login">
+                    <a class="ms-Button ms-Button--primary anonymous" href="/identity/login">
                         <span class="ms-Button-flexContainer">
                             <span class="ms-Button-textContainer">
                                 <span class="ms-Button-label">ورود</span>
+                            </span>
+                        </span>
+                    </a>
+
+                    <a class="ms-Button ms-Button--primary logged-in" href="/identity/login">
+                        <span class="ms-Button-flexContainer">
+                            <span class="ms-Button-textContainer">
+                                <span class="ms-Button-label">ورود به صفحه‌ی تخته‌ها</span>
                             </span>
                         </span>
                     </a>
@@ -131,6 +139,15 @@
                     helpDialog.classList.add("ms-motion-fadeOut");
                 });
             });
+
+            if (localStorage.getItem("access_token")) {
+                document.querySelectorAll(".anonymous").forEach(e => {
+                    e.style = "display: none;";
+                });
+                document.querySelectorAll(".logged-in").forEach(e => {
+                    e.style = "display: block;";
+                });
+            }
         </script>
     </body>
 </html>

@@ -8,7 +8,7 @@
 <IdentityTemplate Title="تغییرات اطلاعات کاربری">
     @if (Model is null)
     {
-        <Spinner Size=@SpinnerSize.Large />
+        <Spinner Size=@SpinnerSize.Large Label="در حال بارگیری اطلاعات..." />
     }
     else
     {
@@ -39,7 +39,7 @@
             <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
             <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                 <StackItem Align=Alignment.Center>
-                    <SubmitButton Text="اعمال تغییرات" />
+                    <Button ButtonType=ButtonType.Submit IsActing=SubmitButtonIsActing Text="اعمال تغییرات" />
                 </StackItem>
             </Stack>
         </EditForm>
@@ -58,6 +58,7 @@
     bool Done { get; set; }
     ProfileModel Model { get; set; }
     EditContext EditContext { get; set; }
+    bool SubmitButtonIsActing { get; set; }
 
     protected override void OnInitialized()
     {
@@ -89,13 +90,21 @@
 
     async Task FormHandler()
     {
-        Done = false;
+        SubmitButtonIsActing = true;
+        try
+        {
+            Done = false;
 
-        var result = await Http.PostAsJsonAsync($"api/Identity/UpdateProfile", (UserDTO)Model);
-        result.EnsureSuccessStatusCode();
-        await AuthorizeApi.UpdateToken(await result.Content.ReadAsStringAsync());
+            var result = await Http.PostAsJsonAsync($"api/Identity/UpdateProfile", (UserDTO)Model);
+            result.EnsureSuccessStatusCode();
+            await AuthorizeApi.UpdateToken(await result.Content.ReadAsStringAsync());
 
-        Done = true;
+            Done = true;
+        }
+        finally
+        {
+            SubmitButtonIsActing = false;
+        }
     }
 
     void DismissMessagebarHandler()

@@ -154,12 +154,8 @@
                             <StackItem>
                                 <Toggle Disabled=@(Parent.AdminReview || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
                             </StackItem>
-                            <StackItem Style="width: 100%;" ClassName=@(Parent.IsSaving ? "has-ms-Spinner--small" : "")>
-                                @if (Parent.IsSaving)
-                                {
-                                    <Spinner Size=@SpinnerSize.Small ClassName="save-spinner" />
-                                }
-                                <PrimaryButton Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.AdminReview || Parent.IsSaving || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
+                            <StackItem Style="width: 100%;">
+                                <Button ButtonType=ButtonType.Primary IsActing=Parent.IsSaving Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.AdminReview || Parent.IsSaving || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
                             </StackItem>
                             <StackItem>
                                 <TooltipHost Style="white-space:nowrap;">

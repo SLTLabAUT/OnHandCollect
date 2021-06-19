@@ -18,6 +18,10 @@
         flex-basis: 0;
 
         .panel {
+            .ms-Toggle {
+                margin: auto !important;
+            }
+
             .panel-open-close {
                 transform: rotate(180deg);
             }

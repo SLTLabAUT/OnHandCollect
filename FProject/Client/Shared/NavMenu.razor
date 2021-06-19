@@ -31,7 +31,7 @@
                             </AuthorizeView>
                             <BlazorFluentUI.Routing.NavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" IconName="Contact" OnClick=@OnLinkClicked />
                             <BlazorFluentUI.Routing.NavLink Name="راهنما" Url="help" Id="help" IconName="HelpMirrored" OnClick=@OnLinkClicked />
-                            <BlazorFluentUI.Routing.NavLink Name="خروج" Id="logout" IconName="SignOut" OnClick=@BeginSignOut />
+                            <BlazorFluentUI.Routing.NavLink Name="خروج" Url="identity/logout" Id="identity/logout" IconName="SignOut" OnClick=@OnLinkClicked />
                         </BlazorFluentUI.Routing.NavLinkGroup>
                     </BlazorFluentUI.Routing.Nav>
                 </StackItem>

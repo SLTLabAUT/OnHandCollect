@@ -1,0 +1,34 @@
+﻿@inherits ButtonParameters
+
+<div class=@(IsActing ? "has-ms-Spinner has-ms-Spinner--small" : "")>
+    @if (IsActing)
+    {
+        <Spinner Size=@SpinnerSize.Small Style="top:calc(50% + var(--spinnerSize-Small));" />
+    }
+    @if (ButtonType == ButtonType.Default)
+    {
+        <DefaultButton Text=@Text IconName=@IconName Style=@Style Disabled=@(Disabled || IsActing) OnClick=@OnClick>
+            @base.ChildContent
+        </DefaultButton>
+    }
+    else if (ButtonType == ButtonType.Primary)
+    {
+        <PrimaryButton Text=@Text IconName=@IconName Style=@Style Disabled=@(Disabled || IsActing) OnClick=@OnClick>
+            @base.ChildContent
+        </PrimaryButton>
+    }
+    else if (ButtonType == ButtonType.Submit)
+    {
+        <MyBFUSubmitButton Text=@Text
+                           UnknownProperties=@UnknownProperties
+                           Disabled=@(Disabled || IsActing)>
+            @base.ChildContent
+        </MyBFUSubmitButton>
+    }
+    else if (ButtonType == ButtonType.Icon)
+    {
+        <MyBFUIconButton IconName=@IconName
+                         Disabled=@(Disabled || IsActing)
+                         OnClick=@OnClick />
+    }
+</div>

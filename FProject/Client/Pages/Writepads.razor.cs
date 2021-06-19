@@ -40,6 +40,10 @@ namespace FProject.Client.Pages
         bool CommentsDialogOpen { get; set; }
         bool InfoDialogOpen { get; set; }
         bool SubmitDisabled { get; set; }
+        bool SaveButtonIsActing { get; set; }
+        bool DeleteButtonIsActing { get; set; }
+        bool SendCommentButtonIsActing { get; set; }
+        bool ChangeStatusButtonIsActing { get; set; }
         bool IsSignSelected { get; set; }
         Handedness Handedness { get; set; }
         NewWritepadModel NewWritepad { get; set; }
@@ -178,49 +182,65 @@ namespace FProject.Client.Pages
 
         async Task SubmitWritepad()
         {
-            var isValid = EditContext.Validate();
-
-            if (!isValid)
+            SaveButtonIsActing = true;
+            try
             {
-                return;
+                var isValid = EditContext.Validate();
+
+                if (!isValid)
+                {
+                    return;
+                }
+
+                var result = await Http.PostAsJsonAsync($"api/Writepad", (NewWritepadDTO)NewWritepad);
+
+                switch (result.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.OK:
+                        var writepads = await result.Content.ReadFromJsonAsync<IEnumerable<WritepadDTO>>();
+
+                        WritepadList.InsertRange(0, writepads.OrderByDescending(e => e.SpecifiedNumber));
+                        WritepadList = WritepadList.Take(10).ToList();
+                        AllCount += (int)NewWritepad.Number;
+
+                        CreateDialogOpen = false;
+                        break;
+                    case System.Net.HttpStatusCode.BadRequest:
+                        var error = await result.Content.ReadFromJsonAsync<WritepadCreationError>();
+                        var errorText = error switch
+                        {
+                            WritepadCreationError.SignNotAllowed => "ایجاد تخته‌ی امضاء با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.",
+                            _ => null,
+                        };
+                        if (errorText is not null)
+                        {
+                            CreateErrors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), errorText);
+                            EditContext.NotifyValidationStateChanged();
+                        }
+                        break;
+                }
             }
-
-            var result = await Http.PostAsJsonAsync($"api/Writepad", (NewWritepadDTO)NewWritepad);
-
-            switch (result.StatusCode)
+            finally
             {
-                case System.Net.HttpStatusCode.OK:
-                    var writepads = await result.Content.ReadFromJsonAsync<IEnumerable<WritepadDTO>>();
-
-                    WritepadList.InsertRange(0, writepads.OrderByDescending(e => e.SpecifiedNumber));
-                    WritepadList = WritepadList.Take(10).ToList();
-                    AllCount += (int)NewWritepad.Number;
-
-                    CreateDialogOpen = false;
-                    break;
-                case System.Net.HttpStatusCode.BadRequest:
-                    var error = await result.Content.ReadFromJsonAsync<WritepadCreationError>();
-                    var errorText = error switch
-                    {
-                        WritepadCreationError.SignNotAllowed => "ایجاد تخته‌ی امضاء با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.",
-                        _ => null,
-                    };
-                    if (errorText is not null)
-                    {
-                        CreateErrors.Add(new FieldIdentifier(EditContext.Model, fieldName: string.Empty), errorText);
-                        EditContext.NotifyValidationStateChanged();
-                    }
-                    break;
+                SaveButtonIsActing = false;
             }
         }
 
         async Task SendCommentHandler()
         {
-            var result = await Http.PostAsJsonAsync($"api/Comment", CommentDTO);
-            result.EnsureSuccessStatusCode();
-            CurrentWritepad.CommentsStatus = WritepadCommentsStatus.NewFromUser;
+            SendCommentButtonIsActing = true;
+            try
+            {
+                var result = await Http.PostAsJsonAsync($"api/Comment", CommentDTO);
+                result.EnsureSuccessStatusCode();
+                CurrentWritepad.CommentsStatus = WritepadCommentsStatus.NewFromUser;
 
-            CommentsDialogOpen = false;
+                CommentsDialogOpen = false;
+            }
+            finally
+            {
+                SendCommentButtonIsActing = false;
+            }
         }
 
         async Task CommentsButtonHandler(MouseEventArgs args, WritepadDTO writepad)
@@ -257,6 +277,7 @@ namespace FProject.Client.Pages
 
         async Task DeleteWritepad(MouseEventArgs args)
         {
+            DeleteButtonIsActing = true;
             try
             {
                 var result = await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.SpecifiedNumber}");
@@ -268,6 +289,7 @@ namespace FProject.Client.Pages
             {
                 CurrentWritepad = null;
                 DeleteDialogOpen = false;
+                DeleteButtonIsActing = false;
             }
 
             if (WritepadList.Count == 0)
@@ -278,20 +300,36 @@ namespace FProject.Client.Pages
 
         async Task SubmitForApproval(MouseEventArgs args, WritepadDTO writepad)
         {
-            var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.WaitForAcceptance}", null);
-            if (response.IsSuccessStatusCode)
+            ChangeStatusButtonIsActing = true;
+            try
             {
-                writepad.Status = WritepadStatus.WaitForAcceptance;
+                var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.WaitForAcceptance}", null);
+                if (response.IsSuccessStatusCode)
+                {
+                    writepad.Status = WritepadStatus.WaitForAcceptance;
+                }
+            }
+            finally
+            {
+                ChangeStatusButtonIsActing = false;
             }
         }
 
         async Task CancelApprovalRequest(MouseEventArgs args, WritepadDTO writepad)
         {
-            var result = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.Draft}", null);
-            if (result.IsSuccessStatusCode)
+            ChangeStatusButtonIsActing = true;
+            try
             {
-                var response = await result.Content.ReadFromJsonAsync<WritepadStatus>();
-                writepad.Status = response;
+                var result = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.Draft}", null);
+                if (result.IsSuccessStatusCode)
+                {
+                    var response = await result.Content.ReadFromJsonAsync<WritepadStatus>();
+                    writepad.Status = response;
+                }
+            }
+            finally
+            {
+                ChangeStatusButtonIsActing = false;
             }
         }
 

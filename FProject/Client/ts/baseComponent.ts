@@ -78,6 +78,10 @@ export function enableBodyScroll(): void {
         if (_bodyScrollDisabledCount === 1) {
             document.body.classList.remove("disabledBodyScroll");
             document.body.removeEventListener('touchmove', _disableIosBodyScroll);
+            document.querySelectorAll(".ms-Panel-scrollableContent, .ms-Modal-scrollableContent").forEach(element => {
+                element.removeEventListener('touchstart', _enableOverlayScrollTouchStart);
+                element.removeEventListener('touchmove', _enableOverlayScrollTouchMove);
+            });
         }
 
         _bodyScrollDisabledCount--;
@@ -88,6 +92,10 @@ export function disableBodyScroll(): void {
     if (!_bodyScrollDisabledCount) {
         document.body.classList.add("disabledBodyScroll");
         document.body.addEventListener('touchmove', _disableIosBodyScroll, { passive: false, capture: false });
+        document.querySelectorAll(".ms-Panel-scrollableContent, .ms-Modal-scrollableContent").forEach(element => {
+            element.addEventListener('touchstart', _enableOverlayScrollTouchStart, { passive: true });
+            element.addEventListener('touchmove', _enableOverlayScrollTouchMove, { passive: true });
+        });
     }
 
     _bodyScrollDisabledCount++;
@@ -95,6 +103,18 @@ export function disableBodyScroll(): void {
 
 const _disableIosBodyScroll = (event: TouchEvent) => {
     event.preventDefault();
+};
+
+const _enableOverlayScrollTouchStart = (event: TouchEvent) => {
+    let target = <HTMLElement>event.currentTarget;
+    if (target.scrollTop === 0) {
+        target.scrollTop = 1;
+    } else if (target.scrollHeight === target.scrollTop + target.offsetHeight) {
+        target.scrollTop -= 1;
+    }
+};
+const _enableOverlayScrollTouchMove = (event: TouchEvent) => {
+    event.stopPropagation();
 };
 
 // end

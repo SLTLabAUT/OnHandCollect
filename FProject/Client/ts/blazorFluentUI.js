@@ -67,6 +67,10 @@ var FluentUIBaseComponent;
             if (_bodyScrollDisabledCount === 1) {
                 document.body.classList.remove("disabledBodyScroll");
                 document.body.removeEventListener('touchmove', _disableIosBodyScroll);
+                document.querySelectorAll(".ms-Panel-scrollableContent, .ms-Modal-scrollableContent").forEach(element => {
+                    element.removeEventListener('touchstart', _enableOverlayScrollTouchStart);
+                    element.removeEventListener('touchmove', _enableOverlayScrollTouchMove);
+                });
             }
             _bodyScrollDisabledCount--;
         }
@@ -76,12 +80,26 @@ var FluentUIBaseComponent;
         if (!_bodyScrollDisabledCount) {
             document.body.classList.add("disabledBodyScroll");
             document.body.addEventListener('touchmove', _disableIosBodyScroll, { passive: false, capture: false });
+            document.querySelectorAll(".ms-Panel-scrollableContent, .ms-Modal-scrollableContent").forEach(element => {
+                element.addEventListener('touchstart', _enableOverlayScrollTouchStart, { passive: true });
+                element.addEventListener('touchmove', _enableOverlayScrollTouchMove, { passive: true });
+            });
         }
         _bodyScrollDisabledCount++;
     }
     FluentUIBaseComponent.disableBodyScroll = disableBodyScroll;
     const _disableIosBodyScroll = (event) => {
         event.preventDefault();
+    };
+    const _enableOverlayScrollTouchStart = (event) => {
+        if (event.currentTarget.scrollTop === 0) {
+            event.currentTarget.scrollTop = 1;
+        } else if (event.currentTarget.scrollHeight === event.currentTarget.scrollTop + event.currentTarget.offsetHeight) {
+            event.currentTarget.scrollTop -= 1;
+        }
+    };
+    const _enableOverlayScrollTouchMove = (event) => {
+        event.stopPropagation();
     };
     // end
     function getClientHeight(element) {

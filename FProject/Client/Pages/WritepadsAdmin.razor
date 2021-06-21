@@ -256,7 +256,11 @@
                         <FluentUIValidationSummary />
 
                         <MyBFUTextField Multiline=true Label="متن پیام جدید" @bind-Value=@CommentDTO.Text @bind-Value:event="OnChange" />
-                        <Button ButtonType=ButtonType.Submit IsActing=SendCommentButtonIsActing Text="ارسال پیام" />
+                        <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                            <StackItem Align=Alignment.Center>
+                                <Button ButtonType=ButtonType.Submit IsActing=SendCommentButtonIsActing Text="ارسال پیام" />
+                            </StackItem>
+                        </Stack>
                     </EditForm>
                 </StackItem>
             </Stack>

@@ -54,7 +54,8 @@ namespace FProject.Server.Services
         public async Task<string> GetContent(EmailTemplate template)
         {
             var content = await RazorTemplateEngine.RenderAsync("EmailTemplate", template);
-            return PreMailer.Net.PreMailer.MoveCssInline(content).Html;
+            return content;
+            //return PreMailer.Net.PreMailer.MoveCssInline(content, ignoreElements: "link", removeComments: true).Html;
         }
     }
 

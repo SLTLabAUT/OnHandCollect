@@ -152,10 +152,11 @@ namespace FProject.Server.Controllers
                     Title = "قفل شدن حساب کاربری",
                     Description = "حساب کاربری شما به دلیل ورود متعدد رمز عبور اشتباه قفل شده است.<br>جهت بازنشانی رمز عبور خود",
                     ButtonLabel = "بازنشانی رمز عبور",
-                    Uri = forgotPasswordLink
+                    ButtonUri = forgotPasswordLink,
+                    BaseUri = $"{Request.Scheme}://{Request.Host.Value}"
                 };
                 var htmlBody = await _emailService.GetContent(template);
-                var textBody = $"{template.Description.Replace("<br>", "\n")}، وارد لینک زیر بشوید:\n{forgotPasswordLink}";
+                var textBody = $"کاربر گرامی،\n{template.Description.Replace("<br>", "\n")}، وارد لینک زیر بشوید:\n{forgotPasswordLink}";
                 var message = new EmailMessage(new string[] { loginDTO.Email }, template.Title, textBody, htmlBody);
                 await _emailService.SendEmailAsync(message);
             }
@@ -222,10 +223,11 @@ namespace FProject.Server.Controllers
                 Title = "بازنشانی رمز عبور",
                 Description = "جهت بازنشانی رمز عبور خود",
                 ButtonLabel = "بازنشانی رمز عبور",
-                Uri = passwordResetLink
+                ButtonUri = passwordResetLink,
+                BaseUri = $"{Request.Scheme}://{Request.Host.Value}"
             };
             var htmlBody = await _emailService.GetContent(template);
-            var textBody = $"{template.Description}، وارد لینک زیر بشوید:\n{passwordResetLink}";
+            var textBody = $"کاربر گرامی،\n{template.Description}، وارد لینک زیر بشوید:\n{passwordResetLink}";
             var message = new EmailMessage(new string[] { user.Email }, template.Title, textBody, htmlBody);
             await _emailService.SendEmailAsync(message);
 
@@ -285,10 +287,11 @@ namespace FProject.Server.Controllers
                 Title = "تایید رایانامه",
                 Description = "جهت تکمیل فرآیند ثبت‌نام و تایید رایانامه‌ی خود",
                 ButtonLabel = "تایید رایانامه",
-                Uri = confirmationLink
+                ButtonUri = confirmationLink,
+                BaseUri = $"{Request.Scheme}://{Request.Host.Value}"
             };
             var htmlBody = await _emailService.GetContent(template);
-            var textBody = $"{template.Description}، وارد لینک زیر بشوید:\n{confirmationLink}";
+            var textBody = $"کاربر گرامی،\n{template.Description}، وارد لینک زیر بشوید:\n{confirmationLink}";
             var message = new EmailMessage(new string[] { user.Email }, template.Title, textBody, htmlBody);
             await _emailService.SendEmailAsync(message);
         }

@@ -28,6 +28,7 @@ namespace FProject.Server.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public string ButtonLabel { get; set; }
-        public string Uri { get; set; }
+        public string ButtonUri { get; set; }
+        public string BaseUri { get; set; }
     }
 }

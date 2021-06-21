@@ -1,0 +1,67 @@
+﻿<mjml lang="fa">
+  <mj-head>
+    <mj-font name="IRANSans" href="@Model.BaseUri/asset/IRANSans/WebFonts/css/fontiran.css" />
+    <mj-attributes>
+      <mj-class name="notmain" full-width="full-width" />
+      <mj-body background-color="#E7E7E7" />
+      <mj-button background-color="#0078d4" color="#ffffff" font-weight="bold" border-radius="2px" border="1px solid #8a8886" />
+      <mj-text line-height="25px" />
+      <mj-all align="center" direction="rtl" font-family="IRANSans, Vazir, sans-serif" />
+    </mj-attributes>
+    <mj-style inline="inline">
+      .main {
+        width: 80%;
+        box-shadow: 0 25.6px 57.6px 0 rgb(0 0 0 / 22%), 0 4.8px 14.4px 0 rgb(0 0 0 / 18%);
+        -moz-box-shadow: 0 25.6px 57.6px 0 rgb(0 0 0 / 22%), 0 4.8px 14.4px 0 rgb(0 0 0 / 18%);
+        -webkit-box-shadow: 0 25.6px 57.6px 0 rgb(0 0 0 / 22%), 0 4.8px 14.4px 0 rgb(0 0 0 / 18%);
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body>
+    <mj-section mj-class="notmain" css-class="text">
+      <mj-column>
+        <mj-text padding="0">
+          <h2>سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</h2>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section>
+      <mj-column>
+      </mj-column>
+    </mj-section>
+    <mj-wrapper css-class="main" background-color="#ffffff">
+      <mj-section padding="0">
+        <mj-column>
+          <mj-text>
+            <h1>@Model.Title</h1>
+          </mj-text>
+
+          <mj-text>
+            <hr />
+          </mj-text>
+
+          <mj-text align="right" padding="10px 40px">
+            کاربر گرامی،
+            <br />
+            @Html.Raw(Model.Description)، روی دکمه‌ی زیر کلیک کنید.
+          </mj-text>
+
+          <mj-spacer height="10px" />
+
+          <mj-button href="@Model.ButtonUri">@Model.ButtonLabel</mj-button>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-section>
+      <mj-column>
+      </mj-column>
+    </mj-section>
+    <mj-section mj-class="notmain">
+      <mj-column>
+        <mj-text>
+          Unsubscribe
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

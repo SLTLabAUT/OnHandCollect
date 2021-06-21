@@ -96,11 +96,15 @@ namespace FProject.Client.Pages
             return WritepadInstance is not null;
         }
 
-        public void SaveTimerElapsedHandler(object s = default, ElapsedEventArgs e = default)
+        public async void SaveTimerElapsedHandler(object s = default, ElapsedEventArgs e = default)
         {
             if (!IsSaving)
             {
-                Task.Factory.StartNew(() => JSRef.InvokeVoidAsync("save"), TaskCreationOptions.LongRunning);
+                var success = await JSRef.InvokeAsync<bool>("save");
+                if (!success)
+                {
+                    throw new JSException("Couldn't Save!");
+                }
             }
         }
 
@@ -127,6 +131,10 @@ namespace FProject.Client.Pages
                     case HttpStatusCode.OK:
                         var saveResponse = await response.Content.ReadFromJsonAsync<SavePointsResponseDTO>();
                         WritepadInstance.LastModified = saveResponse.LastModified;
+                        if (saveResponse.LastSavedDrawingNumber != -1)
+                        {
+                            WritepadInstance.LastSavedDrawingNumber = saveResponse.LastSavedDrawingNumber;
+                        }
                         break;
                     case HttpStatusCode.BadRequest:
                         var error = await response.Content.ReadFromJsonAsync<WritepadEditionError>();
@@ -140,7 +148,9 @@ namespace FProject.Client.Pages
                 return new SaveResponseDTO
                 {
                     StatusCode = response.StatusCode,
-                    LastModified = WritepadInstance.LastModified
+                    ThrowError = !PanelRef.NotAllowedDialogOpen,
+                    LastModified = WritepadInstance.LastModified,
+                    LastSavedDrawingNumber = WritepadInstance.LastSavedDrawingNumber
                 };
             }
             catch (AccessTokenNotAvailableException)
@@ -168,7 +178,9 @@ namespace FProject.Client.Pages
         public class SaveResponseDTO
         {
             public HttpStatusCode StatusCode { get; set; }
+            public bool ThrowError { get; set; } = true;
             public DateTimeOffset LastModified { get; set; }
+            public int LastSavedDrawingNumber { get; set; }
         }
     }
 }

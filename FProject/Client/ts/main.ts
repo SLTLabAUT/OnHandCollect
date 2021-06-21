@@ -14,10 +14,16 @@
     return module;
 }
 
-async function Compress(content: string): Promise<string> {
-    return LZString.compressToBase64(content);
+function CompressAsync(content: string): Promise<string> {
+    return new Promise<string>((resolve, _) => resolve(content))
+        .then(content => {
+            return LZString.compressToBase64(content);
+        });
 }
 
-async function Decompress(content: string): Promise<string> {
-    return LZString.decompressFromBase64(content);
+function DecompressAsync(content: string): Promise<string> {
+    return new Promise<string>((resolve, _) => resolve(content))
+        .then(content => {
+            return LZString.decompressFromBase64(content);
+        });
 }

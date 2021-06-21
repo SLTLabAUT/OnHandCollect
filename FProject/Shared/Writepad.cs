@@ -20,6 +20,7 @@ namespace FProject.Shared
         public Hand Hand { get; set; }
         public int SpecifiedNumber { get; set; }
         public WritepadCommentsStatus CommentsStatus { get; set; }
+        public int LastSavedDrawingNumber { get; set; }
 
         public int? TextId { get; set; }
         public Text Text { get; set; }

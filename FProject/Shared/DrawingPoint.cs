@@ -50,5 +50,6 @@ namespace FProject.Shared
     public class SavePointsResponseDTO
     {
         public DateTimeOffset LastModified { get; set; }
+        public int LastSavedDrawingNumber { get; set; }
     }
 }

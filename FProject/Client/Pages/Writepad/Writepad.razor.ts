@@ -12,7 +12,6 @@ let writepad: Writepad;
 let isSaving: boolean;
 let isMiddleOfDrawing: boolean;
 let saveInQueue: boolean;
-let lastSavedDrawingNumber: number;
 let undoStack: Point[][];
 let deletedDrawings: DeletedDrawing[];
 let num: number;
@@ -36,7 +35,6 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     isSaving = false;
     isMiddleOfDrawing = false;
     saveInQueue = false;
-    lastSavedDrawingNumber = -1;
     undoStack = [];
     deletedDrawings = [];
     num = 0;
@@ -50,12 +48,13 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     padRatio = ratio;
     let writepadReceived: Writepad;
     if (writepadCompressedJson) {
-        writepadReceived = JSON.parse(await Decompress(writepadCompressedJson));
+        writepadReceived = JSON.parse(await DecompressAsync(writepadCompressedJson));
     } else {
-        writepadReceived = JSON.parse(await Decompress(document.getElementById("data").innerHTML.slice(8)));
+        writepadReceived = JSON.parse(await DecompressAsync(document.getElementById("data").innerHTML.slice(8)));
     }
     writepad = {
         LastModified: writepadReceived.LastModified,
+        LastSavedDrawingNumber: writepadReceived.LastSavedDrawingNumber,
         PointerType: writepadReceived.PointerType,
         Status: writepadReceived.Status,
         Type: writepadReceived.Type,
@@ -64,10 +63,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
         },
         Points: writepadReceived.Points ?? []
     };
-    if (writepad.Points.length != 0) {
-        lastSavedDrawingNumber = _.last(writepad.Points).Number;
-        num = lastSavedDrawingNumber + 1;
-    }
+    num = writepad.LastSavedDrawingNumber + 1;
 
     html = document.querySelector("html");
     pad = document.querySelector(".pad");
@@ -106,8 +102,10 @@ function updateCanvasSize() {
     //let oldWidth = canvas.width;
     //let oldHeight = canvas.height;
     //if (panel.classList.contains("panel-collapsed")) {
-    canvas.width = Math.trunc(Math.min(window.innerWidth, html.getBoundingClientRect().width) - panel.getBoundingClientRect().width);
-    canvas.height = Math.trunc(Math.min(window.innerHeight, html.getBoundingClientRect().height));
+    canvas.width = 0;
+    canvas.height = 0;
+    canvas.width = Math.trunc(pad.getBoundingClientRect().width);
+    canvas.height = Math.trunc(pad.getBoundingClientRect().height);
     //} else {
     //    canvas.width = Math.round(window.innerWidth * padRatio);
     //    canvas.height = Math.round(window.innerHeight);
@@ -126,33 +124,35 @@ function updateOffsets() {
 }
 
 export function isSaveRequired() {
-    let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > lastSavedDrawingNumber);
-    if (endingIndex == -1 && !isSaving) {
+    let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > writepad.LastSavedDrawingNumber);
+    let deletedIndex = _.findIndex(deletedDrawings, (d: DeletedDrawing) => d.StartingNumber < writepad.LastSavedDrawingNumber);
+    if (endingIndex == -1 && deletedIndex == -1 && !isSaving) {
         return false;
     }
     return true;
 }
 
-export async function save(): Promise<void> {
+export async function save(): Promise<boolean> {
     if (isSaving) {
-        return;
+        return true;
     } else if (isMiddleOfDrawing) {
         saveInQueue = true;
-        return;
+        return true;
     }
 
-    let startingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Number <= lastSavedDrawingNumber) + 1;
-    let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > lastSavedDrawingNumber);
     if (!isSaveRequired()) {
-        return;
+        return true;
     }
 
+    let succeed = true;
     try {
         //console.log("Start!" + new Date());
         isSaving = true;
 
-        let validDeletedDrawings = deletedDrawings.filter(d => d.StartingNumber <= lastSavedDrawingNumber);
+        let validDeletedDrawings = deletedDrawings.filter(d => d.StartingNumber < writepad.LastSavedDrawingNumber);
 
+        let startingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Number <= writepad.LastSavedDrawingNumber) + 1;
+        let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > writepad.LastSavedDrawingNumber);
         let newDrawings = writepad.Points.slice(startingIndex, endingIndex + 1);
 
         //console.log("Middle1!" + new Date());
@@ -162,37 +162,33 @@ export async function save(): Promise<void> {
             DeletedDrawings: validDeletedDrawings
         };
         let rawData = JSON.stringify(savePointsDTO);
-        let data = await Compress(rawData);
+        let data = await CompressAsync(rawData);
         //console.log(data.length / rawData.length);
         let response: SaveResponseDTO = await componentRef.invokeMethodAsync("Save", data);
         //let response: SaveResponseDTO = await componentRef.invokeMethodAsync("Save", writepad.LastModified, newDrawings, validDeletedDrawings);
         switch (response.statusCode) {
-            case StatusCode.ClientErrorNotFound:
-            case StatusCode.ClientErrorBadRequest:
-                break;
             case StatusCode.SuccessOK:
+                deletedDrawings.length = 0;
                 writepad.LastModified = response.lastModified;
-                lastSavedDrawingNumber = _.last(newDrawings).Number;
+                writepad.LastSavedDrawingNumber = response.lastSavedDrawingNumber;
                 break;
             default:
+                if (response.throwError) {
+                    throw new Error("Couldn't Save!");
+                }
                 break;
         }
         //console.log("End!" + new Date());
-    } finally {
+    }
+    catch {
+        succeed = false;
+    }
+    finally {
         isSaving = false;
         await componentRef.invokeMethodAsync("ReleaseSaveToken");
     }
-}
 
-interface SavePointsDTO {
-    LastModified: Date,
-    NewPoints: Point[],
-    DeletedDrawings: DeletedDrawing[]
-}
-
-interface SaveResponseDTO {
-    statusCode: StatusCode,
-    lastModified: Date
+    return succeed;
 }
 
 async function updateDotNetUndoRedo() {
@@ -239,72 +235,6 @@ function toFixedNumber(number: number, digits: number, base = 10): number {
     return Math.round(number * power) / power;
 }
 
-interface Writepad {
-    LastModified: Date;
-    readonly PointerType: PointerType;
-    readonly Status: WritepadStatus;
-    readonly Type: WritepadType;
-    readonly Text: WritepadText;
-    readonly Points: Point[];
-}
-
-const enum WritepadStatus {
-    Editing,
-    WaitForAcceptance,
-    Accepted
-}
-
-interface WritepadText {
-    readonly Content: string;
-}
-
-interface Point {
-    readonly Number: number;
-    Type: PointType;
-    readonly TimeStamp: number;
-    readonly X: number;
-    readonly Y: number;
-    readonly Width: number;
-    readonly Height: number;
-    readonly Pressure: number;
-    readonly TangentialPressure: number;
-    readonly TiltX: number;
-    readonly TiltY: number;
-    readonly Twist: number;
-}
-
-interface DeletedDrawing {
-    StartingNumber: number,
-    EndingNumber: number
-}
-
-const enum WritepadType {
-    Text,
-    WordGroup,
-    Sign
-}
-
-const enum PointerType {
-    Mouse,
-    Touchpad,
-    Pen,
-    Touch,
-    TouchPen
-}
-
-const enum PointType {
-    Middle,
-    Starting,
-    Ending
-}
-
-const enum Mode {
-    Non,
-    Draw,
-    Erase,
-    Move
-}
-
 export function changeDefaultMode(mode: Mode) {
     defaultMode = mode;
 }
@@ -325,9 +255,9 @@ export function redraw(): void {
     let minY = - canvas.height;
     let maxY = 2 * canvas.height;
     let isInside: boolean;
-    let lastP: Point;
     let lastX: number;
     let lastY: number;
+    let moved: boolean;
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     for (let p of writepad.Points) {
@@ -344,23 +274,25 @@ export function redraw(): void {
             case PointType.Starting:
                 context.beginPath();
                 context.moveTo(screenX, screenY);
+                moved = false;
                 break;
             case PointType.Middle:
                 if (lastX != screenX || lastY != screenY) {
                     context.lineTo(screenX, screenY);
+                    moved = true;
                 }
                 break;
             case PointType.Ending:
                 if (isInside) {
-                    let isDot = lastP.Type == PointType.Starting;
-                    if (isDot) {
-                        context.fillRect(screenX, screenY, 1, 1);
+                    if (lastX != screenX || lastY != screenY) {
+                        context.lineTo(screenX, screenY);
+                        moved = true;
+                    }
+                    if (moved) {
+                        context.stroke();
                     }
                     else {
-                        if (lastX != screenX || lastY != screenY) {
-                            context.lineTo(screenX, screenY);
-                        }
-                        context.stroke();
+                        context.fillRect(screenX, screenY, 1, 1);
                     }
                     isInside = false;
                 }
@@ -369,7 +301,6 @@ export function redraw(): void {
 
         lastX = screenX;
         lastY = screenY;
-        lastP = p;
     }
 }
 
@@ -451,15 +382,15 @@ function detectMode(event: PointerEvent): Mode {
     }
 }
 
-async function draw(startX, startY, endX, endY, isDot: boolean = false) {
-    if (isDot && startX == endX && startY == endY) {
-        context.fillRect(endX, endY, 1, 1);
-    }
-    else {
+async function draw(startX, startY, endX, endY, drawDot: boolean = false) {
+    if (startX != endX || startY != endY) {
         context.beginPath();
         context.moveTo(startX, startY);
         context.lineTo(endX, endY);
         context.stroke();
+    }
+    else if (drawDot) {
+        context.fillRect(endX, endY, 1, 1);
     }
 }
 
@@ -471,7 +402,6 @@ function onPointerDown(event: PointerEvent) {
     }
 
     mode = detectMode(event);
-
     pointerId = event.pointerId;
 
     pointerX = prevPointerX = event.clientX - horizontalOffset;
@@ -507,9 +437,7 @@ function onPointerMove(event: PointerEvent) {
             if (lastPoint.TimeStamp != event.timeStamp) {
                 const realX = toRealX(pointerX);
                 const realY = toRealY(pointerY);
-                if (lastPoint.X != realX || lastPoint.Y != realY) {
-                    draw(prevPointerX, prevPointerY, pointerX, pointerY);
-                }
+                draw(prevPointerX, prevPointerY, pointerX, pointerY);
                 lastPoint = createPoint(event, PointType.Middle, realX, realY, num);
                 addToDrawings(lastPoint);
             }
@@ -547,11 +475,14 @@ function onPointerUp(event: PointerEvent) {
 
             const realX = toRealX(pointerX);
             const realY = toRealY(pointerY);
+
+            draw(prevPointerX, prevPointerY, pointerX, pointerY, true);
+
             if (lastPoint.Type == PointType.Starting
                 || lastPoint.TimeStamp != event.timeStamp
                 || lastPoint.X != realX
                 || lastPoint.Y != realY) {
-                draw(prevPointerX, prevPointerY, pointerX, pointerY, lastPoint.Type == PointType.Starting);
+                
                 lastPoint = createPoint(event, PointType.Ending, realX, realY, num);
                 addToDrawings(lastPoint);
             } else {
@@ -570,6 +501,89 @@ function onPointerUp(event: PointerEvent) {
 
     if (saveInQueue) {
         saveInQueue = false;
-        save();
+        save().catch(error => {
+            console.error(error);
+            throw error;
+        });
     }
+}
+
+interface SavePointsDTO {
+    LastModified: Date,
+    NewPoints: Point[],
+    DeletedDrawings: DeletedDrawing[]
+}
+
+interface SaveResponseDTO {
+    statusCode: StatusCode,
+    throwError: boolean,
+    lastModified: Date,
+    lastSavedDrawingNumber: number
+}
+
+interface Writepad {
+    LastModified: Date;
+    LastSavedDrawingNumber: number;
+    readonly PointerType: PointerType;
+    readonly Status: WritepadStatus;
+    readonly Type: WritepadType;
+    readonly Text: WritepadText;
+    readonly Points: Point[];
+}
+
+const enum WritepadStatus {
+    Editing,
+    WaitForAcceptance,
+    Accepted
+}
+
+interface WritepadText {
+    readonly Content: string;
+}
+
+interface Point {
+    readonly Number: number;
+    Type: PointType;
+    readonly TimeStamp: number;
+    readonly X: number;
+    readonly Y: number;
+    readonly Width: number;
+    readonly Height: number;
+    readonly Pressure: number;
+    readonly TangentialPressure: number;
+    readonly TiltX: number;
+    readonly TiltY: number;
+    readonly Twist: number;
+}
+
+interface DeletedDrawing {
+    StartingNumber: number,
+    EndingNumber: number
+}
+
+const enum WritepadType {
+    Text,
+    WordGroup,
+    Sign
+}
+
+const enum PointerType {
+    Mouse,
+    Touchpad,
+    Pen,
+    Touch,
+    TouchPen
+}
+
+const enum PointType {
+    Middle,
+    Starting,
+    Ending
+}
+
+const enum Mode {
+    Non,
+    Draw,
+    Erase,
+    Move
 }

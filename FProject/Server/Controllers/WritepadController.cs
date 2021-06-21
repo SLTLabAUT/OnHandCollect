@@ -128,7 +128,17 @@ namespace FProject.Server.Controllers
             }
             var writepadDTO = (WritepadDTO)writepad;
             if (withPoints)
+            {
+                var lastSavedDrawingNumber = await _context.Points
+                    .IgnoreQueryFilters()
+                    .Where(p => p.WritepadId == writepad.Id)
+                    .Select(p => p.Number)
+                    .OrderBy(v => v)
+                    .LastOrDefaultAsync();
+                writepadDTO.LastSavedDrawingNumber = lastSavedDrawingNumber == 0 ? -1 : lastSavedDrawingNumber;
+
                 return LZString.CompressToBase64(JsonSerializer.Serialize(writepadDTO));
+            }
             else
             {
                 //if (withNumber)
@@ -274,7 +284,11 @@ namespace FProject.Server.Controllers
             writepad.LastModified = DateTimeOffset.UtcNow;
             await _context.SaveChangesAsync();
 
-            return Ok(new SavePointsResponseDTO { LastModified = writepad.LastModified });
+            var lastPoint = savePointsDTO.NewPoints.LastOrDefault();
+            return Ok(new SavePointsResponseDTO {
+                LastModified = writepad.LastModified,
+                LastSavedDrawingNumber = lastPoint is null ? -1 : lastPoint.Number
+            });
         }
 
         // DELETE api/<WritepadController>/5

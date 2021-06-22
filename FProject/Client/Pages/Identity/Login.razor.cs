@@ -27,7 +27,7 @@ namespace FProject.Client.Pages.Identity
         EditContext EditContext { get; set; }
         ValidationMessageStore Errors { get; set; }
         bool EmailNotConfirmed { get; set; }
-        bool SubmitButtonIsActing { get; set; }
+        Shared.Button SubmitButton { get; set; }
 
         protected override void OnParametersSet()
         {
@@ -43,7 +43,7 @@ namespace FProject.Client.Pages.Identity
 
         async Task LoginHandler()
         {
-            SubmitButtonIsActing = true;
+            SubmitButton.State = Shared.ButtonState.Acting;
             try
             {
                 EmailNotConfirmed = false;
@@ -64,7 +64,7 @@ namespace FProject.Client.Pages.Identity
             }
             finally
             {
-                SubmitButtonIsActing = false;
+                SubmitButton.State = Shared.ButtonState.None;
             }
         }
 

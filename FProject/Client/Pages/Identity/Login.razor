@@ -22,7 +22,7 @@
                 <MyBFUCheckbox Label=@(Utils.GetDisplayName<LoginDTO, bool>(m => m.RememberMe)) @bind-Checked=@LoginDTO.RememberMe />
                 <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                     <StackItem Align=Alignment.Center>
-                        <Button ButtonType=ButtonType.Submit IsActing=SubmitButtonIsActing Text="ورود" />
+                        <Button ButtonType=ButtonType.Submit @ref="SubmitButton" ManualStateControl=true Text="ورود" />
                     </StackItem>
                     <StackItem Align=Alignment.Center>
                         <BlazorFluentUI.Link Href="/identity/forgotpassword">فراموشی رمز عبور</BlazorFluentUI.Link>

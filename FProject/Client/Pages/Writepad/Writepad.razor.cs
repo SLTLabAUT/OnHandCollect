@@ -49,7 +49,7 @@ namespace FProject.Client.Pages
         {
             componentRef = DotNetObjectReference.Create(this);
 
-            JSRef = await JS.InvokeAsync<IJSObjectReference>("ImportGlobal", "Writepad", "/ts/Pages/Writepad/Writepad.razor.js");
+            JSRef = await JS.InvokeAsync<IJSObjectReference>("FProject.ImportGlobal", "Writepad", "/ts/Pages/Writepad/Writepad.razor.js");
 
             SaveTimer.Elapsed += SaveTimerElapsedHandler;
         }
@@ -113,6 +113,7 @@ namespace FProject.Client.Pages
         //public async Task<SaveResponseDTO> Save(DateTimeOffset lastModified, DrawingPoint[] drawingPoints, DeletedDrawing[] deletedDrawings)
         {
             IsSaving = true;
+            PanelRef.SaveButton.State = Shared.ButtonState.Acting;
             PanelRef.StateHasChangedPublic();
             try
             {
@@ -166,6 +167,7 @@ namespace FProject.Client.Pages
         public void ReleaseSaveToken()
         {
             IsSaving = false;
+            PanelRef.SaveButton.State = Shared.ButtonState.Done;
             PanelRef.StateHasChangedPublic();
         }
 

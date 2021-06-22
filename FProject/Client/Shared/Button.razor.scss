@@ -1,0 +1,27 @@
+﻿::deep {
+    display: grid;
+
+    & > * {
+        grid-row: 1;
+        grid-column: 1;
+        position: initial;
+    }
+
+    .overlay {
+        z-index: 1;
+        justify-self: center;
+        align-self: center;
+
+        .done {
+            animation-duration: 1s;
+            font-weight: 900;
+            color: var(--palette-Teal)
+        }
+    }
+
+    .button {
+        .is-Hide {
+            color: #a19f9d75;
+        }
+    }
+}

@@ -48,9 +48,9 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     padRatio = ratio;
     let writepadReceived: Writepad;
     if (writepadCompressedJson) {
-        writepadReceived = JSON.parse(await DecompressAsync(writepadCompressedJson));
+        writepadReceived = JSON.parse(await window.FProject.DecompressAsync(writepadCompressedJson));
     } else {
-        writepadReceived = JSON.parse(await DecompressAsync(document.getElementById("data").innerHTML.slice(8)));
+        writepadReceived = JSON.parse(await window.FProject.DecompressAsync(document.getElementById("data").innerHTML.slice(8)));
     }
     writepad = {
         LastModified: writepadReceived.LastModified,
@@ -162,7 +162,7 @@ export async function save(): Promise<boolean> {
             DeletedDrawings: validDeletedDrawings
         };
         let rawData = JSON.stringify(savePointsDTO);
-        let data = await CompressAsync(rawData);
+        let data = await window.FProject.CompressAsync(rawData);
         //console.log(data.length / rawData.length);
         let response: SaveResponseDTO = await componentRef.invokeMethodAsync("Save", data);
         //let response: SaveResponseDTO = await componentRef.invokeMethodAsync("Save", writepad.LastModified, newDrawings, validDeletedDrawings);

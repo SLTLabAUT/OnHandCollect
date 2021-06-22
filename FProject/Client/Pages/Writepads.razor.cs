@@ -18,6 +18,7 @@ using System.Web;
 using Microsoft.AspNetCore.Components.Authorization;
 using FProject.Shared.Models;
 using System.Security.Claims;
+using FProject.Client.Shared;
 
 namespace FProject.Client.Pages
 {
@@ -40,10 +41,8 @@ namespace FProject.Client.Pages
         bool CommentsDialogOpen { get; set; }
         bool InfoDialogOpen { get; set; }
         bool SubmitDisabled { get; set; }
-        bool SaveButtonIsActing { get; set; }
-        bool DeleteButtonIsActing { get; set; }
-        bool SendCommentButtonIsActing { get; set; }
-        bool ChangeStatusButtonIsActing { get; set; }
+        Button SaveButton { get; set; }
+        Button SendCommentButton { get; set; }
         bool IsSignSelected { get; set; }
         Handedness Handedness { get; set; }
         NewWritepadModel NewWritepad { get; set; }
@@ -182,7 +181,7 @@ namespace FProject.Client.Pages
 
         async Task SubmitWritepad()
         {
-            SaveButtonIsActing = true;
+            SaveButton.State = ButtonState.Acting;
             try
             {
                 var isValid = EditContext.Validate();
@@ -222,13 +221,13 @@ namespace FProject.Client.Pages
             }
             finally
             {
-                SaveButtonIsActing = false;
+                SaveButton.State = ButtonState.None;
             }
         }
 
         async Task SendCommentHandler()
         {
-            SendCommentButtonIsActing = true;
+            SendCommentButton.State = ButtonState.Acting;
             try
             {
                 var result = await Http.PostAsJsonAsync($"api/Comment", CommentDTO);
@@ -239,7 +238,7 @@ namespace FProject.Client.Pages
             }
             finally
             {
-                SendCommentButtonIsActing = false;
+                SendCommentButton.State = ButtonState.None;
             }
         }
 
@@ -277,7 +276,6 @@ namespace FProject.Client.Pages
 
         async Task DeleteWritepad(MouseEventArgs args)
         {
-            DeleteButtonIsActing = true;
             try
             {
                 var result = await Http.DeleteAsync($"api/Writepad/{CurrentWritepad.SpecifiedNumber}");
@@ -289,7 +287,6 @@ namespace FProject.Client.Pages
             {
                 CurrentWritepad = null;
                 DeleteDialogOpen = false;
-                DeleteButtonIsActing = false;
             }
 
             if (WritepadList.Count == 0)
@@ -300,7 +297,6 @@ namespace FProject.Client.Pages
 
         async Task SubmitForApproval(MouseEventArgs args, WritepadDTO writepad)
         {
-            ChangeStatusButtonIsActing = true;
             try
             {
                 var response = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.WaitForAcceptance}", null);
@@ -311,13 +307,11 @@ namespace FProject.Client.Pages
             }
             finally
             {
-                ChangeStatusButtonIsActing = false;
             }
         }
 
         async Task CancelApprovalRequest(MouseEventArgs args, WritepadDTO writepad)
         {
-            ChangeStatusButtonIsActing = true;
             try
             {
                 var result = await Http.PutAsync($"api/Writepad/{writepad.SpecifiedNumber}?status={WritepadStatus.Draft}", null);
@@ -329,7 +323,6 @@ namespace FProject.Client.Pages
             }
             finally
             {
-                ChangeStatusButtonIsActing = false;
             }
         }
 

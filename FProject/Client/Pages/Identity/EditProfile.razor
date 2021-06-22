@@ -39,7 +39,7 @@
             <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
             <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                 <StackItem Align=Alignment.Center>
-                    <Button ButtonType=ButtonType.Submit IsActing=SubmitButtonIsActing Text="اعمال تغییرات" />
+                    <Button ButtonType=ButtonType.Submit @ref="SubmitButton" ManualStateControl=true Text="اعمال تغییرات" />
                 </StackItem>
             </Stack>
         </EditForm>
@@ -58,7 +58,7 @@
     bool Done { get; set; }
     ProfileModel Model { get; set; }
     EditContext EditContext { get; set; }
-    bool SubmitButtonIsActing { get; set; }
+    Button SubmitButton { get; set; }
 
     protected override void OnInitialized()
     {
@@ -90,7 +90,7 @@
 
     async Task FormHandler()
     {
-        SubmitButtonIsActing = true;
+        SubmitButton.State = ButtonState.Acting;
         try
         {
             Done = false;
@@ -103,7 +103,7 @@
         }
         finally
         {
-            SubmitButtonIsActing = false;
+            SubmitButton.State = ButtonState.None;
         }
     }
 

@@ -60,7 +60,7 @@
                 @{
                     var version = typeof(Program).Assembly.GetName().Version;
                 }
-                <MyBFUText Variant="TextType.Small"><MyBFULink Href="/index" OnClick=@OnLinkClickHandler>v@(version.Major).@(version.Minor).@(version.Build)</MyBFULink></MyBFUText>
+                <MyBFUText Variant="TextType.Small"><MyBFULink Href="/index" OnClick=@OnLinkClickHandler>v@(version)</MyBFULink></MyBFUText>
             </MyBFUText>
         </StackItem>
     </Stack>

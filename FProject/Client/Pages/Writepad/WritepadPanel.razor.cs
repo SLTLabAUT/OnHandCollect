@@ -1,4 +1,5 @@
 ﻿using BlazorFluentUI;
+using FProject.Client.Shared;
 using FProject.Shared;
 using FProject.Shared.Models;
 using Microsoft.AspNetCore.Components;
@@ -30,6 +31,7 @@ namespace FProject.Client.Pages
         public bool NotAllowedDialogOpen { get; set; }
         bool LeaveConfirmDialogOpen { get; set; }
         bool HelpDialogOpen { get; set; }
+        public Button SaveButton { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

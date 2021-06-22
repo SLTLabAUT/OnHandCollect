@@ -29,7 +29,7 @@ namespace FProject.Client.Pages.Identity
         ValidationMessageStore Errors { get; set; }
         bool TermsDialogOpen { get; set; }
         bool Done { get; set; }
-        bool SubmitButtonIsActing { get; set; }
+        Shared.Button SubmitButton { get; set; }
 
         protected override void OnInitialized()
         {
@@ -67,7 +67,7 @@ namespace FProject.Client.Pages.Identity
 
         async Task RegisterHandler()
         {
-            SubmitButtonIsActing = true;
+            SubmitButton.State = Shared.ButtonState.Acting;
             try
             {
                 Done = false;
@@ -90,7 +90,7 @@ namespace FProject.Client.Pages.Identity
             }
             finally
             {
-                SubmitButtonIsActing = false;
+                SubmitButton.State = Shared.ButtonState.None;
             }
         }
 

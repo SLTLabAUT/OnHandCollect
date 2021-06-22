@@ -33,7 +33,7 @@
                 <MyBFUCheckbox Label=@(Utils.GetDisplayName<RegisterModel, bool>(m => m.AcceptTerms)) @bind-Checked=@Model.AcceptTerms OnLabelTextClick=@ShowHideTerms Required=true />
                 <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                     <StackItem Align=Alignment.Center>
-                        <Button ButtonType=ButtonType.Submit IsActing=SubmitButtonIsActing Text="ثبت‌نام" />
+                        <Button ButtonType=ButtonType.Submit @ref="SubmitButton" ManualStateControl=true Text="ثبت‌نام" />
                     </StackItem>
                 </Stack>
             </EditForm>

@@ -166,7 +166,7 @@
                                                         <TooltipHost>
                                                             <TooltipContent>رد</TooltipContent>
                                                             <ChildContent>
-                                                                <Button ButtonType=ButtonType.Icon IsActing=ChangeStatusButtonIsActing OnClick=@(args => Reject(args, writepad)) IconName="Cancel" />
+                                                                <Button ButtonType=ButtonType.Icon OnClick=@(args => Reject(args, writepad)) IconName="Cancel" />
                                                             </ChildContent>
                                                         </TooltipHost>
                                                     }
@@ -175,7 +175,7 @@
                                                         <TooltipHost>
                                                             <TooltipContent>تایید</TooltipContent>
                                                             <ChildContent>
-                                                                <Button ButtonType=ButtonType.Icon IsActing=ChangeStatusButtonIsActing OnClick=@(args => Approve(args, writepad)) IconName="Accept" />
+                                                                <Button ButtonType=ButtonType.Icon OnClick=@(args => Approve(args, writepad)) IconName="Accept" />
                                                             </ChildContent>
                                                         </TooltipHost>
                                                     }
@@ -232,7 +232,7 @@
         <ChildContent></ChildContent>
         <FooterTemplate>
             <DefaultButton Text="لغو" OnClick=@(args => DeleteDialogOpen=false) />
-            <Button ButtonType=ButtonType.Primary IsActing=DeleteButtonIsActing Text="حذف" OnClick=DeleteWritepad />
+            <Button ButtonType=ButtonType.Primary ShowDoneOnEnd=true Text="حذف" OnClick=DeleteWritepad />
         </FooterTemplate>
     </MyBFUDialog>
 
@@ -258,7 +258,7 @@
                         <MyBFUTextField Multiline=true Label="متن پیام جدید" @bind-Value=@CommentDTO.Text @bind-Value:event="OnChange" />
                         <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                             <StackItem Align=Alignment.Center>
-                                <Button ButtonType=ButtonType.Submit IsActing=SendCommentButtonIsActing Text="ارسال پیام" />
+                                <Button ButtonType=ButtonType.Submit @ref="SendCommentButton" ManualStateControl=true Text="ارسال پیام" />
                             </StackItem>
                         </Stack>
                     </EditForm>

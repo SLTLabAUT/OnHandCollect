@@ -69,7 +69,7 @@ namespace FProject.Server.Controllers
             {
                 return BadRequest();
             }
-            user.PhoneNumber = userInfo.PhoneNumber.Trim();
+            user.PhoneNumber = userInfo.PhoneNumber?.Trim();
             user.Sex = userInfo.Sex;
             user.BirthYear = userInfo.BirthYear;
             user.Education = userInfo.Education;
@@ -98,7 +98,7 @@ namespace FProject.Server.Controllers
             {
                 UserName = registerDTO.Email.Trim(),
                 Email = registerDTO.Email.Trim(),
-                PhoneNumber = registerDTO.PhoneNumber.Trim(),
+                PhoneNumber = registerDTO.PhoneNumber?.Trim(),
                 Sex = registerDTO.Sex,
                 BirthYear = registerDTO.BirthYear,
                 Education = registerDTO.Education,

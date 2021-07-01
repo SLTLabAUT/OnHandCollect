@@ -21,14 +21,11 @@ namespace FProject.Server
             {
                 var services = scope.ServiceProvider;
 
-                try
+                var seedTask = new SeedData().Initialize(services);
+                seedTask.Wait();
+                if (!seedTask.IsCompletedSuccessfully)
                 {
-                    SeedData.Initialize(services).Wait();
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
+                    throw seedTask.Exception;
                 }
             }
 

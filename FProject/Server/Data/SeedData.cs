@@ -3,8 +3,10 @@ using FProject.Shared;
 using FProject.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -15,77 +17,127 @@ using System.Threading.Tasks;
 
 namespace FProject.Server.Data
 {
-    public static class SeedData
+    public class SeedData
     {
-        public static async Task Initialize(IServiceProvider serviceProvider)
+        public async Task Initialize(IServiceProvider serviceProvider)
         {
             using (var context = serviceProvider.GetRequiredService<ApplicationDbContext>())
             {
                 var config = serviceProvider.GetRequiredService<IConfiguration>();
+                var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
+                var adminEmail = "sssafais@hotmail.com";
+                var admin = await userManager.FindByNameAsync(adminEmail);
 
-                var adminID = await EnsureUser(serviceProvider, config["SeedAdminPw"], "sssafais@hotmail.com");
-                await EnsureRole(serviceProvider, adminID, IdentityRoleConstants.Admin);
+                admin = await EnsureAdmin(userManager, admin, adminEmail, config["SeedAdminPw"]);
+                await EnsureAdminRole(serviceProvider, userManager, admin);
 
                 await EnsureText(context);
                 await EnsureWordGroup(context);
+
+                await EnsureUserWordCount(context);
             }
         }
 
-        private static async Task<string> EnsureUser(IServiceProvider serviceProvider, string UserPw, string Email)
+        private async Task EnsureUserWordCount(ApplicationDbContext context)
         {
-            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
+            var wordsNotCounted = await context.Writepads
+                .Where(w => w.Status == WritepadStatus.Accepted && w.Owner.AcceptedWordCount == 0)
+                .AnyAsync();
 
-            var user = await userManager.FindByNameAsync(Email);
-            if (user is null)
+            if (!wordsNotCounted)
             {
-                user = new ApplicationUser
+                return;
+            }
+
+            var text = context.Text
+                .Select(t => new { Id = t.Id, WordCount = t.WordCount });
+            var writepads = context.Writepads
+                .Where(w => w.Status == WritepadStatus.Accepted && w.Owner.AcceptedWordCount == 0)
+                .Select(w => new { TextId = w.TextId, OwnerId = w.OwnerId });
+
+            var join = from w in writepads
+                       join t in text on w.TextId equals t.Id into gj
+                       from wt in gj.DefaultIfEmpty()
+                       select new { w.OwnerId, WordCount = wt.WordCount as int? ?? 1 };
+            var query = join.GroupBy(r => r.OwnerId, (key, r) => new { UserId = key, AcceptedWordCount = r.Sum(e => e.WordCount) });
+
+            var counts = await query.ToListAsync();
+
+            foreach (var entry in counts)
+            {
+                var user = new ApplicationUser
+                {
+                    Id = entry.UserId
+                };
+
+                var entity = context.Entry(user);
+                if (entity is null)
+                {
+                    context.Users.Attach(user);
+                }
+                else
+                {
+                    user = await context.Users.FindAsync(user.Id);
+                }
+                user.AcceptedWordCount = entry.AcceptedWordCount;
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        private async Task<ApplicationUser> EnsureAdmin(UserManager<ApplicationUser> userManager, ApplicationUser admin, string Email, string UserPw)
+        {
+            if (admin is null)
+            {
+                admin = new ApplicationUser
                 {
                     UserName = Email,
                     Email = Email,
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(user, UserPw);
+                await userManager.CreateAsync(admin, UserPw);
             }
 
-            if (user is null)
+            if (admin is null)
             {
-                throw new Exception("The password is probably not strong enough!");
+                throw new Exception("Admin password is probably not strong enough!");
             }
 
-            return user.Id;
+            return admin;
         }
 
-        private static async Task<IdentityResult> EnsureRole(IServiceProvider serviceProvider,
-                                                                      string uid, string role)
+        private async Task EnsureAdminRole(IServiceProvider serviceProvider, UserManager<ApplicationUser> userManager, ApplicationUser admin)
         {
-            IdentityResult IR = null;
+            var adminRole = IdentityRoleConstants.Admin;
             var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
 
             if (roleManager is null)
             {
-                throw new Exception("roleManager null");
+                throw new Exception("RoleManager is null");
             }
 
-            if (!await roleManager.RoleExistsAsync(role))
+            if (!await roleManager.RoleExistsAsync(adminRole))
             {
-                IR = await roleManager.CreateAsync(new IdentityRole(role));
+                var result = await roleManager.CreateAsync(new IdentityRole(adminRole));
+
+                if (!result.Succeeded)
+                {
+                    throw new Exception("Couldn't create admin role.");
+                }
             }
 
-            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
-
-            var user = await userManager.FindByIdAsync(uid);
-
-            if (user is null)
+            if (!await userManager.IsInRoleAsync(admin, adminRole))
             {
-                throw new Exception("The testUserPw password was probably not strong enough!");
+                var result = await userManager.AddToRoleAsync(admin, adminRole);
+
+                if (!result.Succeeded)
+                {
+                    throw new Exception("Couldn't add admin role to admin.");
+                }
             }
-
-            IR = await userManager.AddToRoleAsync(user, role);
-
-            return IR;
         }
 
-        private static async Task EnsureText(ApplicationDbContext context)
+        private async Task EnsureText(ApplicationDbContext context)
         {
             var count = await context.Text
                 .Where(t => t.Type == TextType.Text)
@@ -123,7 +175,7 @@ namespace FProject.Server.Data
             await context.SaveChangesAsync();
         }
 
-        private static async Task EnsureWordGroup(ApplicationDbContext context)
+        private async Task EnsureWordGroup(ApplicationDbContext context)
         {
             var count = await context.Text
                 .Where(t => t.Type == TextType.WordGroup)

@@ -21,6 +21,7 @@ namespace FProject.Shared.Models
         public short? BirthYear { get; set; }
         public Education? Education { get; set; }
         public Handedness Handedness { get; set; }
+        public int AcceptedWordCount { get; set; }
     }
 
     public class ForgotPasswordDTO

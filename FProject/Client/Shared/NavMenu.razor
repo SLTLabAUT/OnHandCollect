@@ -11,6 +11,13 @@
                             <MyBFUText Variant=TextType.Large>
                                 <Icon IconName="Contact" /> @context.User.FindFirstValue(ClaimTypes.Email)
                             </MyBFUText>
+                            <br />
+                            @if (AcceptedWordCount != -1)
+                            {
+                                <MyBFUText>
+                                    تعداد کلمات تایید شده: @AcceptedWordCount
+                                </MyBFUText>
+                            }
                         </StackItem>
                     </Authorized>
                 </AuthorizeView>
@@ -23,15 +30,15 @@
                 <StackItem VerticalFill="false" Grow="1">
                     <BlazorFluentUI.Routing.Nav>
                         <BlazorFluentUI.Routing.NavLinkGroup>
-                            <BlazorFluentUI.Routing.NavLink Name="تخته‌ها" Url="writepads" Id="writepads" IconName="WhiteBoardApp32" OnClick=@OnLinkClicked />
+                            <BlazorFluentUI.Routing.NavLink Name="تخته‌ها" Url="writepads" Id="writepads" IconName="WhiteBoardApp32" OnClick=@OnNavLinkClickHandler />
                             <AuthorizeView Roles="@IdentityRoleConstants.Admin">
                                 <Authorized>
-                                    <BlazorFluentUI.Routing.NavLink Name="تخته‌ها (صفحه‌ی مدیر)" Url="writepadsadmin" Id="writepadsadmin" IconName="WhiteBoardApp32" OnClick=@OnLinkClicked />
+                                    <BlazorFluentUI.Routing.NavLink Name="تخته‌ها (صفحه‌ی مدیر)" Url="writepadsadmin" Id="writepadsadmin" IconName="WhiteBoardApp32" OnClick=@OnNavLinkClickHandler />
                                 </Authorized>
                             </AuthorizeView>
-                            <BlazorFluentUI.Routing.NavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" IconName="Contact" OnClick=@OnLinkClicked />
-                            <BlazorFluentUI.Routing.NavLink Name="راهنما" Url="help" Id="help" IconName="HelpMirrored" OnClick=@OnLinkClicked />
-                            <BlazorFluentUI.Routing.NavLink Name="خروج" Url="identity/logout" Id="identity/logout" IconName="SignOut" OnClick=@OnLinkClicked />
+                            <BlazorFluentUI.Routing.NavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" IconName="Contact" OnClick=@OnNavLinkClickHandler />
+                            <BlazorFluentUI.Routing.NavLink Name="راهنما" Url="help" Id="help" IconName="HelpMirrored" OnClick=@OnNavLinkClickHandler />
+                            <BlazorFluentUI.Routing.NavLink Name="خروج" Url="identity/logout" Id="identity/logout" IconName="SignOut" OnClick=@OnNavLinkClickHandler />
                         </BlazorFluentUI.Routing.NavLinkGroup>
                     </BlazorFluentUI.Routing.Nav>
                 </StackItem>

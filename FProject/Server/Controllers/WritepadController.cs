@@ -298,25 +298,30 @@ namespace FProject.Server.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
 
-            Writepad writepad;
+            IQueryable<Writepad> writepadQuery = _context.Writepads
+                .Include(w => w.Owner)
+                .Include(w => w.Text);
             if (isAdmin && admin)
             {
-                writepad = await _context.Writepads
-                    .Where(w => w.Id == id)
-                    .FirstOrDefaultAsync();
+                writepadQuery = writepadQuery
+                    .Where(w => w.Id == id);
             }
             else
             {
-                writepad = await _context.Writepads
-                    .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
-                    .FirstOrDefaultAsync();
+                writepadQuery = writepadQuery
+                    .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId);
             }
+            var writepad = await writepadQuery.FirstOrDefaultAsync();
 
             if (writepad is null)
             {
                 return NotFound();
             }
 
+            if (writepad.Status == WritepadStatus.Accepted)
+            {
+                writepad.Owner.AcceptedWordCount -= writepad.Text?.WordCount ?? 1;
+            }
             writepad.IsDeleted = true;
             await _context.SaveChangesAsync();
 
@@ -329,12 +334,15 @@ namespace FProject.Server.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
+            var adminMode = isAdmin && admin;
 
             Writepad writepad;
-            if (isAdmin && admin)
+            if (adminMode)
             {
                 writepad = await _context.Writepads
                     .Where(w => w.Id == id)
+                    .Include(w => w.Owner)
+                    .Include(w => w.Text)
                     .FirstOrDefaultAsync();
             }
             else
@@ -351,7 +359,7 @@ namespace FProject.Server.Controllers
             
             if ((writepad.Status == WritepadStatus.Accepted
                 || status == WritepadStatus.Accepted
-                || status == WritepadStatus.NeedEdit) && !isAdmin)
+                || status == WritepadStatus.NeedEdit) && !adminMode)
             {
                 return BadRequest();
             }
@@ -364,6 +372,15 @@ namespace FProject.Server.Controllers
             if (writepad.LastCheck is not null && (status == WritepadStatus.Accepted || status == WritepadStatus.NeedEdit))
             {
                 writepad.LastCheck = DateTimeOffset.UtcNow;
+            }
+
+            if (status == WritepadStatus.Accepted && writepad.Status != WritepadStatus.Accepted)
+            {
+                writepad.Owner.AcceptedWordCount += writepad.Text?.WordCount ?? 1;
+            }
+            else if (status != WritepadStatus.Accepted && writepad.Status == WritepadStatus.Accepted)
+            {
+                writepad.Owner.AcceptedWordCount -= writepad.Text?.WordCount ?? 1;
             }
 
             writepad.Status = status;

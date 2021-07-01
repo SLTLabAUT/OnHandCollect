@@ -334,11 +334,13 @@
                 <br />
                 نوع ورودی: @(CurrentWritepad?.PointerType.GetAttribute<DisplayAttribute>().Name)
                 <br />
-                نوع: @(CurrentWritepad?.Type.GetAttribute<DisplayAttribute>().Name)
+                نوع داده: @(CurrentWritepad?.Type.GetAttribute<DisplayAttribute>().Name)
                 <br />
                 نوع دست: @(CurrentWritepad?.Hand.GetAttribute<DisplayAttribute>().Name)
                 <br />
                 آخرین بروزرسانی: @CurrentWritepad?.LastModified.GetLocalTimeString()
+                <br />
+                تعداد کلمات: @(CurrentWritepad?.Text?.WordCount ?? 1)
                 <br />
                 @if (CurrentWritepad?.Type != FProject.Shared.WritepadType.Sign)
                 {

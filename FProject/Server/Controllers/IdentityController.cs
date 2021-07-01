@@ -52,6 +52,14 @@ namespace FProject.Server.Controllers
         }
 
         [Authorize]
+        public async Task<int> AcceptedWordCount()
+        {
+            var user = await _signInManager.UserManager.GetUserAsync(User);
+
+            return user.AcceptedWordCount;
+        }
+
+        [Authorize]
         public async Task<IActionResult> UpdateProfile(UserDTO userInfo)
         {
             if (!ModelState.IsValid)

@@ -13,6 +13,7 @@ namespace FProject.Server.Models
         public short? BirthYear { get; set; }
         public Education? Education { get; set; }
         public Handedness Handedness { get; set; }
+        public int AcceptedWordCount { get; set; }
 
         public ICollection<Writepad> Writepads { get; set; }
 
@@ -26,6 +27,7 @@ namespace FProject.Server.Models
                 BirthYear = model.BirthYear,
                 Education = model.Education,
                 Handedness = model.Handedness,
+                AcceptedWordCount = model.AcceptedWordCount
             };
         }
     }

@@ -9,6 +9,22 @@ using System.Threading.Tasks;
 
 namespace FProject.Shared.Models
 {
+    public class UserRankInfo
+    {
+        [Display(Name = "رتبه")]
+        public int Rank { get; set; }
+        [Display(Name = "نام مستعار")]
+        public string Username { get; set; }
+        [Display(Name = "تعداد کلمات")]
+        public int AcceptedWordCount { get; set; }
+    }
+
+    public class UserRankInfoDTO
+    {
+        public List<UserRankInfo> UserRankInfos { get; set; }
+        public int AllCount { get; set; }
+    }
+
     public class UserDTO
     {
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]

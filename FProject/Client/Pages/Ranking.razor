@@ -1,0 +1,28 @@
+﻿@page "/ranking"
+
+<div>
+    <FProject.Client.Pages.Identity.IdentityTemplate Title="رتبه‌بندی">
+        @if (ItemSource is null)
+        {
+            <Spinner Size=@SpinnerSize.Large Label="در حال بارگیری اطلاعات..." />
+        }
+        else
+        {
+            <Stack VerticalFill="true" HorizontalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+                <StackItem VerticalFill=false Align=Alignment.Center>
+                    <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
+                </StackItem>
+                <StackItem VerticalFill="false" Style="width:100%;">
+                    <BlazorFluentUI.Lists.DetailsList ItemsSource=@ItemSource
+                                                      GetKey=@(i => i.Rank)
+                                                      TItem=@UserRankInfo
+                                                      Columns=@ColumnSource
+                                                      LayoutMode=@BlazorFluentUI.Lists.DetailsListLayoutMode.Justified />
+                </StackItem>
+                <StackItem VerticalFill=false Align=Alignment.Center>
+                    <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
+                </StackItem>
+            </Stack>
+        }
+    </FProject.Client.Pages.Identity.IdentityTemplate>
+</div>

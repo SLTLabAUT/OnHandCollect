@@ -65,10 +65,15 @@ html, body {
     overflow: auto;
     text-align: justify;
     text-align-last: center;
-}
 
-.help {
-    margin: 25px 0;
+    .button-section {
+        margin: 15px 0 0 0;
+        text-align: center;
+
+        .ms-Button {
+            margin: 5px;
+        }
+    }
 }
 
 .navigation {

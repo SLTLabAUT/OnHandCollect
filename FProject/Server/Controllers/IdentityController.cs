@@ -1,4 +1,5 @@
-﻿using FProject.Server.Models;
+﻿using FProject.Server.Data;
+using FProject.Server.Models;
 using FProject.Server.Services;
 using FProject.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +17,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -24,23 +27,28 @@ namespace FProject.Server.Controllers
     [ApiController]
     public class IdentityController : ControllerBase
     {
+        protected static readonly Regex emailUglifier = new Regex(@"(.?.?)(.+?)(.?.?@.?)(.{2,})(.)", RegexOptions.Compiled);
+
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ILogger<IdentityController> _logger;
         private readonly EmailService _emailService;
         private readonly LinkGenerator _linkGenerator;
+        private readonly ApplicationDbContext _context;
 
         public IdentityController(SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             ILogger<IdentityController> logger,
             EmailService emailService,
-            LinkGenerator linkGenerator)
+            LinkGenerator linkGenerator,
+            ApplicationDbContext context)
         {
             _signInManager = signInManager;
             _configuration = configuration;
             _logger = logger;
             _emailService = emailService;
             _linkGenerator = linkGenerator;
+            _context = context;
         }
 
         [Authorize]
@@ -57,6 +65,47 @@ namespace FProject.Server.Controllers
             var user = await _signInManager.UserManager.GetUserAsync(User);
 
             return user.AcceptedWordCount;
+        }
+
+        public async Task<UserRankInfoDTO> Ranking(int page = 1)
+        {
+            IQueryable<ApplicationUser> userQuery = _context.Users
+                .Where(u => u.AcceptedWordCount > 0);
+
+            var ranking = (await userQuery
+                .OrderByDescending(u => u.AcceptedWordCount)
+                .Select(u => new { u.Email, u.AcceptedWordCount })
+                .Skip((page - 1) * 10)
+                .Take(10)
+                .ToListAsync())
+                .Select((r, i) => new UserRankInfo { Rank = 10 * (page - 1) + i + 1, Username = UglifyEmail(r.Email), AcceptedWordCount = r.AcceptedWordCount })
+                .ToList();
+
+            var allCount = await userQuery.CountAsync();
+
+            var dto = new UserRankInfoDTO
+            {
+                AllCount = allCount,
+                UserRankInfos = ranking
+            };
+
+            return dto;
+        }
+
+        private string UglifyEmail(string email)
+        {
+            var uglifiedEmail = string.Empty;
+            var match = emailUglifier.Match(email);
+            for (int i = 1; i < match.Groups.Count; i++)
+            {
+                var value = match.Groups[i].Value;
+                if (i == 2 || i == 4)
+                {
+                    value = new string('*', value.Length);
+                }
+                uglifiedEmail += value;
+            }
+            return uglifiedEmail;
         }
 
         [Authorize]

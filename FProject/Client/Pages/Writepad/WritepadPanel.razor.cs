@@ -92,11 +92,17 @@ namespace FProject.Client.Pages
         async Task ChangeDefaultModeHandler(DrawingMode mode)
         {
             await Parent.JSRef.InvokeVoidAsync("changeDefaultMode", mode);
-            MoveDisabled = !MoveDisabled;
+            MoveDisabled = mode == DrawingMode.Move;
         }
 
         public void StateHasChangedPublic()
         {
+            StateHasChanged();
+        }
+
+        public void DefaultModeUpdator(DrawingMode mode)
+        {
+            MoveDisabled = mode == DrawingMode.Move;
             StateHasChanged();
         }
 

@@ -177,6 +177,12 @@ namespace FProject.Client.Pages
             PanelRef.UndoRedoUpdator(undo, redo);
         }
 
+        [JSInvokable]
+        public void DefaultModeUpdator(DrawingMode mode)
+        {
+            PanelRef.DefaultModeUpdator(mode);
+        }
+
         public class SaveResponseDTO
         {
             public HttpStatusCode StatusCode { get; set; }

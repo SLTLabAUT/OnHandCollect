@@ -77,6 +77,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
 
     window.addEventListener("resize", redraw);
     document.addEventListener("scroll", onScroll);
+    document.addEventListener("keyup", onKeyUp);
 
     canvas.addEventListener("pointerdown", onPointerDown);
     canvas.addEventListener("pointermove", onPointerMove);
@@ -202,6 +203,9 @@ export function undo() {
     if (_.last(writepad.Points).Type != PointType.Ending) {
         throw new Error("Drawing is in progress!") // TODO: check if the situation is possible. if yes, you should handle it!
     }
+    if (writepad.Points.length == 0) {
+        return;
+    }
     let lastStartingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Starting);
     let deletedPoints = writepad.Points.splice(lastStartingIndex);
     undoStack.push(deletedPoints);
@@ -310,6 +314,25 @@ function toRealX(screenX: number): number {
 
 function toRealY(screenY: number): number {
     return screenY - offsetY;
+}
+
+async function onKeyUp(event: KeyboardEvent) {
+    if (event.ctrlKey && !event.shiftKey && event.keyCode == 90) { // Ctrl + Z
+        undo();
+    }
+    else if (event.ctrlKey && ((event.shiftKey && event.keyCode == 90) || event.keyCode == 89)) { // Ctrl + Shift + Z || Ctrl + Y
+        redo();
+    }
+    else if (event.keyCode == 77) { // M
+        let newMode = Mode.Move;
+        changeDefaultMode(newMode)
+        componentRef.invokeMethodAsync("DefaultModeUpdator", newMode);
+    }
+    else if (event.keyCode == 68) { // D
+        let newMode = Mode.Non;
+        changeDefaultMode(newMode)
+        componentRef.invokeMethodAsync("DefaultModeUpdator", newMode);
+    }
 }
 
 function createPoint(event: PointerEvent, type: PointType, x: number, y: number, num: number): Point {

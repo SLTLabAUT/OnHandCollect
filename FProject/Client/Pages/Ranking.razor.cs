@@ -31,7 +31,27 @@ namespace FProject.Client.Pages
         {
             ColumnSource.Add(new DetailsRowColumn<UserRankInfo>($" {Utils.GetDisplayName<UserRankInfo, int>(b => b.Rank)}", u => u.Rank) { Index = 0, IconName = "NumberSymbol", IconClassName = "ms-Icon--NumberSymbol", MaxWidth = 75 });
             ColumnSource.Add(new DetailsRowColumn<UserRankInfo>($" {Utils.GetDisplayName<UserRankInfo, int>(b => b.AcceptedWordCount)}", u => u.AcceptedWordCount) { Index = 1, IconName = "TextField", IconClassName = "ms-Icon--TextField", MaxWidth = 100 });
-            ColumnSource.Add(new DetailsRowColumn<UserRankInfo>($" {Utils.GetDisplayName<UserRankInfo>(b => b.Username)}", u => u.Username) { Index = 2, IconName = "Contact", IconClassName = "ms-Icon--Contact" });
+            ColumnSource.Add(new DetailsRowColumn<UserRankInfo>($" {Utils.GetDisplayName<UserRankInfo>(b => b.Username)}", u => u.Username) {
+                Index = 2,
+                IconName = "Contact",
+                IconClassName = "ms-Icon--Contact",
+                ColumnItemTemplate = username => builder =>
+                {
+                    //Console.WriteLine("1");
+                    //var value = (entry?.Value as UserRankInfo)?.Username;
+                    //Console.WriteLine("2");
+                    builder.OpenComponent<TooltipHost>(0);
+                    builder.AddAttribute(1, "TooltipContent", (RenderFragment)(builder2 =>
+                    {
+                        builder2.AddContent(2, username.Value);
+                    }));
+                    builder.AddAttribute(3, "ChildContent", (RenderFragment)(builder2 =>
+                    {
+                        builder2.AddContent(4, username.Value);
+                    }));
+                    builder.CloseComponent();
+                }
+            });
         }
 
         protected override void OnParametersSet()

@@ -3,7 +3,13 @@
     height: 100%;
 
     .content {
-        width: 75% !important;
+        width: 75%;
+    }
+
+    .content-container {
         overflow: auto;
+        width: 100% !important;
+        display: flex;
+        justify-content: center;
     }
 }

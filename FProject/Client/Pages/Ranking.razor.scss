@@ -1,3 +1,12 @@
-﻿::deep .ms-DetailsHeader {
-    padding-top: unset !important;
+﻿::deep {
+    .ms-DetailsHeader {
+        padding-top: unset !important;
+    }
+
+    .ms-DetailsRow-fields {
+        .ms-DetailsRow-field:last-child {
+            direction: ltr;
+            text-align: right;
+        }
+    }
 }

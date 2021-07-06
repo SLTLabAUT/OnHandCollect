@@ -25,38 +25,36 @@
         </StackItem>
         <Hr />
 
-        <AuthorizeView>
-            <Authorized Context="NavMenu">
-                <StackItem VerticalFill="false" Grow="1">
-                    <BlazorFluentUI.Routing.Nav>
-                        <BlazorFluentUI.Routing.NavLinkGroup>
+        <StackItem VerticalFill="false" Grow="1">
+            <BlazorFluentUI.Routing.Nav>
+                <BlazorFluentUI.Routing.NavLinkGroup>
+                    <AuthorizeView>
+                        <Authorized Context="NavMenu">
                             <BlazorFluentUI.Routing.NavLink Name="تخته‌ها" Url="writepads" Id="writepads" IconName="WhiteBoardApp32" OnClick=@OnNavLinkClickHandler />
                             <AuthorizeView Roles="@IdentityRoleConstants.Admin">
                                 <Authorized>
                                     <BlazorFluentUI.Routing.NavLink Name="تخته‌ها (صفحه‌ی مدیر)" Url="writepadsadmin" Id="writepadsadmin" IconName="WhiteBoardApp32" OnClick=@OnNavLinkClickHandler />
                                 </Authorized>
                             </AuthorizeView>
-                            <BlazorFluentUI.Routing.NavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" IconName="Contact" OnClick=@OnNavLinkClickHandler />
+                            <BlazorFluentUI.Routing.NavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" IconName="AccountManagement" OnClick=@OnNavLinkClickHandler />
                             <BlazorFluentUI.Routing.NavLink Name="رتبه‌بندی" Url="ranking" Id="ranking" IconName="NumberedList" OnClick=@OnNavLinkClickHandler />
-                            <BlazorFluentUI.Routing.NavLink Name="قرعه‌کشی" Url="lottery" Id="lottery" IconName="Giftbox" OnClick=@OnNavLinkClickHandler />
-                            <BlazorFluentUI.Routing.NavLink Name="راهنما" Url="help" Id="help" IconName="HelpMirrored" OnClick=@OnNavLinkClickHandler />
+                        </Authorized>
+                        <NotAuthorized>
+                            <BlazorFluentUI.Routing.NavLink Name="ورود" Url="identity/login" Id="identity/login" IconName="Signin" OnClick=@OnNavLinkClickHandler />
+                            <BlazorFluentUI.Routing.NavLink Name="ثبت‌نام" Url="identity/register" Id="identity/register" IconName="EditContact" OnClick=@OnNavLinkClickHandler />
+                            <br />
+                        </NotAuthorized>
+                    </AuthorizeView>
+                    <BlazorFluentUI.Routing.NavLink Name="قرعه‌کشی" Url="lottery" Id="lottery" IconName="Giftbox" OnClick=@OnNavLinkClickHandler />
+                    <BlazorFluentUI.Routing.NavLink Name="راهنما" Url="help" Id="help" IconName="HelpMirrored" OnClick=@OnNavLinkClickHandler />
+                    <AuthorizeView>
+                        <Authorized Context="NavMenu">
                             <BlazorFluentUI.Routing.NavLink Name="خروج" Url="identity/logout" Id="identity/logout" IconName="SignOut" OnClick=@OnNavLinkClickHandler />
-                        </BlazorFluentUI.Routing.NavLinkGroup>
-                    </BlazorFluentUI.Routing.Nav>
-                </StackItem>
-            </Authorized>
-
-            <NotAuthorized>
-                <Stack VerticalFill="false" Grow="1" HorizontalAlign="Alignment.Center" VerticalAlign="Alignment.Center" Tokens=@(new StackTokens { ChildrenGap = new double[] { 25 } })>
-                    <StackItem Align="Alignment.Center" VerticalFill="false">
-                        <PrimaryButton Text="ورود" Href="identity/login" OnClick=@OnLinkClickHandler />
-                    </StackItem>
-                    <StackItem Align="Alignment.Center" VerticalFill="false">
-                        <DefaultButton Text="ثبت‌نام" Href="identity/register" OnClick=@OnLinkClickHandler />
-                    </StackItem>
-                </Stack>
-            </NotAuthorized>
-        </AuthorizeView>
+                        </Authorized>
+                    </AuthorizeView>
+                </BlazorFluentUI.Routing.NavLinkGroup>
+            </BlazorFluentUI.Routing.Nav>
+        </StackItem>
 
         <Hr />
         <StackItem VerticalFill="false" Align="Alignment.Center">

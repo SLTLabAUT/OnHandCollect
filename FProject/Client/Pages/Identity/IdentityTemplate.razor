@@ -4,8 +4,10 @@
             <MyBFUText Variant=@TextType.XxLarge>@Title</MyBFUText>
         </StackItem>
         <Hr />
-        <StackItem VerticalFill="false" Grow="1" ClassName="content">
-            @ChildContent
+        <StackItem VerticalFill="false" Align=Alignment.Center Grow="1" ClassName="content-container">
+            <div class="content">
+                @ChildContent
+            </div>
         </StackItem>
     </Stack>
 </div>

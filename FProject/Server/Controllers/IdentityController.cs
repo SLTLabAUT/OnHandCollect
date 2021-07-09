@@ -101,7 +101,7 @@ namespace FProject.Server.Controllers
                 var value = match.Groups[i].Value;
                 if (i == 2 || i == 4)
                 {
-                    value = new string('*', value.Length);
+                    value = new string('*', 5);
                 }
                 uglifiedEmail += value;
             }

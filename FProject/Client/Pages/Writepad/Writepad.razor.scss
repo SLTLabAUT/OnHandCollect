@@ -35,6 +35,28 @@
                     transform: rotate(0);
                 }
             }
+
+            .tips-container {
+                display: grid;
+                text-align: justify;
+                align-items: center;
+                justify-content: center;
+
+                & > * {
+                    grid-row: 1;
+                    grid-column: 1;
+                }
+
+                .phone-rotate {
+                    opacity: 0;
+                    z-index: 1;
+                    text-align: center;
+
+                    img {
+                        animation: shake 5s infinite;
+                    }
+                }
+            }
         }
     }
 

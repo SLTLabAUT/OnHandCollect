@@ -108,23 +108,28 @@
                         </MyBFUText>
                     </StackItem>
                     <Hr />
-                    <StackItem VerticalFill=false Align=Alignment.Center Style="text-align:justify;">
-                        <MyBFUText Block="true" Variant=@TextType.Medium Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold};text-align:center;margin-bottom:7px;")>
-                            نکات راهنما
-                        </MyBFUText>
-                        <MyBFUText Block="true" Variant=@TextType.Small>
-                            <ul>
-                                <li>
-                                    با استفاده از <b>نوع ورودی متفاوت از نوع ورودی تخته</b>، <b>کلیک راست موس</b> یا <b>دو انگشت همزمان</b> می‌توانید تخته را تکان دهید.
-                                </li>
-                                <li>
-                                    کاربران گوشی همراه، احتمالا در حالت <b>افقی</b> تجربه‌ی بهتری خواهند داشت.
-                                </li>
-                                <li>
-                                    <b>کلیدهای میانبر</b>: M جابجایی، D کشیدن، Ctrl+Z لغو عملیات آخر و Ctrl+Shift+Z برگرداندن عملیات آخر.
-                                </li>
-                            </ul>
-                        </MyBFUText>
+                    <StackItem VerticalFill=false Align=Alignment.Center ClassName="tips-container">
+                        <div class="tips">
+                            <MyBFUText Block="true" Variant=@TextType.Medium Style=@($"font-weight:{ThemeProvider.Theme.FontStyle.FontWeight.Bold};text-align:center;margin-bottom:7px;")>
+                                نکات راهنما
+                            </MyBFUText>
+                            <MyBFUText Block="true" Variant=@TextType.Small>
+                                <ul>
+                                    <li>
+                                        با استفاده از <b>نوع ورودی متفاوت از نوع ورودی تخته</b>، <b>کلیک راست موس</b> یا <b>دو انگشت همزمان</b> می‌توانید تخته را تکان دهید.
+                                    </li>
+                                    <li>
+                                        کاربران گوشی همراه، احتمالا در حالت <b>افقی</b> تجربه‌ی بهتری خواهند داشت.
+                                    </li>
+                                    <li>
+                                        <b>کلیدهای میانبر</b>: M جابجایی، D کشیدن، Ctrl+Z لغو عملیات آخر و Ctrl+Shift+Z برگرداندن عملیات آخر.
+                                    </li>
+                                </ul>
+                            </MyBFUText>
+                        </div>
+                        <div class="phone-rotate">
+                            <img src="/asset/images/phone rotate.png" height="100" alt="بهتر از است گوشی خود را افقی کنید." />
+                        </div>
                     </StackItem>
                 </Stack>
             </StackItem>

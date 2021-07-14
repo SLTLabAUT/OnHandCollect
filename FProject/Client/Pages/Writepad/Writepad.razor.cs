@@ -30,7 +30,6 @@ namespace FProject.Client.Pages
         [Parameter]
         public bool AdminReview { get; set; }
 
-        bool IsInitiationDone { get; set; }
         WritepadPanel PanelRef { get; set; }
         float PadRatio { get; set; } = 0.7f;
         bool PanelCollapsed { get; set; }

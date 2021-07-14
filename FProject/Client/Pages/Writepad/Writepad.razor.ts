@@ -74,8 +74,9 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     canvas.height = 0;
 
     redraw();
+    checkOrientation();
 
-    window.addEventListener("resize", redraw);
+    window.addEventListener("resize", onResize);
     document.addEventListener("scroll", onScroll);
     document.addEventListener("keyup", onKeyUp);
 
@@ -89,6 +90,31 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     writepadElement.addEventListener("contextmenu", e => e.preventDefault());
 
     updateDotNetUndoRedo();
+}
+
+function onResize() {
+    redraw();
+    checkOrientation();
+}
+
+function checkOrientation() {
+    let tips = document.querySelector(".tips");
+    let phoneRotate = document.querySelector(".phone-rotate");
+
+    if (window.innerWidth >= 640 || window.innerWidth >= window.innerHeight) {
+        if (tips.classList.contains("ms-motion-fadeOut")) {
+            phoneRotate.classList.add("ms-motion-fadeOut");
+            phoneRotate.classList.remove("ms-motion-fadeIn");
+            tips.classList.add("ms-motion-fadeIn");
+            tips.classList.remove("ms-motion-fadeOut");
+        }
+    }
+    else if (!phoneRotate.classList.contains("ms-motion-fadeIn")) {
+        tips.classList.add("ms-motion-fadeOut");
+        tips.classList.remove("ms-motion-fadeIn");
+        phoneRotate.classList.add("ms-motion-fadeIn");
+        phoneRotate.classList.remove("ms-motion-fadeOut");
+    }
 }
 
 export function pauseVideo() {

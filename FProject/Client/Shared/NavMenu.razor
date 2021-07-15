@@ -14,8 +14,17 @@
                             <br />
                             @if (AcceptedWordCount != -1)
                             {
+                                var remainingWords = 300 - AcceptedWordCount;
                                 <MyBFUText>
-                                    تعداد کلمات تایید شده: @AcceptedWordCount.ToPersianNumber() از ۳۰۰
+                                    تعداد کلمات تایید شده: @AcceptedWordCount.ToPersianNumber()
+                                    <br />
+                                    @if (remainingWords > 0) {
+                                        @:(@remainingWords.ToPersianNumber() کلمه تا شرکت‌داده‌شدن در قرعه‌کشی)
+                                    }
+                                    else
+                                    {
+                                        @:(دارای @($"{Math.Min(5, remainingWords/200).ToPersianNumber()}") شانس قرعه‌کشی)
+                                    }
                                 </MyBFUText>
                             }
                         </StackItem>

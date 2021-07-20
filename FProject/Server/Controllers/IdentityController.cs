@@ -203,7 +203,7 @@ namespace FProject.Server.Controllers
             }
             else if (result.IsLockedOut)
             {
-                var forgotPasswordLink = Url.Link("/identity/forgotpassword", null);
+                var forgotPasswordLink = $"{Request.Scheme}://{Request.Host.Value}/identity/forgotpassword";
                 var template = new EmailTemplate
                 {
                     Title = "قفل شدن حساب کاربری",
@@ -311,6 +311,16 @@ namespace FProject.Server.Controllers
             {
                 response.Errors = result.Errors.Select(e => (Shared.Models.IdentityError)e);
                 return BadRequest(response);
+            }
+
+            result = await _signInManager.UserManager.SetLockoutEndDateAsync(user, null);
+            if (!result.Succeeded)
+            {
+                _logger.LogWarning($"Couldn't reset lockout of user {user.Id}.");
+                foreach (var error in result.Errors)
+                {
+                    _logger.LogInformation($"Error code {error.Code} - {error.Description}");
+                }
             }
 
             return Ok(response);

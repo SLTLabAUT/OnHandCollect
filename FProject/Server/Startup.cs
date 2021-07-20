@@ -54,7 +54,7 @@ namespace FProject.Server
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(6);
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(3);
                 options.Tokens.EmailConfirmationTokenProvider = "EmailConfirmation";
             })
                 .AddRoles<IdentityRole>()

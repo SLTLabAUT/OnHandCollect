@@ -29,6 +29,9 @@ namespace FProject.Client.Pages
         NavigationManager Navigation { get; set; }
 
         int Page { get; set; } = 1;
+        WritepadStatus? Status { get; set; }
+        WritepadType? Type { get; set; }
+        string UserEmail { get; set; }
         int AllCount { get; set; }
         bool DeleteDialogOpen { get; set; }
         bool CommentsDialogOpen { get; set; }
@@ -50,7 +53,7 @@ namespace FProject.Client.Pages
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int) p).ToString()
                 });
-            TextTypes = Enum.GetValues<FProject.Shared.WritepadType>()
+            TextTypes = Enum.GetValues<WritepadType>()
                 .Select(p => new DropdownOption
                 {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
@@ -68,6 +71,15 @@ namespace FProject.Client.Pages
                     case "page":
                         Page = int.Parse(queryItem.Value);
                         break;
+                    case "userEmail":
+                        UserEmail = queryItem.Value;
+                        break;
+                    case "status":
+                        Status = Enum.Parse<WritepadStatus>(queryItem.Value);
+                        break;
+                    case "type":
+                        Type = Enum.Parse<WritepadType>(queryItem.Value);
+                        break;
                 }
             }
         }
@@ -76,7 +88,7 @@ namespace FProject.Client.Pages
         {
             if (WritepadList is null)
             {
-                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}&admin=true");
+                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}&admin=true&status={Status}&type={Type}&userEmail={UserEmail}");
                 WritepadList = result.Writepads.ToList();
                 AllCount = result.AllCount;
                 StateHasChanged();

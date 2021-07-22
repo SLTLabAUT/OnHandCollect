@@ -40,7 +40,7 @@ namespace FProject.Server.Controllers
 
         // GET: api/<WritepadController>
         [HttpGet]
-        public async Task<WritepadsDTO> BatchGet(int page = 1, bool admin = false)
+        public async Task<WritepadsDTO> BatchGet(int page = 1, bool admin = false, WritepadStatus? status = default, string userEmail = default, WritepadType? type = default)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
@@ -53,8 +53,8 @@ namespace FProject.Server.Controllers
                 var customOrder = new WritepadStatus[] {
                     WritepadStatus.WaitForAcceptance,
                     WritepadStatus.NeedEdit,
-                    WritepadStatus.Draft,
-                    WritepadStatus.Accepted
+                    WritepadStatus.Accepted,
+                    WritepadStatus.Draft
                 };
                 writepadsQuery = writepadsQuery
                     .Include(w => w.Owner)
@@ -75,23 +75,42 @@ namespace FProject.Server.Controllers
                     .OrderByCustomOrder(w => w.Status, customOrder)
                     .ThenByDescending(w => w.UserSpecifiedNumber);
             }
+            if (status is not null)
+            {
+                writepadsQuery = writepadsQuery.Where(w => w.Status == status);
+            }
+            if (type is not null)
+            {
+                writepadsQuery = writepadsQuery.Where(w => w.Type == type);
+            }
+            if (!string.IsNullOrWhiteSpace(userEmail) && adminMode)
+            {
+                writepadsQuery = writepadsQuery.Where(w => w.Owner.NormalizedEmail == userEmail.Trim().ToUpper());
+            }
             var writepads = await writepadsQuery
                 .Skip((page - 1) * 10)
                 .Take(10)
                 .ToListAsync();
 
             var allCount = 0;
-            if (adminMode)
+            IQueryable<Writepad> writepadsCountQuery = _context.Writepads;
+            if (!adminMode)
             {
-                allCount = await _context.Writepads
-                    .CountAsync();
+                writepadsCountQuery = writepadsCountQuery.Where(w => w.OwnerId == userId);
             }
-            else
+            if (status is not null)
             {
-                allCount = await _context.Writepads
-                   .Where(w => w.OwnerId == userId)
-                   .CountAsync();
+                writepadsCountQuery = writepadsCountQuery.Where(w => w.Status == status);
             }
+            if (type is not null)
+            {
+                writepadsCountQuery = writepadsCountQuery.Where(w => w.Type == type);
+            }
+            if (!string.IsNullOrWhiteSpace(userEmail) && adminMode)
+            {
+                writepadsCountQuery = writepadsCountQuery.Where(w => w.Owner.NormalizedEmail == userEmail.Trim().ToUpper());
+            }
+            allCount = await writepadsCountQuery.CountAsync();
 
             return new WritepadsDTO { Writepads = writepads.Select(w => adminMode ? Writepad.ToAdminWritepadDTO(w) : (WritepadDTO)w),
                 AllCount = allCount };

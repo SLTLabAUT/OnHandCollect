@@ -1,0 +1,23 @@
+﻿<MyBFUDialog Title="هشدار - عدم پشتیبانی مرورگر"
+             IsOpen=@Show
+             OnDismiss=@(args => Show=false)
+             CloseButtonAriaLabel="بستن">
+    <ChildContent>
+        @if (Description is null)
+        {
+            @:مرورگر شما جزو مرورگرهای تحت پشتیبانی سامانه نمی‌باشد. لطفا از مرورگر بروزتری استفاده کنید.
+        }
+        else
+        {
+            @Description
+        }
+    </ChildContent>
+    <FooterTemplate></FooterTemplate>
+</MyBFUDialog>
+
+@code {
+    [Parameter]
+    public bool Show { get; set; }
+    [Parameter]
+    public string Description { get; set; }
+} 

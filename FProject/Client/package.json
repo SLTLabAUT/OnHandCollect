@@ -14,11 +14,13 @@
     "lodash-es": "^4.17.20",
     "lz-string": "^1.4.4",
     "office-ui-fabric-core": "^11.0.0",
-    "status-code-enum": "^1.0.0"
+    "status-code-enum": "^1.0.0",
+    "ua-parser-js": "^0.7.28"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.167",
     "@types/lodash-es": "^4.17.4",
+    "@types/ua-parser-js": "^0.7.36",
     "del": "^6.0.0",
     "dotenv": "^10.0.0",
     "gulp": "^4.0.2",

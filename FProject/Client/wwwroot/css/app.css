@@ -38,6 +38,38 @@ ul {
     list-style-position: inside;
 }
 
+.blur-animation {
+    animation: blur .1s cubic-bezier(0,0,1,1) both;
+}
+
+.unblur-animation {
+    animation: unblur .1s cubic-bezier(0,0,1,1) both;
+}
+
+@keyframes blur {
+    0% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0.5;
+        filter: blur(2px);
+    }
+}
+
+@keyframes unblur {
+    0% {
+        opacity: 0.5;
+        filter: blur(2px);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
 @keyframes spinAnimation {
     0% {
         transform: rotate(0deg);

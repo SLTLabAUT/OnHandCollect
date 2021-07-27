@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits EmptyLayout
 
 <div class="main-container">
     <Stack Horizontal="true" Style="width:100%;">
@@ -28,3 +28,5 @@
         </ChildContent>
     </Panel>
 </div>
+
+<BrowserUnsupported Show=@showBrowserWarning Description=@browserWarningDescription />

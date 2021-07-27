@@ -29,17 +29,17 @@ namespace FProject.Client.Shared
 
         protected override async Task OnParametersSetAsync()
         {
-            await UpdateAcceptedWordCount();
+            await UpdateAcceptedWordCount().ConfigureAwait(false);
         }
 
         protected async Task UpdateAcceptedWordCount()
         {
-            if ((await AuthenticationStateTask).User.Identity.IsAuthenticated)
+            if ((await AuthenticationStateTask.ConfigureAwait(false)).User.Identity.IsAuthenticated)
             {
-                var result = await Http.GetAsync($"api/Identity/AcceptedWordCount/");
+                var result = await Http.GetAsync($"api/Identity/AcceptedWordCount/").ConfigureAwait(false);
                 if (result.IsSuccessStatusCode)
                 {
-                    var count = await result.Content.ReadFromJsonAsync<int>();
+                    var count = await result.Content.ReadFromJsonAsync<int>().ConfigureAwait(false);
                     if (AcceptedWordCount != count)
                     {
                         AcceptedWordCount = count;

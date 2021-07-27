@@ -35,3 +35,11 @@ window.FProject.AddDoneEndHandler = function (component, element) {
         await component.invokeMethodAsync("DoneEndHandler");
     });
 };
+
+window.FProject.GetParsedUA = function () {
+    if (!window.FProject.UA) {
+        let parser = new UAParser();
+        window.FProject.UA = parser.getResult();
+    }
+    return window.FProject.UA;
+};

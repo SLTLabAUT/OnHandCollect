@@ -25,13 +25,13 @@ namespace FProject.Client.Services
 
         public async Task<LoginResponse> Login(LoginDTO loginDTO)
         {
-            var result = await _httpClient.PostAsJsonAsync("api/Identity/Login", loginDTO);
-            var response = await result.Content.ReadFromJsonAsync<LoginResponse>();
+            var result = await _httpClient.PostAsJsonAsync("api/Identity/Login", loginDTO).ConfigureAwait(false);
+            var response = await result.Content.ReadFromJsonAsync<LoginResponse>().ConfigureAwait(false);
 
             if (response.LoggedIn)
             {
                 var token = response.AccessToken;
-                await _authenticationStateProvider.MarkUserAsAuthenticated(token);
+                await _authenticationStateProvider.MarkUserAsAuthenticated(token).ConfigureAwait(false);
             }
 
             return response;
@@ -44,28 +44,28 @@ namespace FProject.Client.Services
                 throw new ArgumentNullException();
             }
 
-            await _authenticationStateProvider.MarkUserAsAuthenticated(token);
+            await _authenticationStateProvider.MarkUserAsAuthenticated(token).ConfigureAwait(false);
         }
 
         public async Task Logout()
         {
-            var result = await _httpClient.PostAsync("api/Identity/Logout", null);
+            var result = await _httpClient.PostAsync("api/Identity/Logout", null).ConfigureAwait(false);
             if (!result.IsSuccessStatusCode && result.StatusCode != System.Net.HttpStatusCode.Unauthorized)
             {
                 throw new HttpRequestException();
             }
-            await PostLogout();
+            await PostLogout().ConfigureAwait(false);
         }
 
         public async Task PostLogout()
         {
-            await _authenticationStateProvider.MarkUserAsLoggedOut();
+            await _authenticationStateProvider.MarkUserAsLoggedOut().ConfigureAwait(false);
         }
 
         public async Task<RegisterResponse> Register(RegisterDTO registerDTO)
         {
-            var result = await _httpClient.PostAsJsonAsync("api/Identity/Register", registerDTO);
-            var response = await result.Content.ReadFromJsonAsync<RegisterResponse>();
+            var result = await _httpClient.PostAsJsonAsync("api/Identity/Register", registerDTO).ConfigureAwait(false);
+            var response = await result.Content.ReadFromJsonAsync<RegisterResponse>().ConfigureAwait(false);
             return response;
         }
     }

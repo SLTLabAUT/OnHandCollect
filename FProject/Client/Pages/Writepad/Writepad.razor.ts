@@ -102,16 +102,16 @@ function checkOrientation() {
     let phoneRotate = document.querySelector(".phone-rotate");
 
     if (window.innerWidth >= 640 || window.innerWidth >= window.innerHeight) {
-        if (tips.classList.contains("ms-motion-fadeOut")) {
+        if (tips.classList.contains("blur-animation")) {
             phoneRotate.classList.add("ms-motion-fadeOut");
             phoneRotate.classList.remove("ms-motion-fadeIn");
-            tips.classList.add("ms-motion-fadeIn");
-            tips.classList.remove("ms-motion-fadeOut");
+            tips.classList.add("unblur-animation");
+            tips.classList.remove("blur-animation");
         }
     }
     else if (!phoneRotate.classList.contains("ms-motion-fadeIn")) {
-        tips.classList.add("ms-motion-fadeOut");
-        tips.classList.remove("ms-motion-fadeIn");
+        tips.classList.add("blur-animation");
+        tips.classList.remove("unblur-animation");
         phoneRotate.classList.add("ms-motion-fadeIn");
         phoneRotate.classList.remove("ms-motion-fadeOut");
     }

@@ -228,13 +228,13 @@
     <FooterTemplate></FooterTemplate>
 </MyBFUDialog>
 
-<MyBFUDialog Title="تایید ترک تخته بدون ذخیره‌ی آخرین تغییرات"
+<MyBFUDialog Title="هشدار - تخته‌ی ذخیره نشده"
              IsOpen=@LeaveConfirmDialogOpen
              OnDismiss=@(args => LeaveConfirmDialogOpen=false)
              CloseButtonAriaLabel="بستن"
              Style="text-align: right;">
     <ChildContent>
-        <p>آیا از ترک تخته بدون ذخیره‌ی آخرین تغییرات اطمینان دارید؟</p>
+        <p>آیا از ترک تخته، بدون ذخیره‌ی آخرین تغییرات اطمینان دارید؟</p>
     </ChildContent>
     <FooterTemplate>
         <PrimaryButton Text="لغو ترک تخته" OnClick=@(args => LeaveConfirmDialogOpen=false) />

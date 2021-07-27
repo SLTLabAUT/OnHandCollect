@@ -35,7 +35,7 @@ html, body {
     width: 60%;
     height: 100%;
     background-color: rgba(242, 242, 242, 0.9);
-    padding: 3% 2%;
+    padding: 2.5% 1.5%;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -80,7 +80,7 @@ html, body {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    flex-grow: 1;
+    padding-top: 1%;
 }
 
 .logged-in {
@@ -99,8 +99,27 @@ video {
     .main {
         justify-content: center;
     }
+
     .container {
         width: 100%;
         padding: 5% 3%;
+    }
+}
+
+@media (max-height: 480px), (max-width: 480px) {
+    .header {
+        h1 {
+            font-size: 1.2em;
+        }
+
+        img {
+            max-height: 3em;
+        }
+    }
+
+    .description {
+        p {
+            font-size: 0.9em;
+        }
     }
 }

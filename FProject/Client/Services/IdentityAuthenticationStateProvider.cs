@@ -24,7 +24,7 @@ namespace FProject.Client.Services
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var savedToken = await GetTokenAsync();
+            var savedToken = await GetTokenAsync().ConfigureAwait(false);
             
             SetHttpAuthHeader(savedToken);
 
@@ -39,7 +39,7 @@ namespace FProject.Client.Services
 
         public async Task MarkUserAsAuthenticated(string token)
         {
-            await _localStorage.SetItemAsync("access_token", token);
+            await _localStorage.SetItemAsync("access_token", token).ConfigureAwait(false);
             SetHttpAuthHeader(token);
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
@@ -48,7 +48,7 @@ namespace FProject.Client.Services
 
         public async Task MarkUserAsLoggedOut()
         {
-            await _localStorage.RemoveItemAsync("access_token");
+            await _localStorage.RemoveItemAsync("access_token").ConfigureAwait(false);
             SetHttpAuthHeader();
             var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
             var authState = Task.FromResult(new AuthenticationState(anonymousUser));
@@ -69,7 +69,7 @@ namespace FProject.Client.Services
 
         private async Task<string> GetTokenAsync()
         {
-            var savedToken = await _localStorage.GetItemAsync<string>("access_token");
+            var savedToken = await _localStorage.GetItemAsync<string>("access_token").ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(savedToken))
             {
@@ -84,7 +84,7 @@ namespace FProject.Client.Services
                 
                 if (expired)
                 {
-                    await MarkUserAsLoggedOut();
+                    await MarkUserAsLoggedOut().ConfigureAwait(false);
                 }
                 else
                 {

@@ -36,7 +36,11 @@
                         <Stack VerticalFill="true" Horizontal="true" Wrap="true" HorizontalAlign=Alignment.SpaceEvenly Tokens=@(new StackTokens { ChildrenGap = new double[] { 50 } }) Style="margin:0;">
                             @if (AllCount == 0)
                             {
-                                <MyBFUText>شما تخته‌ای ندارید.</MyBFUText>
+                                <MyBFUText Style="text-align: center;padding: 1% 0;">
+                                    شما تخته‌ای ندارید.
+                                    <br />
+                                    لطفا پیش از فعالیت، <MyBFULink Href="/help"><strong>ویدیوی آموزشی کوتاه سامانه</strong></MyBFULink> را مشاهده کنید!
+                                </MyBFUText>
                             }
                             @for (int i = 0; i < WritepadList.Count; i++)
                             {

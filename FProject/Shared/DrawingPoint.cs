@@ -34,7 +34,7 @@ namespace FProject.Shared
         Ending
     }
 
-    public class DeletedDrawing
+    public class DrawingRange
     {
         public int StartingNumber { get; set; }
         public int EndingNumber { get; set; }
@@ -44,7 +44,8 @@ namespace FProject.Shared
     {
         public DateTimeOffset LastModified { get; set; }
         public IEnumerable<DrawingPoint> NewPoints { get; set; }
-        public IEnumerable<DeletedDrawing> DeletedDrawings { get; set; }
+        public IEnumerable<DrawingRange> DeletedDrawings { get; set; }
+        public IEnumerable<DrawingRange> RecoveredDrawings { get; set; }
     }
 
     public class SavePointsResponseDTO

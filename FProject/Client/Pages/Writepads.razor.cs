@@ -328,7 +328,7 @@ namespace FProject.Client.Pages
 
         void EditHandler(MouseEventArgs args, int id)
         {
-            Navigation.NavigateTo($"/writepad/{id}");
+            Navigation.NavigateTo($"/writepad/{id}{(Page != 1 ? $"?writepadsPage={Page}" : "")}");
         }
 
         void TextTypeChangeHandler(DropdownChangeArgs args)

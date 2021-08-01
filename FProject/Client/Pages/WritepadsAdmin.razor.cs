@@ -202,7 +202,7 @@ namespace FProject.Client.Pages
 
         void EditHandler(MouseEventArgs args, int id)
         {
-            Navigation.NavigateTo($"/writepad/{id}?adminreview");
+            Navigation.NavigateTo($"/writepad/{id}?adminreview&writepadsPage={Page}");
         }
     }
 }

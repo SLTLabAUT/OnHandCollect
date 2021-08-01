@@ -13,7 +13,8 @@ let isSaving: boolean;
 let isMiddleOfDrawing: boolean;
 let saveInQueue: boolean;
 let undoStack: Point[][];
-let deletedDrawings: DeletedDrawing[];
+let deletedDrawings: DrawingRange[];
+let recoveredDrawings: DrawingRange[];
 let num: number;
 let lastPoint: Point;
 let pointerX: number;
@@ -37,6 +38,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     saveInQueue = false;
     undoStack = [];
     deletedDrawings = [];
+    recoveredDrawings = [];
     num = 0;
     offsetX = 0;
     offsetY = 0;
@@ -152,8 +154,9 @@ function updateOffsets() {
 
 export function isSaveRequired() {
     let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > writepad.LastSavedDrawingNumber);
-    let deletedIndex = _.findIndex(deletedDrawings, (d: DeletedDrawing) => d.StartingNumber < writepad.LastSavedDrawingNumber);
-    if (endingIndex == -1 && deletedIndex == -1 && !isSaving) {
+    let deletedIndex = _.findIndex(deletedDrawings, (d: DrawingRange) => d.StartingNumber < writepad.LastSavedDrawingNumber);
+    let recoveredIndex = _.findIndex(recoveredDrawings, (d: DrawingRange) => d.StartingNumber < writepad.LastSavedDrawingNumber);
+    if (endingIndex == -1 && deletedIndex == -1 && recoveredIndex == -1 && !isSaving) {
         return false;
     }
     return true;
@@ -177,6 +180,7 @@ export async function save(): Promise<boolean> {
         isSaving = true;
 
         let validDeletedDrawings = deletedDrawings.filter(d => d.StartingNumber < writepad.LastSavedDrawingNumber);
+        let validRecoveredDrawings = recoveredDrawings.filter(d => d.StartingNumber < writepad.LastSavedDrawingNumber);
 
         let startingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Number <= writepad.LastSavedDrawingNumber) + 1;
         let endingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Ending && p.Number > writepad.LastSavedDrawingNumber);
@@ -186,7 +190,8 @@ export async function save(): Promise<boolean> {
         let savePointsDTO: SavePointsDTO = {
             LastModified: writepad.LastModified,
             NewPoints: newDrawings,
-            DeletedDrawings: validDeletedDrawings
+            DeletedDrawings: validDeletedDrawings,
+            RecoveredDrawings: validRecoveredDrawings
         };
         let rawData = JSON.stringify(savePointsDTO);
         let data = await window.FProject.CompressAsync(rawData);
@@ -196,8 +201,11 @@ export async function save(): Promise<boolean> {
         switch (response.statusCode) {
             case StatusCode.SuccessOK:
                 deletedDrawings.length = 0;
+                recoveredDrawings.length = 0;
                 writepad.LastModified = response.lastModified;
-                writepad.LastSavedDrawingNumber = response.lastSavedDrawingNumber;
+                if (response.lastSavedDrawingNumber != 0) {
+                    writepad.LastSavedDrawingNumber = response.lastSavedDrawingNumber;
+                }
                 break;
             default:
                 if (response.throwError) {
@@ -235,10 +243,12 @@ export function undo() {
     let lastStartingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Starting);
     let deletedPoints = writepad.Points.splice(lastStartingIndex);
     undoStack.push(deletedPoints);
-    deletedDrawings.push({
+    let drawingRange = {
         StartingNumber: deletedPoints[0].Number,
         EndingNumber: _.last(deletedPoints).Number
-    });
+    };
+    deletedDrawings.push(drawingRange);
+    recoveredDrawings = recoveredDrawings.filter(d => d.StartingNumber != drawingRange.EndingNumber);
     redraw();
 
     updateDotNetUndoRedo();
@@ -254,6 +264,10 @@ export function redo() {
     }
     let deletedPoints = undoStack.pop();
     deletedPoints.forEach((point) => writepad.Points.push(point));
+    recoveredDrawings.push({
+        StartingNumber: deletedPoints[0].Number,
+        EndingNumber: _.last(deletedPoints).Number
+    });
     deletedDrawings.pop();
     redraw();
 
@@ -560,7 +574,8 @@ function onPointerUp(event: PointerEvent) {
 interface SavePointsDTO {
     LastModified: Date,
     NewPoints: Point[],
-    DeletedDrawings: DeletedDrawing[]
+    DeletedDrawings: DrawingRange[],
+    RecoveredDrawings: DrawingRange[]
 }
 
 interface SaveResponseDTO {
@@ -605,7 +620,7 @@ interface Point {
     readonly Twist: number;
 }
 
-interface DeletedDrawing {
+interface DrawingRange {
     StartingNumber: number,
     EndingNumber: number
 }

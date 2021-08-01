@@ -284,15 +284,33 @@ namespace FProject.Server.Controllers
             _context.Points.AddRange(savePointsDTO.NewPoints);
 
             if (!savePointsDTO.DeletedDrawings.IsNullOrEmpty()) {
-                foreach (var deletedDrawing in savePointsDTO.DeletedDrawings)
+                foreach (var drawing in savePointsDTO.DeletedDrawings)
                 {
-                    for (int i = deletedDrawing.StartingNumber; i <= deletedDrawing.EndingNumber; i++)
+                    for (int i = drawing.StartingNumber; i <= drawing.EndingNumber; i++)
                     {
                         var point = new DrawingPoint
                         {
                             WritepadId = writepad.Id,
                             Number = i,
                             IsDeleted = true
+                        };
+                        var entry = _context.Points.Attach(point);
+                        entry.Property(p => p.IsDeleted).IsModified = true;
+                    }
+                }
+            }
+
+            if (!savePointsDTO.RecoveredDrawings.IsNullOrEmpty())
+            {
+                foreach (var drawing in savePointsDTO.RecoveredDrawings)
+                {
+                    for (int i = drawing.StartingNumber; i <= drawing.EndingNumber; i++)
+                    {
+                        var point = new DrawingPoint
+                        {
+                            WritepadId = writepad.Id,
+                            Number = i,
+                            IsDeleted = false
                         };
                         var entry = _context.Points.Attach(point);
                         entry.Property(p => p.IsDeleted).IsModified = true;

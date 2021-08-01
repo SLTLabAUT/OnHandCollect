@@ -68,7 +68,7 @@ namespace FProject.Client.Pages
 
         void Leave()
         {
-            Navigation.NavigateTo($"/{(Parent.AdminReview ? "writepadsadmin" : "writepads")}");
+            Navigation.NavigateTo($"/{(Parent.AdminReview ? "writepadsadmin" : "writepads")}{(Parent.WritepadsPage != 1 ? $"?page={Parent.WritepadsPage}" : "")}");
         }
 
         async Task UndoRedoHander(bool isRedo = false)

@@ -16,7 +16,7 @@ using System.Timers;
 
 namespace FProject.Client.Pages
 {
-    public partial class Writepad
+    public partial class Writepad : IAsyncDisposable
     {
         [Inject]
         IJSRuntime JS { get; set; }
@@ -29,6 +29,8 @@ namespace FProject.Client.Pages
         public int Id { get; set; }
         [Parameter]
         public bool AdminReview { get; set; }
+        [Parameter]
+        public int WritepadsPage { get; set; } = 1;
 
         WritepadPanel PanelRef { get; set; }
         float PadRatio { get; set; } = 0.7f;
@@ -62,6 +64,9 @@ namespace FProject.Client.Pages
                 {
                     case "adminreview":
                         AdminReview = true;
+                        break;
+                    case "writepadsPage":
+                        WritepadsPage = int.Parse(queryItem.Value); ;
                         break;
                 }
             }
@@ -180,6 +185,15 @@ namespace FProject.Client.Pages
         public void DefaultModeUpdator(DrawingMode mode)
         {
             PanelRef.DefaultModeUpdator(mode);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (JSRef is not null)
+            {
+                await JSRef.DisposeAsync();
+            }
+            SaveTimer.Dispose();
         }
 
         public class SaveResponseDTO

@@ -55,7 +55,7 @@ namespace FProject.Client.Shared
                 switch (ua.Browser.Name)
                 {
                     case "Mobile Safari":
-                        desired = new Version(13, 2);
+                        desired = new Version(13, 0);
                         break;
                     case "Opera":
                         desired = new Version(44, 0);

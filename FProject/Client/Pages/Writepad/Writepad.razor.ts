@@ -74,6 +74,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     context = canvas.getContext("2d");
     canvas.width = 0;
     canvas.height = 0;
+    initContext();
 
     redraw();
     checkOrientation();
@@ -92,6 +93,12 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     writepadElement.addEventListener("contextmenu", e => e.preventDefault());
 
     updateDotNetUndoRedo();
+}
+
+function initContext() {
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.lineWidth = 2;
 }
 
 function onResize() {
@@ -135,6 +142,7 @@ function updateCanvasSize() {
     canvas.height = 0;
     canvas.width = Math.trunc(pad.getBoundingClientRect().width);
     canvas.height = Math.trunc(pad.getBoundingClientRect().height);
+    initContext();
     //} else {
     //    canvas.width = Math.round(window.innerWidth * padRatio);
     //    canvas.height = Math.round(window.innerHeight);
@@ -336,7 +344,7 @@ export function redraw(): void {
                         context.stroke();
                     }
                     else {
-                        context.fillRect(screenX, screenY, 1, 1);
+                        context.fillRect(screenX-1, screenY-1, 2, 2);
                     }
                     isInside = false;
                 }
@@ -453,7 +461,7 @@ async function draw(startX, startY, endX, endY, drawDot: boolean = false) {
         context.stroke();
     }
     else if (drawDot) {
-        context.fillRect(endX, endY, 1, 1);
+        context.fillRect(endX-1, endY-1, 2, 2);
     }
 }
 

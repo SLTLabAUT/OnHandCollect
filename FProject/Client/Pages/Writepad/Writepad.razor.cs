@@ -30,7 +30,7 @@ namespace FProject.Client.Pages
         [Parameter]
         public bool AdminReview { get; set; }
         [Parameter]
-        public int WritepadsPage { get; set; } = 1;
+        public string WritepadsQuery { get; set; }
 
         WritepadPanel PanelRef { get; set; }
         float PadRatio { get; set; } = 0.7f;
@@ -65,8 +65,8 @@ namespace FProject.Client.Pages
                     case "adminreview":
                         AdminReview = true;
                         break;
-                    case "writepadsPage":
-                        WritepadsPage = int.Parse(queryItem.Value); ;
+                    case "writepadsQuery":
+                        WritepadsQuery = queryItem.Value;
                         break;
                 }
             }

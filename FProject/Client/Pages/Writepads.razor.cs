@@ -34,6 +34,7 @@ namespace FProject.Client.Pages
         [CascadingParameter]
         Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
+        Uri Uri { get; set; }
         int Page { get; set; } = 1;
         int AllCount { get; set; }
         bool CreateDialogOpen { get; set; }
@@ -117,8 +118,8 @@ namespace FProject.Client.Pages
                 CreateErrors.Clear();
             };
 
-            var query = new Uri(Navigation.Uri).Query;
-            foreach (var queryItem in QueryHelpers.ParseQuery(query))
+            Uri = new Uri(Navigation.Uri);
+            foreach (var queryItem in QueryHelpers.ParseQuery(Uri.Query))
             {
                 switch (queryItem.Key)
                 {
@@ -162,11 +163,10 @@ namespace FProject.Client.Pages
 
         async Task OnPageChangeHandler(bool isNext)
         {
-            var uri = new Uri(Navigation.Uri);
-            var queries = HttpUtility.ParseQueryString(uri.Query);
+            var queries = HttpUtility.ParseQueryString(Uri.Query);
             queries["page"] = $"{Page + (isNext ? 1 : -1)}";
             var dic = queries.AllKeys.ToDictionary(k => k, k => queries[k]);
-            Navigation.NavigateTo(QueryHelpers.AddQueryString(uri.AbsolutePath, dic));
+            Navigation.NavigateTo(QueryHelpers.AddQueryString(Uri.AbsolutePath, dic));
             WritepadList = null;
             await OnParametersSetAsync();
         }
@@ -328,7 +328,8 @@ namespace FProject.Client.Pages
 
         void EditHandler(MouseEventArgs args, int id)
         {
-            Navigation.NavigateTo($"/writepad/{id}{(Page != 1 ? $"?writepadsPage={Page}" : "")}");
+            var query = Uri.Query;
+            Navigation.NavigateTo($"/writepad/{id}{(string.IsNullOrWhiteSpace(query) ? "" : $"?writepadsQuery={Uri.EscapeDataString(query.TrimStart('?'))}")}");
         }
 
         void TextTypeChangeHandler(DropdownChangeArgs args)

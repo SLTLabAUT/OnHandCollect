@@ -16,13 +16,16 @@ let undoStack: Point[][];
 let deletedDrawings: DrawingRange[];
 let recoveredDrawings: DrawingRange[];
 let num: number;
+let count: number;
 let lastPoint: Point;
+let tempPoints: Point[];
 let pointerX: number;
 let pointerY: number;
 let prevPointerX: number;
 let prevPointerY: number;
 let offsetX: number;
 let offsetY: number;
+let firstPointerTime: number;
 let lastMoveTime: number;
 let mode: Mode;
 let defaultMode: Mode;
@@ -39,9 +42,11 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     undoStack = [];
     deletedDrawings = [];
     recoveredDrawings = [];
-    num = 0;
+    count = 0;
+    tempPoints = [];
     offsetX = 0;
     offsetY = 0;
+    firstPointerTime = undefined;
     lastMoveTime = undefined;
     mode = Mode.Non;
     defaultMode = Mode.Non;
@@ -65,7 +70,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
         },
         Points: writepadReceived.Points ?? []
     };
-    num = writepad.LastSavedDrawingNumber + 1;
+    num = writepad.LastSavedDrawingNumber;
 
     html = document.querySelector("html");
     pad = document.querySelector(".pad");
@@ -242,10 +247,7 @@ async function updateDotNetUndoRedo() {
 }
 
 export function undo() {
-    if (_.last(writepad.Points).Type != PointType.Ending) {
-        throw new Error("Drawing is in progress!") // TODO: check if the situation is possible. if yes, you should handle it!
-    }
-    if (writepad.Points.length == 0) {
+    if (isMiddleOfDrawing || writepad.Points.length == 0) {
         return;
     }
     let lastStartingIndex = _.findLastIndex(writepad.Points, (p: Point) => p.Type == PointType.Starting);
@@ -263,11 +265,7 @@ export function undo() {
 }
 
 export function redo() {
-    let lastPoint = _.last(writepad.Points);
-    if (lastPoint && lastPoint.Type != PointType.Ending) {
-        throw new Error("Drawing is in progress!")
-    }
-    if (undoStack.length == 0) {
+    if (isMiddleOfDrawing || undoStack.length == 0) {
         return;
     }
     let deletedPoints = undoStack.pop();
@@ -400,20 +398,19 @@ function createPoint(event: PointerEvent, type: PointType, x: number, y: number,
     };
 }
 
-function addToDrawings(point: Point): void {
-    writepad.Points.push(point);
-    num++;
-}
+function addToDrawings(): void {
+    let shouldUpdateUndoRedo = writepad.Points.length == 0 || undoStack.length != 0;
 
-function addStartingPoint(): void {
-    if (undoStack.length != 0) {
+    Array.prototype.push.apply(writepad.Points, tempPoints);
+
+    if (shouldUpdateUndoRedo) {
         undoStack.length = 0;
         updateDotNetUndoRedo();
     }
-    addToDrawings(lastPoint);
-    if (writepad.Points.length == 1) {
-        updateDotNetUndoRedo();
-    }
+
+    num = num + count;
+    count = 0;
+    tempPoints.length = 0;
 }
 
 function detectPointerType(type: string): PointerType {
@@ -440,7 +437,7 @@ function detectMode(event: PointerEvent): Mode {
         return defaultMode;
     }
 
-    if (event.button == 0 && event.buttons == 1 //Left Mouse, Touch Contact, Pen contact
+    if (event.button == 0 && event.buttons == 1 //Left Mouse, Touch Contact, Pen Contact
         && detectPointerType(event.pointerType) == writepad.PointerType) {
         if (event.isPrimary) {
             return Mode.Draw;
@@ -448,9 +445,12 @@ function detectMode(event: PointerEvent): Mode {
         else {
             return Mode.Move;
         }
-    } else if (mode == Mode.Non) {
+    }
+    else if (mode == Mode.Non) {
         return Mode.Move;
     }
+
+    return mode;
 }
 
 async function draw(startX, startY, endX, endY, drawDot: boolean = false) {
@@ -468,19 +468,28 @@ async function draw(startX, startY, endX, endY, drawDot: boolean = false) {
 function onPointerDown(event: PointerEvent) {
     event.preventDefault();
 
-    if (isMiddleOfDrawing) {
-        return;
+    if (firstPointerTime && event.timeStamp - firstPointerTime > 250) {
+        return
     }
 
     mode = detectMode(event);
+
+    if (isMiddleOfDrawing) {
+        return;
+    }
+    isMiddleOfDrawing = true;
+
     pointerId = event.pointerId;
+    firstPointerTime = event.timeStamp;
 
     pointerX = prevPointerX = event.clientX - horizontalOffset;
     pointerY = prevPointerY = event.clientY - verticalOffset;
 
     switch (mode) {
         case Mode.Draw:
-            lastPoint = createPoint(event, PointType.Starting, toRealX(pointerX), toRealY(pointerY), num);
+            count++;
+            lastPoint = createPoint(event, PointType.Starting, toRealX(pointerX), toRealY(pointerY), num + count);
+            tempPoints.push(lastPoint);
             break;
         case Mode.Move:
             lastMoveTime = event.timeStamp;
@@ -494,29 +503,24 @@ function onPointerMove(event: PointerEvent) {
     if (pointerId != event.pointerId)
         return;
 
-    isMiddleOfDrawing = true;
-
     pointerX = event.clientX - horizontalOffset;
     pointerY = event.clientY - verticalOffset;
 
     switch (mode) {
         case Mode.Draw:
-            if (lastPoint.Type == PointType.Starting) {
-                addStartingPoint();
-            }
-
             if (lastPoint.TimeStamp != event.timeStamp) {
+                count++;
                 const realX = toRealX(pointerX);
                 const realY = toRealY(pointerY);
                 draw(prevPointerX, prevPointerY, pointerX, pointerY);
-                lastPoint = createPoint(event, PointType.Middle, realX, realY, num);
-                addToDrawings(lastPoint);
+                lastPoint = createPoint(event, PointType.Middle, realX, realY, num + count);
+                tempPoints.push(lastPoint);
             }
             break;
         case Mode.Move:
             offsetX += pointerX - prevPointerX;
             offsetY += pointerY - prevPointerY;
-            if (event.timeStamp - lastMoveTime > 200) {
+            if (!lastMoveTime || event.timeStamp - lastMoveTime > 200) {
                 lastMoveTime = event.timeStamp;
                 redraw();
             }
@@ -533,32 +537,27 @@ function onPointerUp(event: PointerEvent) {
     if (pointerId != event.pointerId)
         return;
 
-    isMiddleOfDrawing = true;
-
     pointerX = event.clientX - horizontalOffset;
     pointerY = event.clientY - verticalOffset;
 
     switch (mode) {
         case Mode.Draw:
-            if (lastPoint.Type == PointType.Starting) {
-                addStartingPoint();
-            }
-
             const realX = toRealX(pointerX);
             const realY = toRealY(pointerY);
-
-            draw(prevPointerX, prevPointerY, pointerX, pointerY, true);
 
             if (lastPoint.Type == PointType.Starting
                 || lastPoint.TimeStamp != event.timeStamp
                 || lastPoint.X != realX
                 || lastPoint.Y != realY) {
-                
-                lastPoint = createPoint(event, PointType.Ending, realX, realY, num);
-                addToDrawings(lastPoint);
+                count++;
+                draw(prevPointerX, prevPointerY, pointerX, pointerY, true);
+                lastPoint = createPoint(event, PointType.Ending, realX, realY, num + count);
+                tempPoints.push(lastPoint);
             } else {
                 lastPoint.Type = PointType.Ending;
             }
+
+            addToDrawings();
             break;
         case Mode.Move:
             redraw();
@@ -567,6 +566,7 @@ function onPointerUp(event: PointerEvent) {
     }
 
     mode = defaultMode;
+    firstPointerTime = undefined;
     pointerId = undefined;
     isMiddleOfDrawing = false;
 

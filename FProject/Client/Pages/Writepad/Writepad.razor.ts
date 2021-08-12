@@ -409,8 +409,6 @@ function addToDrawings(): void {
     }
 
     num = num + count;
-    count = 0;
-    tempPoints.length = 0;
 }
 
 function detectPointerType(type: string): PointerType {
@@ -508,14 +506,12 @@ function onPointerMove(event: PointerEvent) {
 
     switch (mode) {
         case Mode.Draw:
-            if (lastPoint.TimeStamp != event.timeStamp) {
-                count++;
-                const realX = toRealX(pointerX);
-                const realY = toRealY(pointerY);
-                draw(prevPointerX, prevPointerY, pointerX, pointerY);
-                lastPoint = createPoint(event, PointType.Middle, realX, realY, num + count);
-                tempPoints.push(lastPoint);
-            }
+            count++;
+            const realX = toRealX(pointerX);
+            const realY = toRealY(pointerY);
+            draw(prevPointerX, prevPointerY, pointerX, pointerY);
+            lastPoint = createPoint(event, PointType.Middle, realX, realY, num + count);
+            tempPoints.push(lastPoint);
             break;
         case Mode.Move:
             offsetX += pointerX - prevPointerX;
@@ -544,18 +540,10 @@ function onPointerUp(event: PointerEvent) {
         case Mode.Draw:
             const realX = toRealX(pointerX);
             const realY = toRealY(pointerY);
-
-            if (lastPoint.Type == PointType.Starting
-                || lastPoint.TimeStamp != event.timeStamp
-                || lastPoint.X != realX
-                || lastPoint.Y != realY) {
-                count++;
-                draw(prevPointerX, prevPointerY, pointerX, pointerY, true);
-                lastPoint = createPoint(event, PointType.Ending, realX, realY, num + count);
-                tempPoints.push(lastPoint);
-            } else {
-                lastPoint.Type = PointType.Ending;
-            }
+            count++;
+            draw(prevPointerX, prevPointerY, pointerX, pointerY, true);
+            lastPoint = createPoint(event, PointType.Ending, realX, realY, num + count);
+            tempPoints.push(lastPoint);
 
             addToDrawings();
             break;
@@ -568,6 +556,8 @@ function onPointerUp(event: PointerEvent) {
     mode = defaultMode;
     firstPointerTime = undefined;
     pointerId = undefined;
+    count = 0;
+    tempPoints.length = 0;
     isMiddleOfDrawing = false;
 
     if (saveInQueue) {

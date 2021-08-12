@@ -79,10 +79,10 @@ namespace FProject.Client.Shared
                 }
             }
 
-            if (!showBrowserWarning && ua.Engine is not null && ua.Engine.Name == "WebKit" && !string.IsNullOrWhiteSpace(ua.Engine.Version))
+            if (!showBrowserWarning && ua.Engine?.Name == "WebKit" && ua.OS?.Name == "iOS" && !string.IsNullOrWhiteSpace(ua.OS?.Version))
             {
-                var version = Version.Parse(ua.Engine.Version);
-                Version desired = new Version(608, 0);
+                var version = Version.Parse(ua.OS.Version);
+                Version desired = new Version(13, 0);
                 showBrowserWarning = version < desired;
             }
 

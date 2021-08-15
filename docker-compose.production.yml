@@ -30,3 +30,9 @@ volumes:
         type: none
         o: bind
         device: /srv/sites/handwriting_data_collection/postgres-data/_data
+  dataset:
+    driver: local
+    driver_opts:
+        type: none
+        o: bind
+        device: /srv/sites/handwriting_data_collection/dataset/_data

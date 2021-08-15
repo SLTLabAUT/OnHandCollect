@@ -38,6 +38,30 @@ namespace FProject.Server.Controllers
             return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         }
 
+        [HttpGet("Export")]
+        [Authorize(Roles = IdentityRoleConstants.Admin)]
+        public async Task<IActionResult> Export([FromServices] InkMLExporter exporter, ExportMode mode, DateTimeOffset start = default, DateTimeOffset end = default, TextType textType = default)
+        {
+            int? count;
+            switch (mode)
+            {
+                case ExportMode.Writepads:
+                    count = await exporter.ExportWritepads(start, end);
+                    break;
+                case ExportMode.Authors:
+                    count = await exporter.ExportAuthors();
+                    break;
+                case ExportMode.Text:
+                    count = await exporter.ExportText(textType);
+                    break;
+                default:
+                    return BadRequest();
+                    break;
+            }
+
+            return Ok(count);
+        }
+
         // GET: api/<WritepadController>
         [HttpGet]
         public async Task<WritepadsDTO> BatchGet(int page = 1, bool admin = false, WritepadStatus? status = default, string userEmail = default, WritepadType? type = default)

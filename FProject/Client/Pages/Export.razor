@@ -1,0 +1,7 @@
+﻿@page "/export"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = IdentityRoleConstants.Admin)]
+
+<FProject.Client.Pages.Identity.IdentityTemplate Title="ایجاد خروجی از داده‌ها">
+    @ExportedCount
+</FProject.Client.Pages.Identity.IdentityTemplate>

@@ -12,6 +12,9 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
     volumes:
       - type: volume
+        source: dataset
+        target: /app/Data/InkMLs/Dataset
+      - type: volume
         source: DataProtection-Keys
         target: /root/.aspnet/DataProtection-Keys
     networks:
@@ -34,6 +37,7 @@ services:
       - postgres
 volumes:
   postgres-data:
+  dataset:
   DataProtection-Keys:
 networks:
   app:

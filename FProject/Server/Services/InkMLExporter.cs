@@ -58,7 +58,7 @@ namespace FProject.Server.Services
             var partsCount = count / partsRange + 1;
 
             var folderName = $"{start.ToUniversalTime().ToString("yy-MM-dd HH-mm")} to {end.ToUniversalTime().ToString("yy-MM-dd HH-mm")} ({DateTime.UtcNow.ToString("yy-MM-dd HH-mm-ss")})";
-            Directory.CreateDirectory($"Data/InkMLs/Writepads/{folderName}");
+            Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}");
 
             for (int p = 0; p < partsCount; p++)
             {
@@ -160,7 +160,7 @@ namespace FProject.Server.Services
                     var timestamp = document.Descendants(ns + "timestamp").First();
                     timestamp.SetAttributeValue("time", timeOrigin);
 
-                    using var writer = XmlWriter.Create($"Data/InkMLs/Writepads/{folderName}/{writepad.Id}.inkml", new XmlWriterSettings { Async = true, Indent = true });
+                    using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/Writepads/{folderName}/{writepad.Id}.inkml", new XmlWriterSettings { Async = true, Indent = true });
                     await document.SaveAsync(writer, default).ConfigureAwait(false);
                 }
             }
@@ -221,7 +221,7 @@ namespace FProject.Server.Services
                     }
                     document.Root.SetElementValue("handedness", user.Handedness);
 
-                    using var writer = XmlWriter.Create($"Data/InkMLs/Authors/{user.Id}.xml", new XmlWriterSettings { Async = true, Indent = true });
+                    using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/Authors/{user.Id}.xml", new XmlWriterSettings { Async = true, Indent = true });
                     await document.SaveAsync(writer, default).ConfigureAwait(false);
                 }
             }
@@ -284,7 +284,7 @@ namespace FProject.Server.Services
                     document.Root.Add(textElement);
                 }
 
-                using var writer = XmlWriter.Create($"Data/InkMLs/Text/{type}-{p}.xml", new XmlWriterSettings { Async = true, Indent = true });
+                using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/Text/{type}-{p}.xml", new XmlWriterSettings { Async = true, Indent = true });
                 await document.SaveAsync(writer, default).ConfigureAwait(false);
             }
 

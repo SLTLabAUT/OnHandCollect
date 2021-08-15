@@ -1,2 +1,2 @@
 # FProject
-Fucking (Final) Project of B. S.
+Final Project of my Bachelor's degree.

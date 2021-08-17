@@ -126,11 +126,14 @@ namespace FProject.Client.Pages.Identity
             [RegularExpression(@"^(?:\+98|0)\d{10}$", ErrorMessageResourceName = "PhoneNumber", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "شماره‌ی تلفن همراه")]
             public string PhoneNumber { get; set; }
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "جنسیت")]
             public IDropdownOption Sex { get; set; }
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Range(1200, 1400, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "سال تولد")]
-            public short? BirthYear { get; set; }
+            public short BirthYear { get; set; }
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "سطح تحصیلات")]
             public IDropdownOption Education { get; set; }
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
@@ -145,9 +148,9 @@ namespace FProject.Client.Pages.Identity
                     Password = model.Password,
                     AcceptTerms = model.AcceptTerms,
                     PhoneNumber = model.PhoneNumber,
-                    Sex = model.Sex is null ? null : Enum.Parse<Sex>(model.Sex.Key),
+                    Sex = Enum.Parse<Sex>(model.Sex.Key),
                     BirthYear = model.BirthYear,
-                    Education = model.Education is null ? null : Enum.Parse<Education>(model.Education.Key),
+                    Education = Enum.Parse<Education>(model.Education.Key),
                     Handedness = Enum.Parse<Handedness>(model.Handedness.Key),
                 };
             }

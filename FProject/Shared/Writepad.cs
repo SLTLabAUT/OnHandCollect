@@ -120,4 +120,10 @@ namespace FProject.Shared
         NoReason,
         SignNotAllowed
     }
+
+    public enum WritepadChangeStatusError
+    {
+        NoReason,
+        EmptyWritepad
+    }
 }

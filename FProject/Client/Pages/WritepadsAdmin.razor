@@ -267,4 +267,15 @@
         </ChildContent>
         <FooterTemplate></FooterTemplate>
     </MyBFUDialog>
+
+    <MyBFUDialog Title=@($"عدم امکان تغییر وضعیت تخته‌ی {CurrentWritepad?.Id}")
+                 IsOpen=@EmptyWritepadDialogOpen
+                 OnDismiss=@(args => EmptyWritepadDialogOpen=false)
+                 CloseButtonAriaLabel="بستن"
+                 Style="text-align: right;">
+        <ChildContent>
+            <p>تخته‌ی ارسالی خالی است!</p>
+        </ChildContent>
+        <FooterTemplate></FooterTemplate>
+    </MyBFUDialog>
 </div>

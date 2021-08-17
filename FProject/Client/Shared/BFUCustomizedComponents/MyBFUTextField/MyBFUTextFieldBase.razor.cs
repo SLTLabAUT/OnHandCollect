@@ -21,9 +21,9 @@ namespace BlazorFluentUI
 
     public partial class MyBFUTextFieldBase<TValue> : MyBFUTextFieldParameters, IAsyncDisposable
     {
-        [Parameter] public TValue? Value { get; set; }
+        [Parameter] public TValue Value { get; set; }
 
-        [Parameter] public TValue? DefaultValue { get; set; }
+        [Parameter] public TValue DefaultValue { get; set; }
 
         /// <summary>
         /// Gets or sets a callback that updates the bound value.

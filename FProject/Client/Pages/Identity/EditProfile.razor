@@ -30,12 +30,14 @@
             <MyBFUDropdown ItemsSource=SexOptions
                            Placeholder="یک گزینه را برگزینید..."
                            @bind-SelectedOption=Model.Sex
-                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex)) />
-            <MyBFUNumericTextField TValue="short?" Label=@(Utils.GetDisplayName<ProfileModel, short?>(b => b.BirthYear)) @bind-Value=@Model.BirthYear @bind-Value:event="OnChange" ParsingErrorMessage="مقدار {0} باید مقداری عددی در محدوده‌ی مجاز باشد." />
+                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Sex))
+                           Required=true />
+            <MyBFUNumericTextField TValue="short?" Label=@(Utils.GetDisplayName<ProfileModel, short?>(b => b.BirthYear)) @bind-Value=@Model.BirthYear @bind-Value:event="OnChange" ParsingErrorMessage="مقدار «{0}» باید مقداری عددی در محدوده‌ی مجاز باشد." Required=true />
             <MyBFUDropdown ItemsSource=EducationOptions
                            Placeholder="یک گزینه را برگزینید..."
                            @bind-SelectedOption=Model.Education
-                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Education)) />
+                           Label=@(Utils.GetDisplayName<ProfileModel>(b => b.Education))
+                           Required=true />
             <MyBFUTextField Label=@(Utils.GetDisplayName<ProfileModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
             <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
                 <StackItem Align=Alignment.Center>
@@ -121,11 +123,14 @@
         [RegularExpression(@"^(?:\+98|0)\d{10}$", ErrorMessageResourceName = "PhoneNumber", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Display(Name = "شماره‌ی تلفن همراه")]
         public string PhoneNumber { get; set; }
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Display(Name = "جنسیت")]
         public IDropdownOption Sex { get; set; }
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Range(1200, 1400, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Display(Name = "سال تولد")]
         public short? BirthYear { get; set; }
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Display(Name = "سطح تحصیلات")]
         public IDropdownOption Education { get; set; }
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
@@ -138,9 +143,9 @@
             {
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                Sex = model.Sex is null ? null : Enum.Parse<Sex>(model.Sex.Key),
+                Sex = Enum.Parse<Sex>(model.Sex.Key),
                 BirthYear = model.BirthYear,
-                Education = model.Education is null ? null : Enum.Parse<Education>(model.Education.Key),
+                Education = Enum.Parse<Education>(model.Education.Key),
                 Handedness = Enum.Parse<Handedness>(model.Handedness.Key),
             };
         }

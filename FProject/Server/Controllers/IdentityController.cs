@@ -122,7 +122,7 @@ namespace FProject.Server.Controllers
             }
 
             var user = await _signInManager.UserManager.FindByEmailAsync(userInfo.Email);
-            if (user is null)
+            if (user is null || userInfo.Sex is null || userInfo.BirthYear is null || userInfo.Education is null)
             {
                 return BadRequest();
             }

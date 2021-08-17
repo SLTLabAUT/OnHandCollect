@@ -110,6 +110,10 @@ ul {
     }
 }
 
+.tg-icon {
+    height: 14px !important;
+}
+
 .loading.ms-Spinner {
     display: flex;
     flex-direction: column;

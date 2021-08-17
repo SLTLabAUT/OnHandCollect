@@ -422,7 +422,18 @@ namespace FProject.Server.Controllers
                 || status == WritepadStatus.Accepted
                 || status == WritepadStatus.NeedEdit) && !adminMode)
             {
-                return BadRequest();
+                return BadRequest(WritepadChangeStatusError.NoReason);
+            }
+
+            if (status == WritepadStatus.Accepted || status == WritepadStatus.WaitForAcceptance)
+            {
+                var hasPoint = await _context.Points
+                    .Where(p => p.WritepadId == writepad.Id)
+                    .AnyAsync();
+                if (!hasPoint)
+                {
+                    return BadRequest(WritepadChangeStatusError.EmptyWritepad);
+                }
             }
 
             if (writepad.LastCheck is not null && status == WritepadStatus.Draft)

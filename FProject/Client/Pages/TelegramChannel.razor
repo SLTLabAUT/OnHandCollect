@@ -1,0 +1,25 @@
+﻿@page "/tgchannel"
+@using FProject.Client.Pages.Identity
+
+<IdentityTemplate Title="عضویت در کانال اطلاع‌رسانی تلگرامی سامانه">
+    <MessageBar>
+        <Actions>
+            <MessageBarButton Text="کانال تلگرام سامانه" Href="https://t.me/farsihandwriting" UnknownProperties=@(new Dictionary<string, object>() { { "target", "_blank" } }) />
+        </Actions>
+        <ChildContent>
+            در حال انتقال به کانال تلگرام سامانه...
+            <br />
+            در صورت عدم انتقال، می‌توانید بر روی دکمه‌ی روبرو کلیک کنید یا آدرس کانال (@@FarsiHandwriting) را در تلگرامتان وارد کنید.
+        </ChildContent>
+    </MessageBar>
+</IdentityTemplate>
+
+@code {
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Navigation.NavigateTo("tg://join?invite=IWthOhRoXRBlMzM0");
+    }
+}

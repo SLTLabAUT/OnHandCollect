@@ -23,12 +23,14 @@
                 <MyBFUDropdown ItemsSource=SexOptions
                                Placeholder="یک گزینه را برگزینید..."
                                @bind-SelectedOption=Model.Sex
-                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex)) />
-                <MyBFUNumericTextField TValue="short?" Label=@(Utils.GetDisplayName<RegisterModel, short?>(b => b.BirthYear)) @bind-Value=@Model.BirthYear @bind-Value:event="OnChange" ParsingErrorMessage="مقدار {0} باید مقداری عددی در محدوده‌ی مجاز باشد." />
+                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Sex))
+                               Required=true />
+                <MyBFUNumericTextField TValue="short" Label=@(Utils.GetDisplayName<RegisterModel, short>(b => b.BirthYear)) @bind-Value=@Model.BirthYear @bind-Value:event="OnChange" ParsingErrorMessage="مقدار «{0}» باید مقداری عددی در محدوده‌ی مجاز باشد." Required=true />
                 <MyBFUDropdown ItemsSource=EducationOptions
                                Placeholder="یک گزینه را برگزینید..."
                                @bind-SelectedOption=Model.Education
-                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Education)) />
+                               Label=@(Utils.GetDisplayName<RegisterModel>(b => b.Education))
+                               Required=true />
                 <MyBFUTextField Label=@(Utils.GetDisplayName<RegisterModel>(m => m.PhoneNumber)) @bind-Value=@Model.PhoneNumber @bind-Value:event="OnChange" />
                 <MyBFUCheckbox Label=@(Utils.GetDisplayName<RegisterModel, bool>(m => m.AcceptTerms)) @bind-Checked=@Model.AcceptTerms OnLabelTextClick=@ShowHideTerms Required=true />
                 <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>

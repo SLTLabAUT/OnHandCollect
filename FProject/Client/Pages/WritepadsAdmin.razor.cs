@@ -36,6 +36,7 @@ namespace FProject.Client.Pages
         int AllCount { get; set; }
         bool DeleteDialogOpen { get; set; }
         bool CommentsDialogOpen { get; set; }
+        bool EmptyWritepadDialogOpen { get; set; }
         Button SendCommentButton { get; set; }
         List<WritepadDTO> WritepadList { get; set; }
         IEnumerable<IDropdownOption> PointerTypes { get; set; }
@@ -174,10 +175,20 @@ namespace FProject.Client.Pages
         {
             try
             {
-                var response = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.Accepted}&admin=true", null);
-                if (response.IsSuccessStatusCode)
+                var result = await Http.PutAsync($"api/Writepad/{writepad.Id}?status={WritepadStatus.Accepted}&admin=true", null);
+                switch (result.StatusCode)
                 {
-                    writepad.Status = WritepadStatus.Accepted;
+                    case System.Net.HttpStatusCode.OK:
+                        writepad.Status = WritepadStatus.Accepted;
+                        break;
+                    case System.Net.HttpStatusCode.BadRequest:
+                        var error = await result.Content.ReadFromJsonAsync<WritepadChangeStatusError>();
+                        if (error == WritepadChangeStatusError.EmptyWritepad)
+                        {
+                            CurrentWritepad = writepad;
+                            EmptyWritepadDialogOpen = true;
+                        }
+                        break;
                 }
             }
             finally

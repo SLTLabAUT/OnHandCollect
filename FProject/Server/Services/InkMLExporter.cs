@@ -59,6 +59,9 @@ namespace FProject.Server.Services
 
             var folderName = $"{start.ToUniversalTime().ToString("yy-MM-dd HH-mm")} to {end.ToUniversalTime().ToString("yy-MM-dd HH-mm")} ({DateTime.UtcNow.ToString("yy-MM-dd HH-mm-ss")})";
             Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}");
+            Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}/{Shared.WritepadType.Text}");
+            Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}/{Shared.WritepadType.WordGroup}");
+            Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}/{Shared.WritepadType.Sign}");
 
             for (int p = 0; p < partsCount; p++)
             {
@@ -160,7 +163,7 @@ namespace FProject.Server.Services
                     var timestamp = document.Descendants(ns + "timestamp").First();
                     timestamp.SetAttributeValue("time", timeOrigin);
 
-                    using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/Writepads/{folderName}/{writepad.Id}.inkml", new XmlWriterSettings { Async = true, Indent = true });
+                    using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/Writepads/{folderName}/{writepad.Type}/{writepad.Id}.inkml", new XmlWriterSettings { Async = true, Indent = true });
                     await document.SaveAsync(writer, default).ConfigureAwait(false);
                 }
             }

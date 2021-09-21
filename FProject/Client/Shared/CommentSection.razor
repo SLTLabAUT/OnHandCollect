@@ -8,7 +8,11 @@
         <MyBFUText Block="true" Style=@($"direction:{(comment.FromAdmin ? "ltr" : "rtl")};")>
             @comment.CreatedAt.GetLocalTimeString() - @owner:
         </MyBFUText>
-        @comment.Text
+        @foreach (var line in comment.Text.Split("\n"))
+        {
+            @line
+            <br />
+        }
     </MyBFUText>
     }
 </div>

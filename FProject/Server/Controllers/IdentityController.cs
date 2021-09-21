@@ -33,21 +33,18 @@ namespace FProject.Server.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger<IdentityController> _logger;
         private readonly EmailService _emailService;
-        private readonly LinkGenerator _linkGenerator;
         private readonly ApplicationDbContext _context;
 
         public IdentityController(SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             ILogger<IdentityController> logger,
             EmailService emailService,
-            LinkGenerator linkGenerator,
             ApplicationDbContext context)
         {
             _signInManager = signInManager;
             _configuration = configuration;
             _logger = logger;
             _emailService = emailService;
-            _linkGenerator = linkGenerator;
             _context = context;
         }
 

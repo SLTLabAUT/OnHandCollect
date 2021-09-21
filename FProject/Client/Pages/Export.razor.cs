@@ -51,7 +51,7 @@ namespace FProject.Client.Pages
         {
             if (firstRender)
             {
-                Http.Timeout = Timeout.InfiniteTimeSpan;
+                //Http.Timeout = Timeout.InfiniteTimeSpan;
                 ExportedCount = await Http.GetFromJsonAsync<int?>($"api/Writepad/Export?mode={Mode}&start={Uri.EscapeDataString(Start.ToString())}&end={Uri.EscapeDataString(End.ToString())}&textType={TextType}");
                 StateHasChanged();
             }

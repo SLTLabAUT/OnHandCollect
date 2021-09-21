@@ -41,9 +41,7 @@
           </mj-text>
 
           <mj-text align="right" padding="10px 40px">
-            کاربر گرامی،
-            <br />
-            @Html.Raw(Model.Description)، روی دکمه‌ی زیر کلیک کنید.
+            @Html.Raw(Model.Description)
           </mj-text>
 
           <mj-spacer height="10px" />

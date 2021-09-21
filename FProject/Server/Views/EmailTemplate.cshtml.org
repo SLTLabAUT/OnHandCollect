@@ -18,9 +18,7 @@
         <hr />
         <div class="description">
             <p>
-                کاربر گرامی،
-                <br />
-                @Html.Raw(Model.Description)، روی دکمه‌ی زیر کلیک کنید.
+                @Html.Raw(Model.Description)
             </p>
             <a class="ms-Button ms-Button--primary" href="@Model.Uri">
                 <span class="ms-Button-flexContainer">

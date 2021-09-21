@@ -43,6 +43,8 @@
                             <AuthorizeView Roles="@IdentityRoleConstants.Admin">
                                 <Authorized>
                                     <BlazorFluentUI.Routing.NavLink Name="تخته‌ها (صفحه‌ی مدیر)" Url="writepadsadmin" Id="writepadsadmin" IconName="WhiteBoardApp32" OnClick=@OnNavLinkClickHandler />
+                                    <BlazorFluentUI.Routing.NavLink Name="ارسال ایمیل" Url="emailsender" Id="emailsender" IconName="SendMirrored" OnClick=@OnNavLinkClickHandler />
+                                    <BlazorFluentUI.Routing.NavLink Name="ایجاد خروجی از داده‌ها" Url="export" Id="export" IconName="ExportMirrored" OnClick=@OnNavLinkClickHandler />
                                 </Authorized>
                             </AuthorizeView>
                             <BlazorFluentUI.Routing.NavLink Name="ویرایش اطلاعات کاربری" Url="identity/profile" Id="identity/profile" IconName="AccountManagement" OnClick=@OnNavLinkClickHandler />
@@ -54,7 +56,25 @@
                             <br />
                         </NotAuthorized>
                     </AuthorizeView>
-                    <BlazorFluentUI.Routing.NavLink Name="قرعه‌کشی" Url="lottery" Id="lottery" IconName="Giftbox" OnClick=@OnNavLinkClickHandler />
+                    @{
+                        var remainingDays = (new DateTime(2021, 10, 25) - DateTime.UtcNow).Days;
+                        var lotteryText = "قرعه‌کشی";
+                        var lotteryColor = string.Empty;
+                        if (remainingDays > 0)
+                        {
+                            lotteryText += $" (فرصت باقی‌مانده: {remainingDays} روز)";
+                            lotteryColor = $"#ff{((int)Math.Round((float)(remainingDays - 1) / 33 * 205)).ToString("x2")}00";
+                        }
+                    }
+                    @if (!string.IsNullOrWhiteSpace(lotteryColor))
+                    {
+                        <style>
+                            .lottery .ms-Icon, .lottery .ms-Nav-linkText {
+                                color: @lotteryColor !important;
+                            }
+                        </style>
+                    }
+                    <BlazorFluentUI.Routing.NavLink Name=@lotteryText Url="lottery" Id="lottery" IconName="Giftbox" ClassName="lottery" OnClick=@OnNavLinkClickHandler />
                     <BlazorFluentUI.Routing.NavLink Name="راهنما" Url="help" Id="help" IconName="HelpMirrored" OnClick=@OnNavLinkClickHandler />
                     <AuthorizeView>
                         <Authorized Context="NavMenu">

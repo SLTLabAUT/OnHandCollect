@@ -1,0 +1,26 @@
+﻿@page "/emailsender"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = IdentityRoleConstants.Admin)]
+
+<FProject.Client.Pages.Identity.IdentityTemplate Title="ارسال ایمیل">
+    <EditForm EditContext=EditContext OnValidSubmit=FormHandler>
+        <DataAnnotationsValidator />
+        <FluentUIValidationSummary />
+        @if (Done)
+        {
+            <MessageBar MessageBarType="MessageBarType.Success" OnDismiss="DismissMessagebarHandler">
+                اطلاعات کاربری شما با موفقیت تغییر کرد.
+            </MessageBar>
+        }
+        <MyBFUTextField Label=@(Utils.GetDisplayName<EmailSenderModel>(m => m.Subject)) @bind-Value=@Model.Subject @bind-Value:event="OnChange" />
+        <MyBFUTextField Multiline=true Label=@(Utils.GetDisplayName<EmailSenderModel>(m => m.Tos)) @bind-Value=@Model.Tos @bind-Value:event="OnChange" />
+        <MyBFUTextField Multiline=true Label=@(Utils.GetDisplayName<EmailSenderModel>(m => m.Description)) @bind-Value=@Model.Description @bind-Value:event="OnChange" />
+        <MyBFUTextField Multiline=true Label=@(Utils.GetDisplayName<EmailSenderModel>(m => m.TextDescription)) @bind-Value=@Model.TextDescription @bind-Value:event="OnChange" />
+
+        <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+            <StackItem Align=Alignment.Center>
+                <Button ButtonType=ButtonType.Submit @ref="SubmitButton" ManualStateControl=true Text="ارسال" />
+            </StackItem>
+        </Stack>
+    </EditForm>
+</FProject.Client.Pages.Identity.IdentityTemplate>

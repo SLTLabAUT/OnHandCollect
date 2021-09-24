@@ -64,7 +64,7 @@ namespace FProject.Server.Controllers
 
         // GET: api/<WritepadController>
         [HttpGet]
-        public async Task<WritepadsDTO> BatchGet(int page = 1, bool admin = false, WritepadStatus? status = default, string userEmail = default, WritepadType? type = default)
+        public async Task<WritepadsDTO> BatchGet(int page = 1, bool admin = false, WritepadStatus? status = default, string userEmail = default, WritepadType? type = default, int? writepadId = default)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
@@ -110,6 +110,10 @@ namespace FProject.Server.Controllers
             if (!string.IsNullOrWhiteSpace(userEmail) && adminMode)
             {
                 writepadsQuery = writepadsQuery.Where(w => w.Owner.NormalizedEmail == userEmail.Trim().ToUpper());
+            }
+            if (writepadId is not null && adminMode)
+            {
+                writepadsQuery = writepadsQuery.Where(w => w.Id == writepadId);
             }
             var writepads = await writepadsQuery
                 .Skip((page - 1) * 10)

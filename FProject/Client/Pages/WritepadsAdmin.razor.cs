@@ -33,6 +33,7 @@ namespace FProject.Client.Pages
         WritepadStatus? Status { get; set; }
         WritepadType? Type { get; set; }
         string UserEmail { get; set; }
+        int? WritepadId { get; set; }
         int AllCount { get; set; }
         bool DeleteDialogOpen { get; set; }
         bool CommentsDialogOpen { get; set; }
@@ -82,6 +83,9 @@ namespace FProject.Client.Pages
                     case "type":
                         Type = Enum.Parse<WritepadType>(queryItem.Value);
                         break;
+                    case "writepadId":
+                        WritepadId = int.Parse(queryItem.Value);
+                        break;
                 }
             }
         }
@@ -90,7 +94,7 @@ namespace FProject.Client.Pages
         {
             if (WritepadList is null)
             {
-                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}&admin=true&status={Status}&type={Type}&userEmail={UserEmail}");
+                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}&admin=true&status={Status}&type={Type}&userEmail={UserEmail}&writepadId={WritepadId}");
                 WritepadList = result.Writepads.ToList();
                 AllCount = result.AllCount;
                 StateHasChanged();

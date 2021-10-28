@@ -25,8 +25,47 @@ namespace FProject.Server.Models
 
     public class EmailTemplate
     {
+        private string description = string.Empty;
+        private string textDescription = string.Empty;
+
         public string Title { get; set; }
-        public string Description { get; set; }
+        public bool IsFullDescription { get; set; }
+        public string Description
+        {
+            get
+            {
+                if (IsFullDescription)
+                {
+                    return description.Replace("\n", "<br>");
+                }
+                else
+                {
+                    return $"هم‌یار گرامی،<br>{description.Replace("\n", "<br>")}، روی دکمه‌ی زیر کلیک کنید.";
+                }
+            }
+            set
+            {
+                description = value;
+            }
+        }
+        public string TextDescription
+        {
+            get
+            {
+                if (IsFullDescription)
+                {
+                    return textDescription;
+                }
+                else
+                {
+                    return $"هم‌یار گرامی،\n{description}، وارد لینک زیر بشوید:\n{ButtonUri}"; ;
+                }
+            }
+            set
+            {
+                textDescription = value;
+            }
+        }
         public string ButtonLabel { get; set; }
         public string ButtonUri { get; set; }
         public string BaseUri { get; set; }

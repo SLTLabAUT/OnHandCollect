@@ -51,12 +51,8 @@ namespace FProject.Server.Services
             smtp.Disconnect(true);
         }
 
-        public async Task<string> GetContent(EmailTemplate template, bool isFullDescription = false)
+        public async Task<string> GetHtmlBody(EmailTemplate template)
         {
-            if (!isFullDescription)
-            {
-                template.Description = $"کاربر گرامی،<br>{template.Description}، روی دکمه‌ی زیر کلیک کنید.";
-            }
             var content = await RazorTemplateEngine.RenderAsync("EmailTemplate", template);
             return content;
             //return PreMailer.Net.PreMailer.MoveCssInline(content, ignoreElements: "link", removeComments: true).Html;

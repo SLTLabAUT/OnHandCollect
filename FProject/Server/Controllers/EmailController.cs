@@ -49,17 +49,18 @@ namespace FProject.Server.Controllers
             var template = new EmailTemplate
             {
                 Title = dto.Subject,
-                Description = dto.Description.Replace("\n", "<br>"),
+                IsFullDescription = true,
+                Description = dto.Description,
+                TextDescription = $"{dto.TextDescription}\n{link}",
                 ButtonLabel = "هدایت به سامانه",
                 ButtonUri = link,
                 BaseUri = $"{Request.Scheme}://{Request.Host.Value}"
             };
-            var htmlBody = await _emailService.GetContent(template, true);
-            var textBody = $"{dto.TextDescription}\n{link}";
+            var htmlBody = await _emailService.GetHtmlBody(template);
             foreach (var to in dto.Tos)
             {
                 _logger.LogInformation("Sending email to {} with subject \"{}\".", to, dto.Subject);
-                var message = new EmailMessage(new string[] { to }, template.Title, textBody, htmlBody);
+                var message = new EmailMessage(new string[] { to }, template.Title, template.TextDescription, htmlBody);
                 await _emailService.SendEmailAsync(message);
                 await Task.Delay(random.Next(10, 50) * 1000);
             }

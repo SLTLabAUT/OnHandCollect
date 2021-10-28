@@ -166,7 +166,7 @@
                                 <Toggle Disabled=@(Parent.AdminReview || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
                             </StackItem>
                             <StackItem Style="width: 100%;">
-                                <Button ButtonType=ButtonType.Primary ManualStateControl=true @ref="SaveButton" ShowDoneOnEnd=true Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.AdminReview || Parent.IsSaving || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
+                                <Button ButtonType=ButtonType.Primary ManualStateControl=true @ref="SaveButton" ShowDoneOnEnd=true Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.IsSaving || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
                             </StackItem>
                             <StackItem>
                                 <TooltipHost Style="white-space:nowrap;">

@@ -14,15 +14,15 @@
     <div class="button">
         @if (ButtonType == ButtonType.Default)
         {
-            <DefaultButton Text=@Text IconName=@IconName Style=@ButtonStyle Disabled=@DisabledCondition OnClick=@ClickHandler>
+            <MyBFUDefaultButton Text=@Text IconName=@IconName Style=@ButtonStyle Disabled=@DisabledCondition OnClick=@ClickHandler>
                 @ChildContent
-            </DefaultButton>
+            </MyBFUDefaultButton>
         }
         else if (ButtonType == ButtonType.Primary)
         {
-            <PrimaryButton Text=@Text IconName=@IconName Style=@ButtonStyle Disabled=@DisabledCondition OnClick=@ClickHandler>
+            <MyBFUPrimaryButton Text=@Text IconName=@IconName Style=@ButtonStyle Disabled=@DisabledCondition OnClick=@ClickHandler>
                 @ChildContent
-            </PrimaryButton>
+            </MyBFUPrimaryButton>
         }
         else if (ButtonType == ButtonType.Submit)
         {

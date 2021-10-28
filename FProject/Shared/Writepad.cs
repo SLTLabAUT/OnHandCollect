@@ -45,7 +45,7 @@ namespace FProject.Shared
         public WritepadType Type { get; set; }
         [Display(Name = "نوع دست")]
         public Hand Hand { get; set; }
-        [Range(1, 25, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+        [Range(1, 14, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
         [Display(Name = "تعداد")]
         public int Number { get; set; } = 1;
     }

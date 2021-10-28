@@ -14,4 +14,8 @@ interface FProject {
     DecompressAsync?(content: string): Promise<string>;
     ImportGlobal?(name: string, uri: string): Promise<any>;
     GetParsedUA?(): UAParser.IResult;
+    CheckBrowser?(): void;
+    IsNullOrWhiteSpace?(input): boolean;
+    UnsupportedBrowser?: boolean;
+    GetUnsupportedBrowser?(): boolean;
 }

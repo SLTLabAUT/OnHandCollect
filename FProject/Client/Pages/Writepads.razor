@@ -265,7 +265,7 @@
                                    Label=@(Utils.GetDisplayName<NewWritepadModel, IDropdownOption>(b => b.Hand))
                                    Required="true" />
                 }
-                <Slider Label=@(Utils.GetDisplayName<NewWritepadModel, double>(m => m.Number)) @bind-Value=@NewWritepad.Number Min=1 Max=@(IsSignSelected ? 7 : 25) />
+                <Slider Label=@(Utils.GetDisplayName<NewWritepadModel, double>(m => m.Number)) @bind-Value=@NewWritepad.Number Min=1 Max=@(IsSignSelected ? 7 : 14) />
                 @if (IsSignSelected)
                 {
                     <MessageBar>

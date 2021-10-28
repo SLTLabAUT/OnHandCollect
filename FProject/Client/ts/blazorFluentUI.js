@@ -167,7 +167,7 @@ var FluentUIBaseComponent;
     }
     FluentUIBaseComponent.getNaturalBounds = getNaturalBounds;
     function supportsObjectFit() {
-        return window !== undefined && window.navigator.msMaxTouchPoints === undefined;
+        return window !== undefined && window.navigator.maxTouchPoints === undefined;
     }
     FluentUIBaseComponent.supportsObjectFit = supportsObjectFit;
     function hasOverflow(element) {

@@ -204,14 +204,13 @@ namespace FProject.Server.Controllers
                 var template = new EmailTemplate
                 {
                     Title = "قفل شدن حساب کاربری",
-                    Description = "حساب کاربری شما به دلیل ورود متعدد رمز عبور اشتباه قفل شده است.<br>جهت بازنشانی رمز عبور خود",
+                    Description = "حساب کاربری شما به دلیل ورود متعدد رمز عبور اشتباه قفل شده است.\nجهت بازنشانی رمز عبور خود",
                     ButtonLabel = "بازنشانی رمز عبور",
                     ButtonUri = forgotPasswordLink,
                     BaseUri = $"{Request.Scheme}://{Request.Host.Value}"
                 };
-                var htmlBody = await _emailService.GetContent(template);
-                var textBody = $"کاربر گرامی،\n{template.Description.Replace("<br>", "\n")}، وارد لینک زیر بشوید:\n{forgotPasswordLink}";
-                var message = new EmailMessage(new string[] { loginDTO.Email }, template.Title, textBody, htmlBody);
+                var htmlBody = await _emailService.GetHtmlBody(template);
+                var message = new EmailMessage(new string[] { loginDTO.Email }, template.Title, template.TextDescription, htmlBody);
                 await _emailService.SendEmailAsync(message);
             }
             else if (result.IsNotAllowed)
@@ -280,9 +279,8 @@ namespace FProject.Server.Controllers
                 ButtonUri = passwordResetLink,
                 BaseUri = $"{Request.Scheme}://{Request.Host.Value}"
             };
-            var htmlBody = await _emailService.GetContent(template);
-            var textBody = $"کاربر گرامی،\n{template.Description}، وارد لینک زیر بشوید:\n{passwordResetLink}";
-            var message = new EmailMessage(new string[] { user.Email }, template.Title, textBody, htmlBody);
+            var htmlBody = await _emailService.GetHtmlBody(template);
+            var message = new EmailMessage(new string[] { user.Email }, template.Title, template.TextDescription, htmlBody);
             await _emailService.SendEmailAsync(message);
 
             return Ok();
@@ -354,9 +352,8 @@ namespace FProject.Server.Controllers
                 ButtonUri = confirmationLink,
                 BaseUri = $"{Request.Scheme}://{Request.Host.Value}"
             };
-            var htmlBody = await _emailService.GetContent(template);
-            var textBody = $"کاربر گرامی،\n{template.Description}، وارد لینک زیر بشوید:\n{confirmationLink}";
-            var message = new EmailMessage(new string[] { user.Email }, template.Title, textBody, htmlBody);
+            var htmlBody = await _emailService.GetHtmlBody(template);
+            var message = new EmailMessage(new string[] { user.Email }, template.Title, template.TextDescription, htmlBody);
             await _emailService.SendEmailAsync(message);
         }
 

@@ -1,0 +1,51 @@
+﻿@inherits ButtonParameters
+@namespace FProject.Client.Shared
+
+@{ 
+    if (Variant != TextType.None)
+    {
+        IconSize = $" Icon-Size-{Variant.ToString()}";
+    }
+}
+
+<MyBFUButtonBase Href=@Href
+            ClassName=@(ClassName + IconSize + " ms-Button--icon")
+            Style=@Style
+            Primary=@Primary
+            Disabled=@Disabled
+            AllowDisabledFocus=@AllowDisabledFocus
+            PrimaryDisabled=@PrimaryDisabled
+            Checked=@Checked
+            AriaDescripton=@AriaDescripton
+            AriaLabel=@AriaLabel
+            AriaRoleDescription=@AriaRoleDescription
+            Text=@null
+            SecondaryText=@SecondaryText
+            Toggle=@Toggle
+            Split=@Split
+            IconName=@IconName
+            IconSrc=@IconSrc
+            HideChevron=@HideChevron
+            MenuItems=@MenuItems
+            SubordinateItemTemplate=@SubordinateItemTemplate
+            CheckedChanged=@CheckedChanged
+            OnClick=@OnClick
+            OnKeyDown=@OnKeyDown
+            Command=@Command
+            CommandParameter=@CommandParameter
+            UnknownProperties=@UnknownProperties
+            @ref="baseReference" />
+
+@code {
+    [Parameter]
+    public TextType Variant { get; set; }
+
+    private string IconSize { get; set; } = string.Empty;
+
+    private MyBFUButtonBase baseReference;
+    protected override void OnAfterRender(bool firstRender)
+    {
+        RootElementReference = baseReference.RootElementReference;
+        base.OnAfterRender(firstRender);
+    }
+}

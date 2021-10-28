@@ -1,5 +1,6 @@
 ﻿using FProject.Client.Shared;
 using FProject.Shared.Models;
+using FProject.Shared.Resources;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
@@ -59,16 +60,16 @@ namespace FProject.Client.Pages
 
         public class EmailSenderModel
         {
-            [Required]
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "موضوع/عنوان")]
             public string Subject { get; set; }
-            [Required]
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "توضیحات")]
             public string Description { get; set; }
-            [Required]
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "توضیحات ساده")]
             public string TextDescription { get; set; }
-            [Required]
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "گیرنده‌ها")]
             public string Tos { get; set; }
 

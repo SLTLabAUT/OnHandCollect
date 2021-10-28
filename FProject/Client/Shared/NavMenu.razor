@@ -57,13 +57,17 @@
                         </NotAuthorized>
                     </AuthorizeView>
                     @{
-                        var remainingDays = (new DateTime(2021, 10, 25) - DateTime.UtcNow).Days;
+                        var remainingDays = (new DateTime(2021, 10, 31) - DateTime.UtcNow).Days;
+                        if (remainingDays < 0)
+                        {
+                            remainingDays = (new DateTime(2021, 11, 7) - DateTime.UtcNow).Days;
+                        }
                         var lotteryText = "قرعه‌کشی";
                         var lotteryColor = string.Empty;
-                        if (remainingDays > 0)
+                        if (remainingDays > -1)
                         {
                             lotteryText += $" (فرصت باقی‌مانده: {remainingDays} روز)";
-                            lotteryColor = $"#ff{((int)Math.Round((float)(remainingDays - 1) / 33 * 205)).ToString("x2")}00";
+                            lotteryColor = $"#ff{((int)Math.Round((float)(remainingDays) / 7 * 205)).ToString("x2")}00";
                         }
                     }
                     @if (!string.IsNullOrWhiteSpace(lotteryColor))

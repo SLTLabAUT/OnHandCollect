@@ -276,29 +276,43 @@ namespace FProject.Server.Controllers
 
         // POST api/<WritepadController>/{id}
         [HttpPost("{id}")]
-        public async Task<IActionResult> SavePoints(int id, [FromBody] string savePointsDTOCompressedJson)
+        public async Task<IActionResult> SavePoints(int id, [FromBody] string savePointsDTOCompressedJson, bool admin = false)
         {
-            //var savePointsDTO = JsonSerializer.Deserialize<SavePointsDTO>(savePointsDTOCompressedJson);
-            var savePointsDTO = JsonSerializer.Deserialize<SavePointsRequestDTO>(LZString.DecompressFromBase64(savePointsDTOCompressedJson));
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var writepad = await _context.Writepads
-                .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId).FirstOrDefaultAsync();
+            var isAdmin = User.IsInRole(IdentityRoleConstants.Admin);
+            var adminMode = admin && isAdmin;
+
+            IQueryable<Writepad> writepadQuery = _context.Writepads;
+            if (adminMode)
+            {
+                writepadQuery = writepadQuery
+                    .Where(w => w.Id == id);
+            }
+            else
+            {
+                writepadQuery = writepadQuery
+                    .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId);
+            }
+            var writepad = await writepadQuery.FirstOrDefaultAsync();
             if (writepad is null)
             {
                 return NotFound();
             }
-            else if (writepad.Status == WritepadStatus.Accepted || (writepad.LastModified - savePointsDTO.LastModified) > TimeSpan.FromMilliseconds(1))
+
+            var savePointsDTO = JsonSerializer.Deserialize<SavePointsRequestDTO>(LZString.DecompressFromBase64(savePointsDTOCompressedJson));
+
+            if (writepad.Status == WritepadStatus.Accepted || (writepad.LastModified - savePointsDTO.LastModified) > TimeSpan.FromMilliseconds(1))
             {
                 return BadRequest();
             }
-            if (writepad.Type == WritepadType.Sign)
+            if (writepad.Type == WritepadType.Sign && !adminMode)
             {
                 var lastEditedSign = await _context.Writepads
-                    .Where(w => w.OwnerId == userId
+                    .Where(w => w.OwnerId == writepad.OwnerId
                         && w.Type == WritepadType.Sign
                         && w.PointerType == writepad.PointerType
                         && w.Hand == writepad.Hand
-                        && w.UserSpecifiedNumber != id)
+                        && w.Id != writepad.Id)
                     .OrderByDescending(w => w.LastModified)
                     .Skip(6)
                     .FirstOrDefaultAsync();

@@ -368,7 +368,7 @@ namespace FProject.Client.Pages
             [Display(Name = "نوع دست")]
             public IDropdownOption Hand { get; set; }
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
-            [Range(1, 25, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+            [Range(1, 14, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "تعداد")]
             public double Number { get; set; } = 1;
 

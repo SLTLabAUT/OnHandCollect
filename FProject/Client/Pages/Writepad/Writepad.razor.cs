@@ -129,7 +129,7 @@ namespace FProject.Client.Pages
                 //});
                 //var stringContent = new StringContent(savePointsDTOCompressedJson, Encoding.ASCII, "application/json");
                 //var stringContent = new StringContent(savePointsDTOJson, Encoding.UTF8, "application/json");
-                var response = await Http.PostAsJsonAsync($"api/Writepad/{Id}", savePointsDTOCompressedJson);
+                var response = await Http.PostAsJsonAsync($"api/Writepad/{Id}?admin={AdminReview}", savePointsDTOCompressedJson);
 
                 switch (response.StatusCode)
                 {

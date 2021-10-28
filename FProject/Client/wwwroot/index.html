@@ -6,11 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>سامانه‌ی جامع جمع‌آوری دادگان دست‌نوشته‌ی برخط فارسی</title>
     <base href="/" />
-    <link href="/asset/IRANSans/WebFonts/css/fontiran.css?version=1.2.7.0" rel="stylesheet" />
-    <link href="/css/fabric.min.css?version=1.2.7.0" rel="stylesheet" />
-    <!--<link href="/sass/fabric-icons.css?version=1.2.7.0" rel="stylesheet" />-->
-    <link href="/css/app.css?version=1.2.7.0" rel="stylesheet" />
-    <link href="/FProject.Client.styles.css?version=1.2.7.0" rel="stylesheet" />
+    <link href="/asset/IRANSans/WebFonts/css/fontiran.css?version=1.2.8.1" rel="stylesheet" />
+    <link href="/css/fabric.min.css?version=1.2.8.1" rel="stylesheet" />
+    <!--<link href="/sass/fabric-icons.css?version=1.2.8.1" rel="stylesheet" />-->
+    <link href="/sass/index-client.css?version=1.2.8.1" rel="stylesheet" />
+    <link href="/css/app.css?version=1.2.8.1" rel="stylesheet" />
+    <link href="/FProject.Client.styles.css?version=1.2.8.1" rel="stylesheet" />
 </head>
 
 <body>
@@ -21,22 +22,75 @@
         </div>
     </div>
 
+    <div class="ms-LayerHost" id="unsupported-browser" style="display: none;">
+        <span class="ms-Layer mediumFont ms-Layer--fixed">
+            <div class="ms-Layer-content">
+                <div role="dialog"
+                     aria-labelledby="هشدار - عدم پشتیبانی مرورگر"
+                     style="outline: none">
+                    <div class="mediumFont ms-Modal isOpen ms-Dialog">
+                        <div class="mediumFont ms-Overlay ms-Overlay--light"></div>
+                        <div class="ms-Modal-main ms-Dialog-main-0-0">
+                            <div style="pointer-events: none; position: fixed" tabindex="0"></div>
+                            <div class="ms-Modal-scrollableContent" data-is-scrollable="true">
+                                <div class="mediumFont ms-Dialog-content">
+                                    <div class="ms-Dialog-header">
+                                        <p class="xlargeFont ms-Dialog-title"
+                                           id="-title"
+                                           role="heading"
+                                           aria-level="2">
+                                            هشدار - عدم پشتیبانی مرورگر
+                                        </p>
+                                        <div class="ms-Dialog-topButton">
+                                            <button class="ms-Button ms-Button--default ms-Dialog-button ms-Button--icon"
+                                                    data-is-focusable="">
+                                                <span class="ms-Button-flexContainer">
+                                                    <i class="ms-Icon ms-Icon--Cancel ms-Button-icon"
+                                                       data-icon-name="Cancel"
+                                                       role="presentation"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="ms-Dialog-inner">
+                                        <div class="ms-Dialog-innerContent">
+                                            مرورگر شما جزو مرورگرهای تحت پشتیبانی سامانه نمی‌باشد.
+                                            <br />
+                                            لطفا مرورگر خود را به‌روز کنید.
+                                        </div>
+                                        <div class="ms-Dialog-actions">
+                                            <div class="ms-Dialog-actionsRight"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="pointer-events: none; position: fixed" tabindex="0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
+    </div>
+
     <div id="blazor-error-ui">
         یک خطای غیرمترقبه اتفاق افتاده است.
         <a href="" class="reload">بازآوری صفحه</a>
         <a class="dismiss">🗙</a>
     </div>
 
-    <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js?version=1.2.7.0"></script>
-    <script src="_framework/blazor.webassembly.js?version=1.2.7.0"></script>
-    <script src="/ts/Ts/blazorFluentUI.js?version=1.2.7.0"></script>
-    <script src="/lib/lz-string/libs/lz-string.min.js?version=1.2.7.0"></script>
-    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?version=1.2.7.0"></script>
-    <script src="/ts/Ts/main.js?version=1.2.7.0"></script>
+    <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js?version=1.2.8.1"></script>
+    <script src="_framework/blazor.webassembly.js?version=1.2.8.1"></script>
+    <script src="/ts/Ts/blazorFluentUI.js?version=1.2.8.1"></script>
+    <script src="/lib/lz-string/libs/lz-string.min.js?version=1.2.8.1"></script>
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?version=1.2.8.1"></script>
+    <script src="/lib/compare-versions/index.js?version=1.2.8.1"></script>
 
     <script>
-        window.FProject.VERSION = "1.2.7.0";
+        window.FProject = {};
+        window.FProject.VERSION = "1.2.8.1";
     </script>
+
+    <script type="module" src="/ts/Ts/main.js?version=1.2.8.1"></script>
 </body>
 
 </html>

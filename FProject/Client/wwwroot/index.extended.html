@@ -9,6 +9,7 @@
     <link href="/asset/IRANSans/WebFonts/css/fontiran.css?version=<!-- @echo VERSION -->" rel="stylesheet" />
     <link href="/css/fabric.min.css?version=<!-- @echo VERSION -->" rel="stylesheet" />
     <!--<link href="/sass/fabric-icons.css?version=<!-- @echo VERSION -->" rel="stylesheet" />-->
+    <link href="/sass/index-client.css?version=<!-- @echo VERSION -->" rel="stylesheet" />
     <link href="/css/app.css?version=<!-- @echo VERSION -->" rel="stylesheet" />
     <link href="/FProject.Client.styles.css?version=<!-- @echo VERSION -->" rel="stylesheet" />
 </head>
@@ -21,6 +22,56 @@
         </div>
     </div>
 
+    <div class="ms-LayerHost" id="unsupported-browser" style="display: none;">
+        <span class="ms-Layer mediumFont ms-Layer--fixed">
+            <div class="ms-Layer-content">
+                <div role="dialog"
+                     aria-labelledby="هشدار - عدم پشتیبانی مرورگر"
+                     style="outline: none">
+                    <div class="mediumFont ms-Modal isOpen ms-Dialog">
+                        <div class="mediumFont ms-Overlay ms-Overlay--light"></div>
+                        <div class="ms-Modal-main ms-Dialog-main-0-0">
+                            <div style="pointer-events: none; position: fixed" tabindex="0"></div>
+                            <div class="ms-Modal-scrollableContent" data-is-scrollable="true">
+                                <div class="mediumFont ms-Dialog-content">
+                                    <div class="ms-Dialog-header">
+                                        <p class="xlargeFont ms-Dialog-title"
+                                           id="-title"
+                                           role="heading"
+                                           aria-level="2">
+                                            هشدار - عدم پشتیبانی مرورگر
+                                        </p>
+                                        <div class="ms-Dialog-topButton">
+                                            <button class="ms-Button ms-Button--default ms-Dialog-button ms-Button--icon"
+                                                    data-is-focusable="">
+                                                <span class="ms-Button-flexContainer">
+                                                    <i class="ms-Icon ms-Icon--Cancel ms-Button-icon"
+                                                       data-icon-name="Cancel"
+                                                       role="presentation"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="ms-Dialog-inner">
+                                        <div class="ms-Dialog-innerContent">
+                                            مرورگر شما جزو مرورگرهای تحت پشتیبانی سامانه نمی‌باشد.
+                                            <br />
+                                            لطفا مرورگر خود را به‌روز کنید.
+                                        </div>
+                                        <div class="ms-Dialog-actions">
+                                            <div class="ms-Dialog-actionsRight"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="pointer-events: none; position: fixed" tabindex="0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
+    </div>
+
     <div id="blazor-error-ui">
         یک خطای غیرمترقبه اتفاق افتاده است.
         <a href="" class="reload">بازآوری صفحه</a>
@@ -28,7 +79,7 @@
     </div>
 
     <!-- @if ASPNETCORE_ENVIRONMENT='Development' -->
-    <script src="/lib/eruda/eruda.js?version=<!-- @echo VERSION -->""></script>
+    <script src="/lib/eruda/eruda.js?version=<!-- @echo VERSION -->" "></script>
     <script>eruda.init();</script>
     <!-- @endif -->
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js?version=<!-- @echo VERSION -->"></script>
@@ -36,11 +87,14 @@
     <script src="/ts/Ts/blazorFluentUI.js?version=<!-- @echo VERSION -->"></script>
     <script src="/lib/lz-string/libs/lz-string.min.js?version=<!-- @echo VERSION -->"></script>
     <script src="/lib/ua-parser-js/dist/ua-parser.min.js?version=<!-- @echo VERSION -->"></script>
-    <script src="/ts/Ts/main.js?version=<!-- @echo VERSION -->"></script>
+    <script src="/lib/compare-versions/index.js?version=<!-- @echo VERSION -->"></script>
 
     <script>
+        window.FProject = {};
         window.FProject.VERSION = "<!-- @echo VERSION -->";
     </script>
+
+    <script type="module" src="/ts/Ts/main.js?version=<!-- @echo VERSION -->"></script>
 </body>
 
 </html>

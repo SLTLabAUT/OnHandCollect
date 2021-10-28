@@ -17,8 +17,8 @@
     border-radius: var(--effects-RoundedCorner2);
 }
 
-.ms-Button::-moz-focus-inner{
-    border:0;
+.ms-Button::-moz-focus-inner {
+    border: 0;
 }
 
 .ms-Fabric--isFocusVisible .ms-Button:focus::after {
@@ -33,7 +33,7 @@
     z-index: var(--zIndex-FocusStyle);
 }
 
-@media screen and (-ms-high-contrast: active){
+@media screen and (-ms-high-contrast: active) {
     .ms-Fabric--isFocusVisible .ms-Button:focus::after {
         left: -2px;
         top: -2px;
@@ -58,15 +58,14 @@
     pointer-events: none;
 }
 
- .ms-Button:hover, 
- .ms-Button:focus {
+.ms-Button:focus {
     text-decoration: none;
     outline: 0;
 }
 
- .ms-Button:link, 
- .ms-Button:visited, 
- .ms-Button:active {
+.ms-Button:link,
+.ms-Button:visited,
+.ms-Button:active {
     text-decoration: none;
 }
 
@@ -81,7 +80,8 @@
     background-color: var(--palette-NeutralLight);
     color: var(--palette-NeutralDark);
 }
- .ms-Button.ms-Button--primary.is-expanded {
+
+.ms-Button.ms-Button--primary.is-expanded {
     background-color: var(--palette-ThemeDark);
     color: var(--palette-White);
 }
@@ -100,13 +100,6 @@
 
 .ms-Button.ms-Button--primary.is-expanded .ms-Button .ms-Button-menuIcon {
     color: var(--palette-White);
-}
-
- .ms-Button.ms-Button--default:not(.ms-Button--command).is-expanded:hover {
-    background-color: var(--palette-NeutralQuaternaryAlt);
-}
- .ms-Button.ms-Button--primary.is-expanded:hover {
-    background-color: var(--palette-ThemeDark);
 }
 
 .ms-Button.is-disabled .ms-Button .ms-Button-icon {
@@ -204,7 +197,7 @@
     border-radius: 0;
     border-top-right-radius: var(--effects-RoundedCorner2);
     border-bottom-right-radius: var(--effects-RoundedCorner2);
-    border:1px solid var(--palette-NeutralSecondaryAlt);
+    border: 1px solid var(--palette-NeutralSecondaryAlt);
     border-left: none;
     outline: transparent;
     user-select: none;
@@ -220,6 +213,7 @@
     margin-right: 0px;
     margin-bottom: 0px;
 }
+
 .ms-Button-splitContainer .ms-Button-menuIcon.is-disabled {
     border-color: var(--palette-NeutralLighter);
     /* Hack to force disabled on border for splitbutton right side menu */
@@ -261,11 +255,6 @@
     border-color: var(--palette-White);
 }
 
-.ms-Button--primary:hover {
-    color: var(--palette-White);
-    background-color: var(--palette-ThemeDarkAlt);
-}
-
 .ms-Button--primary:active {
     color: var(--palette-White);
     background-color: var(--palette-ThemeDark);
@@ -277,22 +266,11 @@
     border: none;
 }
 
-.ms-Button--primary.is-checked:hover {
-    background-color: var(--palette-ThemePrimary);
-    color: var(--palette-White);
-    border: none;
-}
-
 @media screen and (-ms-high-contrast: active) {
     .ms-Button--primary {
         color: Window;
         background-color: WindowText;
         -ms-high-contrast-adjust: none;
-    }
-
-    .ms-Button--primary:hover {
-        color: Window;
-        background-color: Highlight;
     }
 
     .ms-Button--primary:active {
@@ -316,38 +294,30 @@
     background-color: var(--palette-White);
     border: 1px solid var(--palette-NeutralSecondaryAlt);
 }
-    /*
+/*
  .ms-Fabric--isFocusVisible .ms-Button--default:focus:after {
     outline: none;
     border-color: var(--palette-White);
 }
 */
-.ms-Button--default:hover {
-    color: var(--semanticTextColors-ButtonTextHovered);
-    background-color: var(--palette-NeutralLighter);
-}
 
 .ms-Button--default:active {
     color: var(--semanticTextColors-ButtonTextChecked);
     background-color: var(--palette-NeutralLight);
 }
 
-    .ms-Button--default.is-checked:not(.is-disabled) {
+.ms-Button--default.is-checked:not(.is-disabled) {
     color: var(--semanticTextColors-ButtonTextChecked);
     background-color: var(--palette-NeutralLight);
 }
 
-    .ms-Button--default.is-checked:hover {
-    background-color: var(--palette-NeutralLight);
-}
-
-    .ms-Button--default.is-disabled {
+.ms-Button--default.is-disabled {
     background-color: var(--palette-NeutralLighter);
     border-color: var(--palette-NeutralLighter);
 }
 
 @media screen and (-ms-high-contrast: active) {
-     .ms-Button--default {
+    .ms-Button--default {
         color: Highlight;
         background-color: Highlight;
     }
@@ -371,19 +341,12 @@
     background-color: transparent;
     border: 1px solid transparent;
 }
-    /*
+/*
  .ms-Fabric--isFocusVisible .ms-Button--action:focus:after {
     outline: none;
     border-color: var(--palette-White);
 }
 */
-.ms-Button.ms-Button--action:hover {
-    color: var(--palette-ThemePrimary);
-}
-
-.ms-Button.ms-Button--action .ms-Button .ms-Button-icon:hover {
-    color: var(--palette-ThemePrimary);
-}
 
 .ms-Button.ms-Button--action:active {
     color: var(--palette-Black);
@@ -435,14 +398,6 @@
     font-weight: var(--fontWeight-Regular);
 }
 
-@media screen and (-ms-high-contrast: active) {
-
-     .ms-Button.ms-Button--action:hover {
-        color: Highlight;
-        background-color: Highlight;
-    }
-}
-
 /* CommandBarButton */
 
 .ms-Button.ms-Button--commandBar {
@@ -454,112 +409,86 @@
     border: none;
     border-radius: 0;
 }
-    /*
+/*
  .ms-Fabric--isFocusVisible .ms-Button--commandBar:focus:after {
     outline: none;
     border-color: var(--palette-White);
 }
 */
-     .ms-Button.ms-Button--commandBar:hover {
-        color: var(--palette-NeutralDark);
-        background-color: var(--palette-NeutralLighter);
-    }
 
-        .ms-Button.ms-Button--commandBar:hover .ms-Button .ms-Button-icon {
-            color: var(--palette-ThemeDarkAlt);
-        }
+.ms-Button.ms-Button--commandBar:active {
+    color: var(--semanticTextColors-Black);
+    background-color: var(--palette-NeutralLight);
+}
 
-        .ms-Button.ms-Button--commandBar:hover .ms-Button .ms-Button-menuIcon {
-            color: var(--palette-NeutralPrimary);
-        }
+.ms-Button.ms-Button--commandBar:active .ms-Button .ms-Button-icon {
+    color: var(--palette-ThemeDarkAlt);
+}
 
-     .ms-Button.ms-Button--commandBar:active {
-        color: var(--semanticTextColors-Black);
-        background-color: var(--palette-NeutralLight);
-    }
-
-        .ms-Button.ms-Button--commandBar:active .ms-Button .ms-Button-icon {
-            color: var(--palette-ThemeDarkAlt);
-        }
-
-        .ms-Button.ms-Button--commandBar:active .ms-Button .ms-Button-menuIcon {
-            color: var(--palette-NeutralPrimary);
-        }
+.ms-Button.ms-Button--commandBar:active .ms-Button .ms-Button-menuIcon {
+    color: var(--palette-NeutralPrimary);
+}
 
 
 
-     .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled) {
-        color: var(--Palette-NeutralDark);
-        background-color: var(--palette-NeutralLight);
-    }
+.ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled) {
+    color: var(--Palette-NeutralDark);
+    background-color: var(--palette-NeutralLight);
+}
 
-        .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled) .ms-Button .ms-Button-icon {
-            color: var(--Palette-ThemeDark);
-        }
+.ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled) .ms-Button .ms-Button-icon {
+    color: var(--Palette-ThemeDark);
+}
 
-        .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled) .ms-Button .ms-Button-menuIcon {
-            color: var(--Palette-NeutralDark);
-            background-color: var(--palette-NeutralPrimary);
-        }
-
-
-         .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover {
-            background-color: var(--palette-NeutralQuaternaryAlt);
-        }
-
-            .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover .ms-Button .ms-Button-icon {
-                color: var(--Palette-ThemeDark);
-            }
-
-            .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover .ms-Button .ms-Button-menuIcon {
-                color: var(--Palette-NeutralDark);
-                background-color: var(--palette-NeutralPrimary);
-            }
+.ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled) .ms-Button .ms-Button-menuIcon {
+    color: var(--Palette-NeutralDark);
+    background-color: var(--palette-NeutralPrimary);
+}
 
 
 
 
-     .ms-Button.ms-Button--commandBar.is-expanded {
-        background-color: var(--palette-NeutralLight);
-        color: var(--palette-NeutralDark);
-    }
+.ms-Button.ms-Button--commandBar.is-expanded {
+    background-color: var(--palette-NeutralLight);
+    color: var(--palette-NeutralDark);
+}
 
-        .ms-Button.ms-Button--commandBar.is-expanded .ms-Button .ms-Button-icon {
-            color: var(--palette-ThemeDark);
-        }
+.ms-Button.ms-Button--commandBar.is-expanded .ms-Button .ms-Button-icon {
+    color: var(--palette-ThemeDark);
+}
 
-        .ms-Button.ms-Button--commandBar.is-expanded .ms-Button .ms-Button-menuIcon {
-            color: var(--palette-NeutralPrimary);
-        }
-
-
-
-     .ms-Button.ms-Button--commandBar.is-disabled {
-        background-color: var(--palette-White);
-    }
-
-        .ms-Button.ms-Button--commandBar.is-disabled .ms-Button .ms-Button-icon {
-            color: var(--semanticTextColors-DisabledBodySubtext);
-        }
-
-
-    .ms-Button.ms-Button--commandBar .ms-Button .ms-Button-icon {
-        color: var(--palette-ThemePrimary);
-    }
-
-    .ms-Button.ms-Button--commandBar .ms-Button .ms-Button-label {
-        font-weight: normal;
-    }
-
-    .ms-Button.ms-Button--commandBar .ms-Button .ms-Button-menuIcon {
-        color: var(--palette-NeutralSecondary);
-    }
+.ms-Button.ms-Button--commandBar.is-expanded .ms-Button .ms-Button-menuIcon {
+    color: var(--palette-NeutralPrimary);
+}
 
 
 
-    /* IconButton */
+.ms-Button.ms-Button--commandBar.is-disabled {
+    background-color: var(--palette-White);
+}
 
- .ms-Button--icon {
+.ms-Button.ms-Button--commandBar.is-disabled .ms-Button .ms-Button-icon {
+    color: var(--semanticTextColors-DisabledBodySubtext);
+}
+
+
+.ms-Button.ms-Button--commandBar .ms-Button .ms-Button-icon {
+    color: var(--palette-ThemePrimary);
+}
+
+.ms-Button.ms-Button--commandBar .ms-Button .ms-Button-label {
+    font-weight: normal;
+}
+
+.ms-Button.ms-Button--commandBar .ms-Button .ms-Button-menuIcon {
+    color: var(--palette-NeutralSecondary);
+}
+
+
+
+/* IconButton */
+
+.ms-Button--icon {
     padding: 0 4px;
     min-width: 32px;
     height: 32px;
@@ -568,43 +497,26 @@
     color: var(--semanticTextColors-Link);
 }
 
-     .ms-Button--icon:hover {
-        color: var(--palette-ThemeDarkAlt);
-        background-color: var(--palette-NeutralLighter);
-    }
+.ms-Button--icon:active {
+    color: var(--palette-ThemeDark);
+    background-color: var(--palette-NeutralLight);
+}
 
-     .ms-Button--icon:active {
-        color: var(--palette-ThemeDark);
-        background-color: var(--palette-NeutralLight);
-    }
+.ms-Button--icon.is-checked:not(.is-disabled) {
+    color: var(--palette-ThemeDark);
+    background-color: var(--palette-NeutralLight);
+    border: none;
+}
 
-     .ms-Button--icon.is-checked:not(.is-disabled) {
-        color: var(--palette-ThemeDark);
-        background-color: var(--palette-NeutralLight);
-        border: none;
-    }
-
-     .ms-Button--icon.is-checked:hover {
-        background-color: var(--palette-NeutralQuaternaryAlt);
-        color: var(--palette-ThemeDark);
-    }
-
-     .ms-Button--icon.is-disabled {
-        border-color: var(--palette-NeutralQuaternaryAlt);
-    }
-
-@media screen and (-ms-high-contrast: active) {
-     .ms-Button.ms-Button--icon:hover {
-        color: Highlight;
-        background-color: Highlight;
-    }
+.ms-Button--icon.is-disabled {
+    border-color: var(--palette-NeutralQuaternaryAlt);
 }
 
 
 
 /* CommandButton */
 
- .ms-Button.ms-Button--command {
+.ms-Button.ms-Button--command {
     min-width: unset;
     padding: 0px 4px;
     height: 40px;
@@ -612,123 +524,104 @@
     background-color: transparent;
     border: 1px solid transparent;
 }
-    /*
+/*
  .ms-Fabric--isFocusVisible .ms-Button--command:focus:after {
     outline: none;
     border-color: var(--palette-White);
 }
 */
-     .ms-Button.ms-Button--command:hover {
-        color: var(--palette-ThemePrimary);
-    }
 
-     .ms-Button.ms-Button--command.is-expanded {
-        color: var(--palette-ThemePrimary);
-    }
-
-    .ms-Button.ms-Button--command .ms-Button .ms-Button-icon:hover {
-        color: var(--palette-ThemePrimary);
-    }
+.ms-Button.ms-Button--command.is-expanded {
+    color: var(--palette-ThemePrimary);
+}
 
 
-     .ms-Button.ms-Button--command:active {
-        color: var(--palette-Black);
-    }
+.ms-Button.ms-Button--command:active {
+    color: var(--palette-Black);
+}
 
-    .ms-Button.ms-Button--command .ms-Button .ms-Button-icon:active {
-        color: var(--palette-ThemeDarker);
-    }
+.ms-Button.ms-Button--command .ms-Button .ms-Button-icon:active {
+    color: var(--palette-ThemeDarker);
+}
 
-    /*  .ms-Button.ms-Button--command.is-expanded {
+/*  .ms-Button.ms-Button--command.is-expanded {
         color: var(--palette-NeutralLight);
     }*/
 
-     .ms-Button.ms-Button--command.is-disabled {
-        color: var(--palette-NeutralTertiary);
-        background-color: transparent;
-    }
+.ms-Button.ms-Button--command.is-disabled {
+    color: var(--palette-NeutralTertiary);
+    background-color: transparent;
+}
 
 
-     .ms-Button.ms-Button--command.is-checked:not(.is-disabled) {
-        color: var(--palette-Black);
-    }
+.ms-Button.ms-Button--command.is-checked:not(.is-disabled) {
+    color: var(--palette-Black);
+}
 
-    .ms-Button.ms-Button--command.is-checked .ms-Button .ms-ButtonIcon {
-        color: var(--palette-ThemeDarker);
-    }
+.ms-Button.ms-Button--command.is-checked .ms-Button .ms-ButtonIcon {
+    color: var(--palette-ThemeDarker);
+}
 
-    .ms-Button.ms-Button--command .ms-Button .ms-Button-flexContainer {
-        justify-content: flex-start;
-    }
+.ms-Button.ms-Button--command .ms-Button .ms-Button-flexContainer {
+    justify-content: flex-start;
+}
 
-    .ms-Button.ms-Button--command .ms-Button .ms-Button-icon {
-        color: var(--palette-ThemeDarkAlt);
-    }
+.ms-Button.ms-Button--command .ms-Button .ms-Button-icon {
+    color: var(--palette-ThemeDarkAlt);
+}
 
-    .ms-Button.ms-Button--command.is-disabled .ms-Button .ms-Button-icon {
-        color: inherit;
-    }
+.ms-Button.ms-Button--command.is-disabled .ms-Button .ms-Button-icon {
+    color: inherit;
+}
 
-    .ms-Button.ms-Button--command .ms-Button .ms-Button-menuIcon {
-        color: var(--palette-NeutralSecondary);
-    }
+.ms-Button.ms-Button--command .ms-Button .ms-Button-menuIcon {
+    color: var(--palette-NeutralSecondary);
+}
 
-    .ms-Button.ms-Button--command .ms-Button .ms-Button-textContainer {
-        flex-grow: 0;
-    }
+.ms-Button.ms-Button--command .ms-Button .ms-Button-textContainer {
+    flex-grow: 0;
+}
 
-    .ms-Button.ms-Button--command .ms-Button .ms-Button-label {
-        font-weight: var(--fontWeight-Regular);
-    }
-
-@media screen and (-ms-high-contrast: active) {
-
-     .ms-Button.ms-Button--command:hover {
-        color: Highlight;
-        background-color: Highlight;
-    }
+.ms-Button.ms-Button--command .ms-Button .ms-Button-label {
+    font-weight: var(--fontWeight-Regular);
 }
 
 
 
 /* CompoundButton */
- .ms-Button.ms-Button--compound {
+.ms-Button.ms-Button--compound {
     max-width: 280px;
     min-height: 72px;
     padding: 16px 12px;
     height: auto;
 }
 
-    .ms-Button.ms-Button--compound .ms-Button .ms-Button-flexContainer {
-        flex-direction: row;
-        align-items: flex-start;
-        min-width: 100%;
-        margin: unset;
-    }
+.ms-Button.ms-Button--compound .ms-Button .ms-Button-flexContainer {
+    flex-direction: row;
+    align-items: flex-start;
+    min-width: 100%;
+    margin: unset;
+}
 
-    .ms-Button.ms-Button--compound .ms-Button .ms-Button-textContainer {
-        text-align: left;
-    }
+.ms-Button.ms-Button--compound .ms-Button .ms-Button-textContainer {
+    text-align: left;
+}
 
-    .ms-Button.ms-Button--compound .ms-Button .ms-Button-label {
-        margin: 0 0 5px 0;
-        line-height: 100%;
-        font-weight: var(--fontWeight-SemiBold);
-    }
+.ms-Button.ms-Button--compound .ms-Button .ms-Button-label {
+    margin: 0 0 5px 0;
+    line-height: 100%;
+    font-weight: var(--fontWeight-SemiBold);
+}
 
-    .ms-Button.ms-Button--compound .ms-Button .ms-Button-description {
-        line-height: 100%;
-    }
+.ms-Button.ms-Button--compound .ms-Button .ms-Button-description {
+    line-height: 100%;
+}
 
 
 .ms-Button--default.ms-Button--compound .ms-Button .ms-Button-description {
     color: var(--palette-NeutralSecondary);
 }
 
-
-.ms-Button--default.ms-Button--compound:hover .ms-Button .ms-Button-description {
-    color: var(--palette-NeutralDark);
-}
 
 .ms-Button--default.ms-Button--compound.is-checked .ms-Button .ms-Button-description {
     color: inherit;
@@ -745,10 +638,6 @@
 }
 
 
-.ms-Button--primary.ms-Button--compound:hover .ms-Button .ms-Button-description {
-    color: var(--palette-White);
-}
-
 .ms-Button--primary.ms-Button--compound.is-checked .ms-Button .ms-Button-description {
     color: inherit;
 }
@@ -756,4 +645,145 @@
 
 .ms-Button--primary.ms-Button--compound.is-disabled .ms-Button .ms-Button-description {
     color: inherit;
+}
+
+@media (hover: hover) {
+    .ms-Button:hover {
+        text-decoration: none;
+        outline: 0;
+    }
+
+    .ms-Button.ms-Button--default:not(.ms-Button--command).is-expanded:hover {
+        background-color: var(--palette-NeutralQuaternaryAlt);
+    }
+
+    .ms-Button.ms-Button--primary.is-expanded:hover {
+        background-color: var(--palette-ThemeDark);
+    }
+
+    /* PRIMARY BUTTON */
+
+    .ms-Button--primary:hover {
+        color: var(--palette-White);
+        background-color: var(--palette-ThemeDarkAlt);
+    }
+
+    .ms-Button--primary.is-checked:hover {
+        background-color: var(--palette-ThemePrimary);
+        color: var(--palette-White);
+        border: none;
+    }
+
+    @media screen and (-ms-high-contrast: active) {
+        .ms-Button--primary:hover {
+            color: Window;
+            background-color: Highlight;
+        }
+    }
+
+    /* DEFAULT BUTTON */
+
+    .ms-Button--default:hover {
+        color: var(--semanticTextColors-ButtonTextHovered);
+        background-color: var(--palette-NeutralLighter);
+    }
+
+    .ms-Button--default.is-checked:hover {
+        background-color: var(--palette-NeutralLight);
+    }
+
+    /* ActionButton */
+
+    .ms-Button.ms-Button--action:hover {
+        color: var(--palette-ThemePrimary);
+    }
+
+    .ms-Button.ms-Button--action .ms-Button .ms-Button-icon:hover {
+        color: var(--palette-ThemePrimary);
+    }
+
+    @media screen and (-ms-high-contrast: active) {
+        .ms-Button.ms-Button--action:hover {
+            color: Highlight;
+            background-color: Highlight;
+        }
+    }
+
+    /* CommandBarButton */
+
+    .ms-Button.ms-Button--commandBar:hover {
+        color: var(--palette-NeutralDark);
+        background-color: var(--palette-NeutralLighter);
+    }
+
+    .ms-Button.ms-Button--commandBar:hover .ms-Button .ms-Button-icon {
+        color: var(--palette-ThemeDarkAlt);
+    }
+
+    .ms-Button.ms-Button--commandBar:hover .ms-Button .ms-Button-menuIcon {
+        color: var(--palette-NeutralPrimary);
+    }
+
+    .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover {
+        background-color: var(--palette-NeutralQuaternaryAlt);
+    }
+
+    .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover
+    .ms-Button
+    .ms-Button-icon {
+        color: var(--Palette-ThemeDark);
+    }
+
+    .ms-Button.ms-Button--commandBar.is-checked:not(.is-disabled):hover
+    .ms-Button
+    .ms-Button-menuIcon {
+        color: var(--Palette-NeutralDark);
+        background-color: var(--palette-NeutralPrimary);
+    }
+
+    /* IconButton */
+
+    .ms-Button--icon:hover {
+        color: var(--palette-ThemeDarkAlt);
+        background-color: var(--palette-NeutralLighter);
+    }
+
+    .ms-Button--icon.is-checked:hover {
+        background-color: var(--palette-NeutralQuaternaryAlt);
+        color: var(--palette-ThemeDark);
+    }
+
+    @media screen and (-ms-high-contrast: active) {
+        .ms-Button.ms-Button--icon:hover {
+            color: Highlight;
+            background-color: Highlight;
+        }
+    }
+
+    /* CommandButton */
+
+    .ms-Button.ms-Button--command:hover {
+        color: var(--palette-ThemePrimary);
+    }
+
+    .ms-Button.ms-Button--command .ms-Button .ms-Button-icon:hover {
+        color: var(--palette-ThemePrimary);
+    }
+
+    @media screen and (-ms-high-contrast: active) {
+        .ms-Button.ms-Button--command:hover {
+            color: Highlight;
+            background-color: Highlight;
+        }
+    }
+
+    /* CompoundButton */
+
+    .ms-Button--default.ms-Button--compound:hover .ms-Button .ms-Button-description {
+        color: var(--palette-NeutralDark);
+    }
+
+    .ms-Button--primary.ms-Button--compound:hover .ms-Button .ms-Button-description {
+        color: var(--palette-White);
+    }
 }

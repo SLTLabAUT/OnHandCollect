@@ -39,7 +39,7 @@ namespace FProject.Shared
 
     public class NewWritepadDTO
     {
-        [Display(Name = "نوع ورودی")]
+        [Display(Name = "نوع اشاره‌گر")]
         public PointerType PointerType { get; set; }
         [Display(Name = "نوع داده")]
         public WritepadType Type { get; set; }

@@ -269,7 +269,7 @@
                 @if (IsSignSelected)
                 {
                     <MessageBar>
-                        ایجاد تخته‌ی امضاء با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.
+                        ایجاد تخته‌ی امضاء با اشاره‌گر و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.
                     </MessageBar>
                 }
             </EditForm>
@@ -336,7 +336,7 @@
                 <br />
                 وضعیت: @(CurrentWritepad?.Status.GetAttribute<DisplayAttribute>().Name)
                 <br />
-                نوع ورودی: @(CurrentWritepad?.PointerType.GetAttribute<DisplayAttribute>().Name)
+                نوع اشاره‌گر: @(CurrentWritepad?.PointerType.GetAttribute<DisplayAttribute>().Name)
                 <br />
                 نوع داده: @(CurrentWritepad?.Type.GetAttribute<DisplayAttribute>().Name)
                 <br />

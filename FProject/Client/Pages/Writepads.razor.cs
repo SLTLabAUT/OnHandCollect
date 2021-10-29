@@ -209,7 +209,7 @@ namespace FProject.Client.Pages
                         var error = await result.Content.ReadFromJsonAsync<WritepadCreationError>();
                         var errorText = error switch
                         {
-                            WritepadCreationError.SignNotAllowed => "ایجاد تخته‌ی امضاء با نوع ورودی و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.",
+                            WritepadCreationError.SignNotAllowed => "ایجاد تخته‌ی امضاء با اشاره‌گر و دست یکسان تنها ۷ عدد در هر ۱۲ ساعت مجاز است.",
                             _ => null,
                         };
                         if (errorText is not null)
@@ -359,7 +359,7 @@ namespace FProject.Client.Pages
         public class NewWritepadModel
         {
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
-            [Display(Name = "نوع ورودی")]
+            [Display(Name = "نوع اشاره‌گر")]
             public IDropdownOption PointerType { get; set; }
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "نوع داده")]

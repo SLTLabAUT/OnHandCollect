@@ -57,10 +57,10 @@
                         </NotAuthorized>
                     </AuthorizeView>
                     @{
-                        var remainingDays = (new DateTime(2021, 10, 31) - DateTime.UtcNow).Days;
+                        var remainingDays = (new DateTime(2021, 11, 1) - DateTime.UtcNow).Days;
                         if (remainingDays < 0)
                         {
-                            remainingDays = (new DateTime(2021, 11, 7) - DateTime.UtcNow).Days;
+                            remainingDays = (new DateTime(2021, 11, 8) - DateTime.UtcNow).Days;
                         }
                         var lotteryText = "قرعه‌کشی";
                         var lotteryColor = string.Empty;

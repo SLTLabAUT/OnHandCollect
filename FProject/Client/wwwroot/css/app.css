@@ -38,6 +38,12 @@ ul {
     list-style-position: inside;
 }
 
+.nested-ul {
+    margin-block-start: 0.25em;
+    margin-block-end: 0.5em;
+    padding-inline-start: 40px;
+}
+
 .blur-animation {
     animation: blur .1s cubic-bezier(0,0,1,1) both;
 }

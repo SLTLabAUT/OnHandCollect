@@ -27,7 +27,7 @@ namespace FProject.Client.Pages
         bool CollapsedChanged { get; set; }
         bool UndoDisabled { get; set; }
         bool RedoDisabled { get; set; } = true;
-        bool MoveDisabled { get; set; }
+        DrawingMode CurrentDefaultMode { get; set; }
         public bool NotAllowedDialogOpen { get; set; }
         bool LeaveConfirmDialogOpen { get; set; }
         bool HelpDialogOpen { get; set; }
@@ -92,7 +92,7 @@ namespace FProject.Client.Pages
         async Task ChangeDefaultModeHandler(DrawingMode mode)
         {
             await Parent.JSRef.InvokeVoidAsync("changeDefaultMode", mode);
-            MoveDisabled = mode == DrawingMode.Move;
+            CurrentDefaultMode = mode;
         }
 
         public void StateHasChangedPublic()
@@ -102,7 +102,7 @@ namespace FProject.Client.Pages
 
         public void DefaultModeUpdator(DrawingMode mode)
         {
-            MoveDisabled = mode == DrawingMode.Move;
+            CurrentDefaultMode = mode;
             StateHasChanged();
         }
 

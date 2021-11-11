@@ -1,4 +1,6 @@
 ﻿@using System.ComponentModel.DataAnnotations
+@using FProject.Shared
+@using TextType = BlazorFluentUI.TextType 
 @namespace FProject.Client.Pages
 
 <Stack ClassName=@("panel" + (PanelCollapsed ? " panel-collapsed" : "")) Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
@@ -140,21 +142,30 @@
                         <Stack>
                             <StackItem>
                                 <Stack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.SpaceAround VerticalAlign=Alignment.Center>
-                                    <StackItem VerticalFill=false>
-                                        <MyBFUIconButton IconName="Undo" Disabled=UndoDisabled OnClick=@(args => UndoRedoHander()) />
-                                    </StackItem>
-                                    <StackItem VerticalFill=false>
-                                        <MyBFUIconButton IconName="Redo" Disabled=RedoDisabled OnClick=@(args => UndoRedoHander(true)) />
-                                    </StackItem>
+                                    @if (Parent.AdminReview)
+                                    {
+                                        <StackItem VerticalFill=false>
+                                            <MyBFUIconButton IconName="RectangularClipping" Disabled=@(CurrentDefaultMode == DrawingMode.Select) OnClick=@(args => ChangeDefaultModeHandler(DrawingMode.Select)) />
+                                        </StackItem>
+                                    }
+                                    else
+                                    {
+                                        <StackItem VerticalFill=false>
+                                            <MyBFUIconButton IconName="Undo" Disabled=UndoDisabled OnClick=@(args => UndoRedoHander()) />
+                                        </StackItem>
+                                        <StackItem VerticalFill=false>
+                                            <MyBFUIconButton IconName="Redo" Disabled=RedoDisabled OnClick=@(args => UndoRedoHander(true)) />
+                                        </StackItem>
+                                    }
                                 </Stack>
                             </StackItem>
                             <StackItem>
                                 <Stack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.SpaceAround VerticalAlign=Alignment.Center>
                                     <StackItem VerticalFill=false>
-                                        <MyBFUIconButton IconName="Edit" Disabled=!MoveDisabled OnClick=@(args => ChangeDefaultModeHandler(FProject.Shared.DrawingMode.Non)) />
+                                        <MyBFUIconButton IconName="Edit" Disabled=@(CurrentDefaultMode == DrawingMode.Non || CurrentDefaultMode == DrawingMode.Draw) OnClick=@(args => ChangeDefaultModeHandler(DrawingMode.Non)) />
                                     </StackItem>
                                     <StackItem VerticalFill=false>
-                                        <MyBFUIconButton IconName="Move" Disabled=MoveDisabled OnClick=@(args => ChangeDefaultModeHandler(FProject.Shared.DrawingMode.Move)) />
+                                        <MyBFUIconButton IconName="Move" Disabled=@(CurrentDefaultMode == DrawingMode.Move) OnClick=@(args => ChangeDefaultModeHandler(DrawingMode.Move)) />
                                     </StackItem>
                                 </Stack>
                             </StackItem>
@@ -163,7 +174,21 @@
                     <StackItem Style="margin-left:5px;">
                         <Stack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
                             <StackItem>
-                                <Toggle Disabled=@(Parent.AdminReview || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
+                                @if (Parent.AdminReview)
+                                {
+                                    <Stack Horizontal=true VerticalFill=true Reversed=true HorizontalAlign=Alignment.SpaceAround VerticalAlign=Alignment.Center>
+                                        <StackItem VerticalFill=false>
+                                            <MyBFUIconButton IconName="Undo" Disabled=UndoDisabled OnClick=@(args => UndoRedoHander()) />
+                                        </StackItem>
+                                        <StackItem VerticalFill=false>
+                                            <MyBFUIconButton IconName="Redo" Disabled=RedoDisabled OnClick=@(args => UndoRedoHander(true)) />
+                                        </StackItem>
+                                    </Stack>
+                                }
+                                else
+                                {
+                                    <Toggle Disabled=@(Parent.AdminReview || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
+                                }
                             </StackItem>
                             <StackItem Style="width: 100%;">
                                 <Button ButtonType=ButtonType.Primary ManualStateControl=true @ref="SaveButton" ShowDoneOnEnd=true Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.IsSaving || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />

@@ -106,7 +106,8 @@ namespace FProject.Shared
         Non,
         Draw,
         Erase,
-        Move
+        Move,
+        Select
     }
 
     public enum WritepadCreationError

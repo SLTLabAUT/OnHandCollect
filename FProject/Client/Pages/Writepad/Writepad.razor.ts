@@ -15,6 +15,7 @@ let saveInQueue: boolean;
 let undoStack: Point[][];
 let deletedDrawings: DrawingRange[];
 let recoveredDrawings: DrawingRange[];
+let selectedDrawings: DrawingRange[];
 let num: number;
 let count: number;
 let lastPoint: Point;
@@ -33,6 +34,7 @@ let pointerId: number;
 let padRatio: number;
 let horizontalOffset: number;
 let verticalOffset: number;
+let selectionBox: SelectionBox;
 
 export async function init(compRef, ratio: number, origin: number, writepadCompressedJson: string): Promise<void> {
     timeStampOrigin = origin;
@@ -42,6 +44,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     undoStack = [];
     deletedDrawings = [];
     recoveredDrawings = [];
+    selectedDrawings = [];
     count = 0;
     tempPoints = [];
     offsetX = 0;
@@ -50,6 +53,7 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     lastMoveTime = undefined;
     mode = Mode.Non;
     defaultMode = Mode.Non;
+    selectionBox = undefined;
 
     componentRef = compRef;
     padRatio = ratio;
@@ -104,6 +108,8 @@ function initContext() {
     context.lineCap = "round";
     context.lineJoin = "round";
     context.lineWidth = 2;
+    context.strokeStyle = "black";
+    context.setLineDash([]);
 }
 
 function onResize() {
@@ -258,7 +264,7 @@ export function undo() {
         EndingNumber: _.last(deletedPoints).Number
     };
     deletedDrawings.push(drawingRange);
-    recoveredDrawings = recoveredDrawings.filter(d => d.StartingNumber != drawingRange.EndingNumber);
+    recoveredDrawings = recoveredDrawings.filter(d => d.StartingNumber != drawingRange.StartingNumber);
     redraw();
 
     updateDotNetUndoRedo();
@@ -322,6 +328,13 @@ export function redraw(): void {
 
         switch (p.Type) {
             case PointType.Starting:
+                if (_.findIndex(selectedDrawings, (d: DrawingRange) => d.StartingNumber == p.Number) == -1) {
+                    context.strokeStyle = "black";
+                }
+                else {
+                    context.strokeStyle = "red";
+                }
+
                 context.beginPath();
                 context.moveTo(screenX, screenY);
                 moved = false;
@@ -352,6 +365,24 @@ export function redraw(): void {
         lastX = screenX;
         lastY = screenY;
     }
+
+    if (selectionBox) {
+        context.setLineDash([1, 1]);
+        context.lineWidth = 1;
+        let boxMinX = toScreenX(selectionBox.MinX);
+        let boxMaxX = toScreenX(selectionBox.MaxX);
+        let boxMinY = toScreenY(selectionBox.MinY);
+        let boxMaxY = toScreenY(selectionBox.MaxY);
+        context.beginPath();
+        context.moveTo(boxMinX, boxMinY);
+        context.lineTo(boxMinX, boxMaxY);
+        context.lineTo(boxMaxX, boxMaxY);
+        context.lineTo(boxMaxX, boxMinY);
+        context.lineTo(boxMinX, boxMinY);
+        context.stroke();
+    }
+
+    initContext();
 }
 
 function toRealX(screenX: number): number {
@@ -376,6 +407,11 @@ async function onKeyUp(event: KeyboardEvent) {
     }
     else if (event.keyCode == 68) { // D
         let newMode = Mode.Non;
+        changeDefaultMode(newMode)
+        componentRef.invokeMethodAsync("DefaultModeUpdator", newMode);
+    }
+    else if (event.keyCode == 83) { // S
+        let newMode = Mode.Select;
         changeDefaultMode(newMode)
         componentRef.invokeMethodAsync("DefaultModeUpdator", newMode);
     }
@@ -406,6 +442,10 @@ function addToDrawings(): void {
     if (shouldUpdateUndoRedo) {
         undoStack.length = 0;
         updateDotNetUndoRedo();
+    }
+
+    if (selectedDrawings.length != 0) {
+        selectedDrawings.length = 0;
     }
 
     num = num + count;
@@ -482,14 +522,23 @@ function onPointerDown(event: PointerEvent) {
 
     pointerX = prevPointerX = event.clientX - horizontalOffset;
     pointerY = prevPointerY = event.clientY - verticalOffset;
+    const realX = toRealX(pointerX);
+    const realY = toRealY(pointerY);
 
     switch (mode) {
         case Mode.Draw:
             count++;
-            lastPoint = createPoint(event, PointType.Starting, toRealX(pointerX), toRealY(pointerY), num + count);
+            lastPoint = createPoint(event, PointType.Starting, realX, realY, num + count);
             tempPoints.push(lastPoint);
             break;
         case Mode.Move:
+            lastMoveTime = event.timeStamp;
+            break;
+        case Mode.Select:
+            selectionBox = {
+                StartingX: realX,
+                StartingY: realY
+            };
             lastMoveTime = event.timeStamp;
             break;
     }
@@ -503,12 +552,12 @@ function onPointerMove(event: PointerEvent) {
 
     pointerX = event.clientX - horizontalOffset;
     pointerY = event.clientY - verticalOffset;
+    const realX = toRealX(pointerX);
+    const realY = toRealY(pointerY);
 
     switch (mode) {
         case Mode.Draw:
             count++;
-            const realX = toRealX(pointerX);
-            const realY = toRealY(pointerY);
             draw(prevPointerX, prevPointerY, pointerX, pointerY);
             lastPoint = createPoint(event, PointType.Middle, realX, realY, num + count);
             tempPoints.push(lastPoint);
@@ -518,6 +567,14 @@ function onPointerMove(event: PointerEvent) {
             offsetY += pointerY - prevPointerY;
             if (!lastMoveTime || event.timeStamp - lastMoveTime > 200) {
                 lastMoveTime = event.timeStamp;
+                redraw();
+            }
+            break;
+        case Mode.Select:
+            if (!lastMoveTime || event.timeStamp - lastMoveTime > 200) {
+                updateSelectionBox(realX, realY);
+                lastMoveTime = event.timeStamp;
+                select();
                 redraw();
             }
             break;
@@ -535,11 +592,11 @@ function onPointerUp(event: PointerEvent) {
 
     pointerX = event.clientX - horizontalOffset;
     pointerY = event.clientY - verticalOffset;
+    const realX = toRealX(pointerX);
+    const realY = toRealY(pointerY);
 
     switch (mode) {
         case Mode.Draw:
-            const realX = toRealX(pointerX);
-            const realY = toRealY(pointerY);
             count++;
             draw(prevPointerX, prevPointerY, pointerX, pointerY, true);
             lastPoint = createPoint(event, PointType.Ending, realX, realY, num + count);
@@ -548,6 +605,13 @@ function onPointerUp(event: PointerEvent) {
             addToDrawings();
             break;
         case Mode.Move:
+            redraw();
+            lastMoveTime = undefined;
+            break;
+        case Mode.Select:
+            updateSelectionBox(realX, realY);
+            select();
+            selectionBox = undefined;
             redraw();
             lastMoveTime = undefined;
             break;
@@ -567,6 +631,67 @@ function onPointerUp(event: PointerEvent) {
             throw error;
         });
     }
+}
+
+function updateSelectionBox(x: number, y: number): void {
+    if (x > selectionBox.StartingX) {
+        selectionBox.MinX = selectionBox.StartingX;
+        selectionBox.MaxX = x;
+    }
+    else {
+        selectionBox.MinX = x;
+        selectionBox.MaxX = selectionBox.StartingX;
+    }
+    if (y > selectionBox.MinY) {
+        selectionBox.MinY = selectionBox.StartingY;
+        selectionBox.MaxY = y;
+    }
+    else {
+        selectionBox.MinY = y;
+        selectionBox.MaxY = selectionBox.StartingY;
+    }
+}
+
+function select(): void {
+    selectedDrawings.length = 0;
+
+    let startingNumber: number;
+    let isInside: boolean = false;
+    for (let p of writepad.Points) {
+        let insideCheck =
+            p.X >= selectionBox.MinX && p.X <= selectionBox.MaxX &&
+            p.Y >= selectionBox.MinY && p.Y <= selectionBox.MaxY;
+        if (!isInside && insideCheck) {
+            isInside = true;
+        }
+
+        switch (p.Type) {
+            case PointType.Starting:
+                startingNumber = p.Number;
+                if (isInside && !insideCheck) {
+                    isInside = false;
+                }
+                break;
+            case PointType.Ending:
+                if (isInside) {
+                    selectedDrawings.push({
+                        StartingNumber: startingNumber,
+                        EndingNumber: p.Number
+                    });
+                    isInside = false;
+                }
+                break;
+        }
+    }
+}
+
+interface SelectionBox {
+    StartingX: number;
+    StartingY: number;
+    MinX?: number,
+    MinY?: number,
+    MaxX?: number,
+    MaxY?: number
 }
 
 interface SavePointsDTO {
@@ -647,5 +772,6 @@ const enum Mode {
     Non,
     Draw,
     Erase,
-    Move
+    Move,
+    Select
 }

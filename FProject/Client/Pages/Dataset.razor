@@ -16,4 +16,46 @@
         <br />
         داده‌های نوع «امضاء» تنها در اختیار مراکز رسمی و معتبر قرار می‌گیرند. برای دریافتشان باید با جمع‌آوری‌کنندگان این پایگاه‌داده تماس حاصل کنید.
     </MyBFUText>
+    <br />
+    <br />
+    <MyBFUText Block=true Style="text-align: center;">
+        <MyBFUText Variant=TextType.XLarge>آمار پایگاه‌داده</MyBFUText>
+        <Hr Width=50 />
+        <br />
+        <ul>
+            <li>
+                تعداد کلمات تأییدشده:
+                @if (Stats is not null)
+                {
+                    @Stats.AcceptedWordCount.ToPersianNumber()
+                }
+                else
+                {
+                    <Spinner Size=@SpinnerSize.XSmall Style="display:inline-flex;" />
+                }
+            </li>
+            <li>
+                تعداد نویسندگان بالای ۱۵۰ کلمه:
+                @if (Stats is not null)
+                {
+                    @Stats.Participant150Count.ToPersianNumber()
+                }
+                else
+                {
+                    <Spinner Size=@SpinnerSize.XSmall Style="display:inline-flex;" />
+                }
+            </li>
+            <li>
+                تعداد کل نویسندگان:
+                @if (Stats is not null)
+                {
+                    @Stats.ParticipantCount.ToPersianNumber()
+                }
+                else
+                {
+                    <Spinner Size=@SpinnerSize.XSmall Style="display:inline-flex;" />
+                }
+            </li>
+        </ul>
+    </MyBFUText>
 </FProject.Client.Pages.Identity.IdentityTemplate>

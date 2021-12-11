@@ -48,6 +48,25 @@ namespace FProject.Server.Controllers
             _context = context;
         }
 
+        public async Task<ActionResult<int>> GetUserAcceptedWordCount(string email, string api_key)
+        {
+            if (api_key != _configuration["API_Key"])
+            {
+                return Forbid();
+            }
+
+            var user = await _context.Users
+                .Where(u => u.NormalizedEmail == email.Trim().ToUpper())
+                .FirstOrDefaultAsync();
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user.AcceptedWordCount);
+        }
+
         [Authorize]
         public async Task<ActionResult<UserDTO>> UserInfo()
         {

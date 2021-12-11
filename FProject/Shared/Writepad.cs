@@ -10,6 +10,13 @@ using System.Threading.Tasks;
 
 namespace FProject.Shared
 {
+    public class Stats
+    {
+        public int AcceptedWordCount { get; set; }
+        public int Participant150Count { get; set; }
+        public int ParticipantCount { get; set; }
+    }
+
     public class WritepadDTO
     {
         public int Id { get; set; }

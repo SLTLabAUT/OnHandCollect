@@ -18,7 +18,9 @@ namespace FProject.Shared
 
     public enum TextType
     {
+        [Display(Name = "متن")]
         Text,
+        [Display(Name = "گروه کلمات")]
         WordGroup
     }
 }

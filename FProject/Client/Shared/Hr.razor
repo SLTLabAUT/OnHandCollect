@@ -1,1 +1,6 @@
-﻿<hr style="width:100%;" />
+﻿<hr style="width:@(Width)%;margin:auto;" />
+
+@code {
+    [Parameter]
+    public int Width { get; set; } = 100;
+}

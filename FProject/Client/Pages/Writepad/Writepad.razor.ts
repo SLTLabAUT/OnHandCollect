@@ -275,12 +275,48 @@ export function redo() {
         return;
     }
     let deletedPoints = undoStack.pop();
-    deletedPoints.forEach((point) => writepad.Points.push(point));
-    recoveredDrawings.push({
-        StartingNumber: deletedPoints[0].Number,
-        EndingNumber: _.last(deletedPoints).Number
+    let startingIndices: number[] = []
+    deletedPoints.forEach((point, index) => {
+        writepad.Points.push(point);
+        if (point.Type == PointType.Starting) {
+            startingIndices.push(index);
+        }
     });
-    deletedDrawings.pop();
+    for (var i = 0; i < startingIndices.length; i++) {
+        let endingNumber = 0;
+        if (i == startingIndices.length - 1) {
+            endingNumber = _.last(deletedPoints).Number;
+        }
+        else {
+            endingNumber = deletedPoints[startingIndices[i + 1] - 1].Number;
+        }
+        recoveredDrawings.push({
+            StartingNumber: deletedPoints[startingIndices[i]].Number,
+            EndingNumber: endingNumber
+        });
+        deletedDrawings.pop();
+    }
+    redraw();
+
+    updateDotNetUndoRedo();
+}
+
+export function deleteSelected() {
+    if (isMiddleOfDrawing || selectedDrawings.length == 0) {
+        return;
+    }
+
+    for (let range of selectedDrawings.reverse()) {
+        let startingIndex = writepad.Points.findIndex(p => p.Number == range.StartingNumber);
+        if (startingIndex == -1) {
+            continue;
+        }
+        let deletedPoints = writepad.Points.splice(startingIndex, range.EndingNumber - range.StartingNumber + 1);
+        undoStack.push(deletedPoints);
+        deletedDrawings.push(range);
+        recoveredDrawings = recoveredDrawings.filter(d => d.StartingNumber != range.StartingNumber);
+    }
+
     redraw();
 
     updateDotNetUndoRedo();
@@ -415,6 +451,9 @@ async function onKeyUp(event: KeyboardEvent) {
         changeDefaultMode(newMode)
         componentRef.invokeMethodAsync("DefaultModeUpdator", newMode);
     }
+    else if (event.keyCode == 46) { // Delete
+        deleteSelected();
+    }
 }
 
 function createPoint(event: PointerEvent, type: PointType, x: number, y: number, num: number): Point {
@@ -446,6 +485,7 @@ function addToDrawings(): void {
 
     if (selectedDrawings.length != 0) {
         selectedDrawings.length = 0;
+        redraw();
     }
 
     num = num + count;

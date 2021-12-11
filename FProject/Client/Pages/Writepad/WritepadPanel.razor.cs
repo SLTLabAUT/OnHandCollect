@@ -83,6 +83,11 @@ namespace FProject.Client.Pages
             }
         }
 
+        async Task DeleteSelectedHander()
+        {
+            await Parent.JSRef.InvokeVoidAsync("deleteSelected");
+        }
+
         void AutoSaveChangedHandler(bool? checkedBool)
         {
             Parent.SaveTimer.Enabled = checkedBool ?? false;

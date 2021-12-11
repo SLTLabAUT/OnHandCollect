@@ -146,6 +146,7 @@
                                     {
                                         <StackItem VerticalFill=false>
                                             <MyBFUIconButton IconName="RectangularClipping" Disabled=@(CurrentDefaultMode == DrawingMode.Select) OnClick=@(args => ChangeDefaultModeHandler(DrawingMode.Select)) />
+                                            <MyBFUIconButton IconName="Delete" OnClick=@(args => DeleteSelectedHander()) />
                                         </StackItem>
                                     }
                                     else

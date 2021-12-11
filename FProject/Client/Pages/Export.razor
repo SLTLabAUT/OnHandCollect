@@ -3,5 +3,40 @@
 @attribute [Authorize(Roles = IdentityRoleConstants.Admin)]
 
 <FProject.Client.Pages.Identity.IdentityTemplate Title="ایجاد خروجی از داده‌ها">
-    @ExportedCount
+    <EditForm EditContext=EditContext OnValidSubmit=FormHandler>
+        <DataAnnotationsValidator />
+        <FluentUIValidationSummary />
+        @if (ExportedCount is not null)
+        {
+            <MessageBar MessageBarType="MessageBarType.Success" OnDismiss=DismissMessagebarHandler>
+                یک خروجی از @ExportedCount تعداد داده ایجاد شد.
+            </MessageBar>
+        }
+        else if (IsExporting)
+        {
+            <MessageBar OnDismiss=DismissMessagebarHandler>
+                در حال ایجاد خروجی...
+            </MessageBar>
+        }
+        <MyBFUDropdown ItemsSource=ModeOptions
+                        Placeholder="یک گزینه را برگزینید..."
+                        @bind-SelectedOption=Model.Mode
+                        Label=@(Utils.GetDisplayName<ExportModel>(m => m.Mode))
+                        Required=true />
+        <DatePicker @bind-Value=Model.Start
+                    Label=@(Utils.GetDisplayName<ExportModel, DateTime?>(m => m.Start))
+                    Placeholder="یک زمان را برگزینید..." />
+        <DatePicker @bind-Value=Model.End
+                    Label=@(Utils.GetDisplayName<ExportModel, DateTime?>(m => m.End))
+                    Placeholder="یک زمان را برگزینید..." />
+        <MyBFUDropdown ItemsSource=TextTypeOptions
+                        Placeholder="یک گزینه را برگزینید..."
+                        @bind-SelectedOption=Model.TextType
+                        Label=@(Utils.GetDisplayName<ExportModel>(m => m.TextType)) />
+        <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
+            <StackItem Align=Alignment.Center>
+                <Button ButtonType=ButtonType.Submit @ref="SubmitButton" ManualStateControl=true Text="ایجاد خروجی" />
+            </StackItem>
+        </Stack>
+    </EditForm>
 </FProject.Client.Pages.Identity.IdentityTemplate>

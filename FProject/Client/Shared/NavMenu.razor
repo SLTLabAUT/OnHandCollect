@@ -12,18 +12,41 @@
                                 <Icon IconName="Contact" /> @context.User.FindFirstValue(ClaimTypes.Email)
                             </MyBFUText>
                             <br />
+                            <br />
                             @if (AcceptedWordCount != -1)
                             {
-                                var remainingWords = 300 - AcceptedWordCount;
                                 <MyBFUText>
-                                    تعداد کلمات تایید شده: @AcceptedWordCount.ToPersianNumber()
+                                    تعداد کلمات تأییدشده: @AcceptedWordCount.ToPersianNumber()
                                     <br />
-                                    @if (remainingWords > 0) {
-                                        @:(@remainingWords.ToPersianNumber() کلمه تا شرکت‌داده‌شدن در قرعه‌کشی)
+                                    @{
+                                        var limits = new int[] { 0, 150, 300, 600, 1200, 2400 };
+                                        var starNumber = 0;
+                                        for (var i = limits.Length - 1; i >= 0; i--)
+                                        {
+                                            if (AcceptedWordCount >= limits[i])
+                                            {
+                                                starNumber = i;
+                                                break;
+                                            }
+                                        }
                                     }
-                                    else
+                                    <MyBFUText Variant=TextType.XLarge>
+                                        @for (var i = 0; i < 5; i++)
+                                        {
+                                            if (i < starNumber)
+                                            {
+                                                @:★
+                                            }
+                                            else
+                                            {
+                                                @:☆
+                                            }
+                                        }
+                                    </MyBFUText>
+                                    <br />
+                                    @if (starNumber < 5)
                                     {
-                                        @:(دارای @($"{Math.Min(5, AcceptedWordCount/200).ToPersianNumber()}") شانس قرعه‌کشی)
+                                        @:(@((limits[starNumber + 1] - AcceptedWordCount).ToPersianNumber()) کلمه تا ستاره‌ی بعدی)
                                     }
                                 </MyBFUText>
                             }
@@ -59,7 +82,7 @@
                     @{
                         var lotteryDate = new DateTime(2021, 11, 8);
                         var now = DateTime.UtcNow;
-                        var lotteryText = "قرعه‌کشی";
+                        var lotteryText = "قرعه‌کشی (پایان‌یافته)";
                         var lotteryColor = string.Empty;
                         if (lotteryDate > now)
                         {

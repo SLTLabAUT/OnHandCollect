@@ -301,7 +301,11 @@ namespace FProject.Server.Controllers
 
             var savePointsDTO = JsonSerializer.Deserialize<SavePointsRequestDTO>(LZString.DecompressFromBase64(savePointsDTOCompressedJson));
 
-            if (writepad.Status == WritepadStatus.Accepted || (writepad.LastModified - savePointsDTO.LastModified) > TimeSpan.FromMilliseconds(1))
+            if ((writepad.LastModified - savePointsDTO.LastModified) > TimeSpan.FromMilliseconds(1))
+            {
+                return BadRequest();
+            }
+            if (writepad.Status == WritepadStatus.Accepted && !adminMode)
             {
                 return BadRequest();
             }

@@ -146,6 +146,8 @@
                                     {
                                         <StackItem VerticalFill=false>
                                             <MyBFUIconButton IconName="RectangularClipping" Disabled=@(CurrentDefaultMode == DrawingMode.Select) OnClick=@(args => ChangeDefaultModeHandler(DrawingMode.Select)) />
+                                        </StackItem>
+                                        <StackItem VerticalFill=false>
                                             <MyBFUIconButton IconName="Delete" OnClick=@(args => DeleteSelectedHander()) />
                                         </StackItem>
                                     }
@@ -173,7 +175,7 @@
                         </Stack>
                     </StackItem>
                     <StackItem Style="margin-left:5px;">
-                        <Stack VerticalFill=true HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center>
+                        <Stack>
                             <StackItem>
                                 @if (Parent.AdminReview)
                                 {
@@ -191,10 +193,11 @@
                                     <Toggle Disabled=@(Parent.AdminReview || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) InlineLabel="true" Checked=Parent.AutoSaveChecked Label="‌ذخیره‌ی خودکار" OffText=" " OnText=" " CheckedChanged=AutoSaveChangedHandler />
                                 }
                             </StackItem>
-                            <StackItem Style="width: 100%;">
-                                <Button ButtonType=ButtonType.Primary ManualStateControl=true @ref="SaveButton" ShowDoneOnEnd=true Text="ذخیره" IconName="Save" Style="width: 100%;" Disabled=@(Parent.IsSaving || Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
-                            </StackItem>
                             <StackItem>
+                                <Button ButtonType=ButtonType.Primary ManualStateControl=true @ref="SaveButton" ShowDoneOnEnd=true Text="ذخیره" IconName="Save" Style="width: 100%;"
+                                    Disabled=@(Parent.IsSaving || (Parent.WritepadInstance.Status == FProject.Shared.WritepadStatus.Accepted && !Parent.AdminReview)) OnClick=@(args => Parent.SaveTimerElapsedHandler()) />
+                            </StackItem>
+                            <StackItem Align=Alignment.Center>
                                 <TooltipHost Style="white-space:nowrap;">
                                     <TooltipContent>آخرین بروزرسانی</TooltipContent>
                                     <ChildContent>

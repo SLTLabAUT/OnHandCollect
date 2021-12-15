@@ -67,6 +67,28 @@ namespace FProject.Server.Controllers
             return Ok(user.AcceptedWordCount);
         }
 
+        public async Task<ActionResult<int>> GetUserAcceptedWritepadCount(string email, string api_key)
+        {
+            if (api_key != _configuration["API_Key"])
+            {
+                return Forbid();
+            }
+
+            var count = -1;
+            try
+            {
+                count = await _context.Writepads
+                    .Where(w => w.Owner.NormalizedEmail == email.Trim().ToUpper() && w.Status == Shared.WritepadStatus.Accepted)
+                    .CountAsync();
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound();
+            }
+
+            return Ok(count);
+        }
+
         [Authorize]
         public async Task<ActionResult<UserDTO>> UserInfo()
         {

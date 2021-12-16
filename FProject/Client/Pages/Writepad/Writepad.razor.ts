@@ -109,6 +109,7 @@ function initContext() {
     context.lineJoin = "round";
     context.lineWidth = 2;
     context.strokeStyle = "black";
+    context.fillStyle = "black";
     context.setLineDash([]);
 }
 
@@ -366,9 +367,11 @@ export function redraw(): void {
             case PointType.Starting:
                 if (_.findIndex(selectedDrawings, (d: DrawingRange) => d.StartingNumber == p.Number) == -1) {
                     context.strokeStyle = "black";
+                    context.fillStyle = "black";
                 }
                 else {
                     context.strokeStyle = "red";
+                    context.fillStyle = "red";
                 }
 
                 context.beginPath();
@@ -403,6 +406,12 @@ export function redraw(): void {
     }
 
     if (selectionBox) {
+        if (selectedDrawings.length == 0) {
+            context.strokeStyle = "black";
+        }
+        else {
+            context.strokeStyle = "red";
+        }
         context.setLineDash([1, 1]);
         context.lineWidth = 1;
         let boxMinX = toScreenX(selectionBox.MinX);

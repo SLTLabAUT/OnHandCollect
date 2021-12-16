@@ -25,11 +25,14 @@ namespace FProject.Server.Data
             {
                 var config = serviceProvider.GetRequiredService<IConfiguration>();
                 var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
-                var adminEmail = "sssafais@hotmail.com";
-                var admin = await userManager.FindByNameAsync(adminEmail);
 
-                admin = await EnsureAdmin(userManager, admin, adminEmail, config["SeedAdminPw"]);
-                await EnsureAdminRole(serviceProvider, userManager, admin);
+                var adminEmails = config.GetSection("SeedAdmins").Get<List<string>>();
+                foreach (var adminEmail in adminEmails)
+                {
+                    var admin = await userManager.FindByNameAsync(adminEmail);
+                    admin = await EnsureAdmin(userManager, admin, adminEmail, config["SeedAdminPw"]);
+                    await EnsureAdminRole(serviceProvider, userManager, admin);
+                }
 
                 await EnsureText(context);
                 await EnsureWordGroup(context);

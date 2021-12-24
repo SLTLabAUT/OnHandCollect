@@ -12,8 +12,8 @@ namespace FProject.Shared.Models
         [Display(Name = "تخته‌ها")]
         Writepads,
         [Display(Name = "نویسنده‌ها")]
-        Authors,
-        [Display(Name = "متن‌ها")]
-        Text
+        Writers,
+        [Display(Name = "نویسه‌های مرجع")]
+        GroundTruths
     }
 }

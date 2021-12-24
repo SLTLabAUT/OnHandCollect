@@ -48,11 +48,11 @@ namespace FProject.Server.Controllers
                 case ExportMode.Writepads:
                     count = await exporter.ExportWritepads(start, end);
                     break;
-                case ExportMode.Authors:
-                    count = await exporter.ExportAuthors();
+                case ExportMode.Writers:
+                    count = await exporter.ExportWriters();
                     break;
-                case ExportMode.Text:
-                    count = await exporter.ExportText(textType);
+                case ExportMode.GroundTruths:
+                    count = await exporter.ExportGroundTruths(textType);
                     break;
                 default:
                     return BadRequest();

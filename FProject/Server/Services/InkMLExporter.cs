@@ -13,8 +13,8 @@ namespace FProject.Server.Services
 {
     public class InkMLExporter
     {
-        public static XDocument AuthorTemplate;
-        public static XDocument TextTemplate;
+        public static XDocument WriterTemplate;
+        public static XDocument GTTemplate;
         public static XDocument WritepadTemplate;
 
         private readonly ApplicationDbContext _context;
@@ -33,14 +33,14 @@ namespace FProject.Server.Services
             reader.Close();
             reader.Dispose();
 
-            reader = XmlReader.Create("Data/InkMLs/Templates/Authors.xml", settings);
-            AuthorTemplate = await XDocument.LoadAsync(reader, default, default);
+            reader = XmlReader.Create("Data/InkMLs/Templates/Writers.xml", settings);
+            WriterTemplate = await XDocument.LoadAsync(reader, default, default);
             reader.Close();
             reader.Dispose();
 
-            reader = XmlReader.Create("Data/InkMLs/Templates/Text.xml", settings);
-            TextTemplate = await XDocument.LoadAsync(reader, default, default);
-            TextTemplate.Root.RemoveNodes();
+            reader = XmlReader.Create("Data/InkMLs/Templates/GroundTruths.xml", settings);
+            GTTemplate = await XDocument.LoadAsync(reader, default, default);
+            GTTemplate.Root.RemoveNodes();
             reader.Close();
             reader.Dispose();
         }
@@ -171,7 +171,7 @@ namespace FProject.Server.Services
             return count;
         }
 
-        public async Task<int> ExportAuthors()
+        public async Task<int> ExportWriters()
         {
             IQueryable<ApplicationUser> query = _context.Users;
             var count = await query.CountAsync().ConfigureAwait(false);
@@ -194,7 +194,7 @@ namespace FProject.Server.Services
                 {
                     await Task.Delay(100).ConfigureAwait(false);
 
-                    var document = new XDocument(AuthorTemplate);
+                    var document = new XDocument(WriterTemplate);
 
                     document.Root.SetAttributeValue("id", $"urn:uuid:{user.Id}");
 
@@ -224,7 +224,7 @@ namespace FProject.Server.Services
                     }
                     document.Root.SetElementValue("handedness", user.Handedness);
 
-                    using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/Authors/{user.Id}.xml", new XmlWriterSettings { Async = true, Indent = true });
+                    using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/Writers/{user.Id}.xml", new XmlWriterSettings { Async = true, Indent = true });
                     await document.SaveAsync(writer, default).ConfigureAwait(false);
                 }
             }
@@ -232,7 +232,7 @@ namespace FProject.Server.Services
             return count;
         }
 
-        public async Task<int> ExportText(Shared.TextType type)
+        public async Task<int> ExportGroundTruths(Shared.TextType type)
         {
             IQueryable<Shared.Text> query = _context.Text
                 .Where(t => t.Type == type);
@@ -258,7 +258,7 @@ namespace FProject.Server.Services
                     .Take(partsRange)
                     .ToListAsync().ConfigureAwait(false);
 
-                var document = new XDocument(TextTemplate);
+                var document = new XDocument(GTTemplate);
 
                 document.Root.SetAttributeValue("type", type);
 
@@ -287,7 +287,7 @@ namespace FProject.Server.Services
                     document.Root.Add(textElement);
                 }
 
-                using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/Text/{type}-{p}.xml", new XmlWriterSettings { Async = true, Indent = true });
+                using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/GroundTruths/{type}-{p}.xml", new XmlWriterSettings { Async = true, Indent = true });
                 await document.SaveAsync(writer, default).ConfigureAwait(false);
             }
 

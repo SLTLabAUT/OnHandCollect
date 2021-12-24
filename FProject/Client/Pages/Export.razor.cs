@@ -21,8 +21,6 @@ namespace FProject.Client.Pages
     public partial class Export
     {
         [Inject]
-        NavigationManager Navigation { get; set; }
-        [Inject]
         HttpClient Http { get; set; }
 
         int? ExportedCount { get; set; }
@@ -102,7 +100,7 @@ namespace FProject.Client.Pages
             public DateTime? Start { get; set; }
             [Display(Name = "انتهای بازه‌ی زمانی")]
             public DateTime? End { get; set; }
-            [Display(Name = "نوع متن")]
+            [Display(Name = "نوع نویسه‌ی مرجع")]
             public IDropdownOption TextType { get; set; }
         }
     }

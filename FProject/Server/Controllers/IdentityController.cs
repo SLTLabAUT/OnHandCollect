@@ -48,16 +48,66 @@ namespace FProject.Server.Controllers
             _context = context;
         }
 
-        public async Task<ActionResult<int>> GetUserAcceptedWordCount(string email, string api_key)
+        async Task<ApplicationUser> getBestUserByEmailOrPhone(string email = default, string phoneNumber = default)
+        {
+            ApplicationUser user = null;
+
+            if (email is not null)
+            {
+                user = await _context.Users
+                    .Where(u => u.NormalizedEmail == email.Trim().ToUpper())
+                    .FirstOrDefaultAsync();
+            }
+
+            if (phoneNumber is not null)
+            {
+                phoneNumber = phoneNumber.Trim();
+                var phoneNumber2 = phoneNumber.Trim();
+                if (phoneNumber2.StartsWith("0"))
+                {
+                    phoneNumber2 = $"+98{phoneNumber2.Substring(1)}";
+                }
+                else if (phoneNumber2.StartsWith("+98"))
+                {
+                    phoneNumber2 = $"0{phoneNumber2.Substring(3)}";
+                }
+                else if (phoneNumber2.StartsWith("98"))
+                {
+                    phoneNumber2 = $"0{phoneNumber2.Substring(2)}";
+                }
+
+                if (user is null || (user.PhoneNumber != phoneNumber && user.PhoneNumber != phoneNumber2))
+                {
+                    var users = await _context.Users
+                        .Where(u => u.PhoneNumber == phoneNumber || u.PhoneNumber == phoneNumber2)
+                        .ToListAsync();
+
+                    if (user is null)
+                    {
+                        user = users.FirstOrDefault();
+                    }
+
+                    foreach (var u in users)
+                    {
+                        if (u.AcceptedWordCount > user.AcceptedWordCount)
+                        {
+                            user = u;
+                        }
+                    }
+                }
+            }
+
+            return user;
+        }
+
+        public async Task<ActionResult<int>> GetUserAcceptedWordCount(string api_key, string email = default, string phoneNumber = default)
         {
             if (api_key != _configuration["API_Key"])
             {
                 return Forbid();
             }
 
-            var user = await _context.Users
-                .Where(u => u.NormalizedEmail == email.Trim().ToUpper())
-                .FirstOrDefaultAsync();
+            var user = await getBestUserByEmailOrPhone(email, phoneNumber);
 
             if (user is null)
             {
@@ -67,24 +117,23 @@ namespace FProject.Server.Controllers
             return Ok(user.AcceptedWordCount);
         }
 
-        public async Task<ActionResult<int>> GetUserAcceptedWritepadCount(string email, string api_key)
+        public async Task<ActionResult<int>> GetUserAcceptedWritepadCount(string api_key, string email = default, string phoneNumber = default)
         {
             if (api_key != _configuration["API_Key"])
             {
                 return Forbid();
             }
 
-            var count = -1;
-            try
-            {
-                count = await _context.Writepads
-                    .Where(w => w.Owner.NormalizedEmail == email.Trim().ToUpper() && w.Status == Shared.WritepadStatus.Accepted)
-                    .CountAsync();
-            }
-            catch (ArgumentNullException)
+            var user = await getBestUserByEmailOrPhone(email, phoneNumber);
+
+            if (user is null)
             {
                 return NotFound();
             }
+
+            var count = await _context.Writepads
+                .Where(w => w.Owner.Id == user.Id && w.Status == Shared.WritepadStatus.Accepted)
+                .CountAsync();
 
             return Ok(count);
         }

@@ -30,5 +30,21 @@ namespace FProject.Server.Models
                 AcceptedWordCount = model.AcceptedWordCount
             };
         }
+
+        public static explicit operator UserStatsDTO(ApplicationUser model)
+        {
+            if (model is null)
+            {
+                return null;
+            }
+
+            return new UserStatsDTO
+            {
+                Id = model.Id,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                Count = model.AcceptedWordCount
+            };
+        }
     }
 }

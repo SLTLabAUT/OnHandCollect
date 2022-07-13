@@ -44,6 +44,14 @@ namespace FProject.Shared.Models
         public int AcceptedWordCount { get; set; }
     }
 
+    public class UserStatsDTO
+    {
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public int Count { get; set; }
+    }
+
     public class ForgotPasswordDTO
     {
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]

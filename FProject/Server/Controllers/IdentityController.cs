@@ -100,31 +100,31 @@ namespace FProject.Server.Controllers
             return user;
         }
 
-        public async Task<ActionResult<int>> GetUserAcceptedWordCount(string api_key, string email = default, string phoneNumber = default)
+        public async Task<ActionResult<UserStatsDTO>> GetUserAcceptedWordCount(string api_key, string email = default, string phoneNumber = default)
         {
             if (api_key != _configuration["API_Key"])
             {
                 return Forbid();
             }
 
-            var user = await getBestUserByEmailOrPhone(email, phoneNumber);
+            var user = (UserStatsDTO)await getBestUserByEmailOrPhone(email, phoneNumber);
 
             if (user is null)
             {
                 return NotFound();
             }
 
-            return Ok(user.AcceptedWordCount);
+            return user;
         }
 
-        public async Task<ActionResult<int>> GetUserAcceptedWritepadCount(string api_key, string email = default, string phoneNumber = default)
+        public async Task<ActionResult<UserStatsDTO>> GetUserAcceptedWritepadCount(string api_key, string email = default, string phoneNumber = default)
         {
             if (api_key != _configuration["API_Key"])
             {
                 return Forbid();
             }
 
-            var user = await getBestUserByEmailOrPhone(email, phoneNumber);
+            var user = (UserStatsDTO)await getBestUserByEmailOrPhone(email, phoneNumber);
 
             if (user is null)
             {
@@ -134,8 +134,9 @@ namespace FProject.Server.Controllers
             var count = await _context.Writepads
                 .Where(w => w.Owner.Id == user.Id && w.Status == Shared.WritepadStatus.Accepted)
                 .CountAsync();
+            user.Count = count;
 
-            return Ok(count);
+            return user;
         }
 
         [Authorize]

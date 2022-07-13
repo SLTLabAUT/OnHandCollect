@@ -122,7 +122,7 @@
                 <Icon IconName="Mail" /> <MyBFULink Href="mailto:info@farsihandwriting.ir">info@farsihandwriting.ir</MyBFULink>
                 <br />
                 @{
-                    var version = typeof(Program).Assembly.GetName().Version;
+                    var version = typeof(Program).Assembly.GetName().Version.ToString(3);
                 }
                 <MyBFUText Variant="TextType.Small"><MyBFULink Href="/index" OnClick=@OnLinkClickHandler>v@(version)</MyBFULink></MyBFUText>
             </MyBFUText>

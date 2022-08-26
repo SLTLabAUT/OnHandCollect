@@ -140,7 +140,7 @@ namespace FProject.Server.Controllers
             }
             allCount = await writepadsCountQuery.CountAsync();
 
-            return new WritepadsDTO { Writepads = writepads.Select(w => adminMode ? Writepad.ToAdminWritepadDTO(w) : (WritepadDTO)w),
+            return new WritepadsDTO { Writepads = writepads.Select(w => adminMode ? w.ToAdminWritepadDTO() : (WritepadDTO)w),
                 AllCount = allCount };
         }
 
@@ -215,6 +215,16 @@ namespace FProject.Server.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var lastUserSpecifiedId = 0;
+            try
+            {
+                lastUserSpecifiedId = await _context.Writepads
+                    .Where(w => w.OwnerId == userId)
+                    .MaxAsync(w => w.UserSpecifiedNumber);
+            }
+            catch (InvalidOperationException) { }
+
             var texts = new List<Text>();
             if (newWritepad.Type == WritepadType.Sign)
             {
@@ -240,37 +250,60 @@ namespace FProject.Server.Controllers
                     texts.Add(new Text());
                 }
             }
+            else if (newWritepad.Type.IsWordGroup())
+            {
+                if (newWritepad.WordGroupType == WordGroupType.Mix)
+                {
+                    var fractions = new[] { (double)2 / 5, (double)2 / 5, (double)1 / 5 };
+                    var types = new[] { WritepadType.WordGroup3, WritepadType.WordGroup2, WritepadType.WordGroup };
+                    var originalCount = newWritepad.Number;
+                    var remainingCount = newWritepad.Number;
+                    for (int i = 0; i < fractions.Length; i++)
+                    {
+                        var count = Math.Min((int)Math.Ceiling(fractions[i] * originalCount), remainingCount);
+                        newWritepad.Number = count;
+                        remainingCount -= count;
+                        newWritepad.Type = types[i];
+                        texts.AddRange(await textProvider.GetNewText(userId, newWritepad));
+                    }
+                }
+                else
+                {
+                    texts = await textProvider.GetNewText(userId, newWritepad);
+                }
+            }
             else
             {
                 texts = await textProvider.GetNewText(userId, newWritepad);
             }
 
-            var lastUserSpecifiedId = 0;
-            try
+            var newWritepads = new List<Writepad>();
+            foreach (var text in texts)
             {
-                lastUserSpecifiedId = await _context.Writepads
-                    .Where(w => w.OwnerId == userId)
-                    .MaxAsync(w => w.UserSpecifiedNumber);
-            }
-            catch (InvalidOperationException) { }
+                var writepad = new Writepad
+                {
+                    UserSpecifiedNumber = ++lastUserSpecifiedId,
+                    PointerType = newWritepad.PointerType,
+                    LastModified = DateTimeOffset.UtcNow,
+                    Type = newWritepad.Type,
+                    Hand = newWritepad.Hand,
+                    OwnerId = userId
+                };
 
-            var newWritepads = texts.Select(t => new Writepad
-            {
-                UserSpecifiedNumber = ++lastUserSpecifiedId,
-                PointerType = newWritepad.PointerType,
-                LastModified = DateTimeOffset.UtcNow,
-                Type = newWritepad.Type,
-                Hand = newWritepad.Hand,
-                TextId = t.Id == 0 ? null : t.Id,
-                OwnerId = userId
-            }).ToList();
+                if (text.Type.IsWordGroup())
+                {
+                    writepad.Type = text.Type.ToWritepadType();
+                }
+
+                if (text.Id != 0)
+                {
+                    writepad.TextId = text.Id;
+                    writepad.Text = text;
+                }
+            }
             _context.Writepads.AddRange(newWritepads);
             await _context.SaveChangesAsync();
 
-            for (int i = 0; i < newWritepad.Number; i++)
-            {
-                newWritepads[i].Text = texts[i];
-            }
             return Ok(newWritepads.Select(w => (WritepadDTO)w));
         }
 

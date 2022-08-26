@@ -19,15 +19,8 @@ using FProject.Client.Shared;
 
 namespace FProject.Client.Pages
 {
-    public partial class WritepadsAdmin
+    public partial class WritepadsAdmin : WritepadsShared
     {
-        [Inject]
-        ThemeProvider ThemeProvider { get; set; }
-        [Inject]
-        HttpClient Http { get; set; }
-        [Inject]
-        NavigationManager Navigation { get; set; }
-
         Uri Uri { get; set; }
         int Page { get; set; } = 1;
         WritepadStatus? Status { get; set; }
@@ -40,29 +33,12 @@ namespace FProject.Client.Pages
         bool EmptyWritepadDialogOpen { get; set; }
         Button SendCommentButton { get; set; }
         List<WritepadDTO> WritepadList { get; set; }
-        IEnumerable<IDropdownOption> PointerTypes { get; set; }
-        IEnumerable<IDropdownOption> TextTypes { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
 
         CommentDTO CommentDTO { get; set; }
         EditContext CommentEditContext { get; set; }
 
         bool HaveNextPage => Page * 10 < AllCount;
-
-        protected override void OnInitialized()
-        {
-            PointerTypes = Enum.GetValues<PointerType>()
-                .Select(p => new DropdownOption {
-                    Text = p.GetAttribute<DisplayAttribute>().Name,
-                    Key = ((int) p).ToString()
-                });
-            TextTypes = Enum.GetValues<WritepadType>()
-                .Select(p => new DropdownOption
-                {
-                    Text = p.GetAttribute<DisplayAttribute>().Name,
-                    Key = ((int)p).ToString()
-                });
-        }
 
         protected override void OnParametersSet()
         {

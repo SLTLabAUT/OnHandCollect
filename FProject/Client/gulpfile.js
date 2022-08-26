@@ -4,7 +4,7 @@ const sourcemaps = require("gulp-sourcemaps");
 const terser = require("gulp-terser");
 const ts = require("gulp-typescript");
 const pathResolver = require("gulp-typescript-path-resolver");
-const sass = require("gulp-sass");
+const sass = require("gulp-sass")(require('sass'));
 const preprocess = require("gulp-preprocess");
 const rename = require("gulp-rename");
 

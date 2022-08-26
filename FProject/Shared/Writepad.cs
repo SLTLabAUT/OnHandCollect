@@ -50,6 +50,8 @@ namespace FProject.Shared
         public PointerType PointerType { get; set; }
         [Display(Name = "نوع داده")]
         public WritepadType Type { get; set; }
+        [Display(Name = "نوع گروه کلمات")]
+        public WordGroupType WordGroupType { get; set; }
         [Display(Name = "نوع دست")]
         public Hand Hand { get; set; }
         [Range(1, 14, ErrorMessageResourceName = "Range", ErrorMessageResourceType = typeof(ErrorMessageResource))]
@@ -87,10 +89,28 @@ namespace FProject.Shared
     {
         [Display(Name = "متن")]
         Text,
-        [Display(Name = "گروه کلمات")]
+        [Display(Name = "گروه کلمات تکی")]
         WordGroup,
         [Display(Name = "امضاء")]
-        Sign
+        Sign,
+        [Display(Name = "گروه کلمات دوتایی")]
+        WordGroup2,
+        [Display(Name = "گروه کلمات سه‌تایی")]
+        WordGroup3,
+        [Display(Name = "گروه ارقام")]
+        NumberGroup,
+    }
+
+    public enum WordGroupType
+    {
+        [Display(Name = "مخلوط")]
+        Mix,
+        [Display(Name = "گروه کلمات تکی")]
+        WordGroup,
+        [Display(Name = "گروه کلمات دوتایی")]
+        WordGroup2,
+        [Display(Name = "گروه کلمات سه‌تایی")]
+        WordGroup3,
     }
 
     public enum Hand

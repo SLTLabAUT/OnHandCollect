@@ -36,6 +36,7 @@ namespace FProject.Server.Data
 
                 await EnsureText(context);
                 await EnsureWordGroup(context);
+                await EnsureWordGroupNormalization(context);
 
                 await EnsureUserWordCount(context);
             }
@@ -222,10 +223,31 @@ namespace FProject.Server.Data
                             Rarity = text.Rarity,
                             Type = TextType.WordGroup,
                             WordCount = batch.Count,
-                            Content = string.Join(" ", batch)
+                            Content = string.Join("\n", batch)
                         }
                     );
                 }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        private async Task EnsureWordGroupNormalization(ApplicationDbContext context)
+        {
+            var first = await context.Text
+                .Where(t => t.Type == TextType.WordGroup)
+                .FirstOrDefaultAsync();
+            if (first is null || !first.Content.Contains(" "))
+            {
+                return;
+            }
+
+            var allWordGroups = await context.Text
+                .Where(t => t.Type == TextType.WordGroup)
+                .ToListAsync();
+            foreach (var wg in allWordGroups)
+            {
+                wg.Content = wg.Content.Replace(" ", "\n");
             }
 
             await context.SaveChangesAsync();

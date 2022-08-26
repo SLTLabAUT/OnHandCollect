@@ -1,13 +1,10 @@
-﻿using BlazorFluentUI;
-using FProject.Shared;
+﻿using FProject.Shared;
+using FProject.Shared.Extensions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -77,9 +74,14 @@ namespace FProject.Client.Pages
             WritepadInstance = taskWritepadInstance.Result;
             WritepadCompressedJson = taskWritepadCompressedJson.Result;
 
-            if (WritepadInstance.Type == WritepadType.WordGroup)
+            if (WritepadInstance.Text?.Type.IsGroupedText() == true)
             {
-                WritepadInstance.Text.Content = WritepadInstance.Text.Content.Replace(" ", "<br />");
+                var lines = WritepadInstance.Text.Content.Split("\n");
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    lines[i] = $"<span class=\"line-indicator\">خط {i}</span>:<br /><strong>{lines[i]}</strong>";
+                }
+                WritepadInstance.Text.Content = string.Join("<br />", lines);
             }
         }
 

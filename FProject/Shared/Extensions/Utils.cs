@@ -110,8 +110,39 @@ namespace FProject.Shared.Extensions
             {
                 WritepadType.Text => TextType.Text,
                 WritepadType.WordGroup => TextType.WordGroup,
+                WritepadType.WordGroup2 => TextType.WordGroup2,
+                WritepadType.WordGroup3 => TextType.WordGroup3,
+                WritepadType.NumberGroup => TextType.NumberGroup,
                 _ => throw new NotSupportedException()
             };
+        }
+
+        public static WritepadType ToWritepadType(this TextType type)
+        {
+            return type switch
+            {
+                TextType.Text => WritepadType.Text,
+                TextType.WordGroup => WritepadType.WordGroup,
+                TextType.WordGroup2 => WritepadType.WordGroup2,
+                TextType.WordGroup3 => WritepadType.WordGroup3,
+                TextType.NumberGroup => WritepadType.NumberGroup,
+                _ => throw new NotSupportedException()
+            };
+        }
+
+        public static bool IsWordGroup(this WritepadType type)
+        {
+            return type == WritepadType.WordGroup || type == WritepadType.WordGroup2 || type == WritepadType.WordGroup3;
+        }
+
+        public static bool IsWordGroup(this TextType type)
+        {
+            return type == TextType.WordGroup || type == TextType.WordGroup2 || type == TextType.WordGroup3;
+        }
+
+        public static bool IsGroupedText(this TextType type)
+        {
+            return type == TextType.WordGroup || type == TextType.WordGroup2 || type == TextType.WordGroup3 || type == TextType.NumberGroup;
         }
 
         public static Hand ToHand(this Handedness handedness)

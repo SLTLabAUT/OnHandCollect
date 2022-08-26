@@ -1,5 +1,6 @@
 ﻿using FProject.Server.Data;
 using FProject.Server.Models;
+using FProject.Shared;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -59,9 +60,10 @@ namespace FProject.Server.Services
 
             var folderName = $"{start.ToUniversalTime().ToString("yy-MM-dd HH-mm")} to {end.ToUniversalTime().ToString("yy-MM-dd HH-mm")} ({DateTime.UtcNow.ToString("yy-MM-dd HH-mm-ss")})";
             Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}");
-            Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}/{Shared.WritepadType.Text}");
-            Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}/{Shared.WritepadType.WordGroup}");
-            Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}/{Shared.WritepadType.Sign}");
+            foreach (var type in Enum.GetValues<WritepadType>())
+            {
+                Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}/{type}");
+            }
 
             for (int p = 0; p < partsCount; p++)
             {
@@ -275,11 +277,10 @@ namespace FProject.Server.Services
                     }
                     else
                     {
-                        var words = content.Split(" ");
                         var contentElement = new XElement("content");
-                        foreach (var word in words)
+                        foreach (var line in content.Split("\n"))
                         {
-                            contentElement.Add(new XElement("word", word));
+                            contentElement.Add(new XElement("line", line));
                         }
                         textElement.Add(contentElement);
                     }

@@ -13,6 +13,7 @@ namespace FProject.Shared
         public string Content { get; set; }
         public int WordCount { get; set; }
         public float Rarity { get; set; }
+        public float Priority { get; set; }
         public TextType Type { get; set; }
     }
 
@@ -20,7 +21,13 @@ namespace FProject.Shared
     {
         [Display(Name = "متن")]
         Text,
-        [Display(Name = "گروه کلمات")]
-        WordGroup
+        [Display(Name = "گروه کلمات تکی")]
+        WordGroup,
+        [Display(Name = "گروه کلمات دوتایی")]
+        WordGroup2,
+        [Display(Name = "گروه کلمات سه‌تایی")]
+        WordGroup3,
+        [Display(Name = "گروه ارقام")]
+        NumberGroup,
     }
 }

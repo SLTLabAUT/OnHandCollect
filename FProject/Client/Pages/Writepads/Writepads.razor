@@ -1,6 +1,8 @@
 ﻿@page "/writepads"
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authorization
+@namespace FProject.Client.Pages
+@inherits WritepadsShared
 @attribute [Authorize]
 
 <div style="height:100%;">
@@ -54,49 +56,8 @@
                                             </StackItem>
                                             <StackItem Style="text-align:center;">
                                                 @{
-                                                    string pointerTypeTooltip = string.Empty;
-                                                    string pointerTypeIconName = string.Empty;
-                                                    switch (writepad.PointerType)
-                                                    {
-                                                        case FProject.Shared.PointerType.Mouse:
-                                                            pointerTypeTooltip = "موس";
-                                                            pointerTypeIconName = "TouchPointer";
-                                                            break;
-                                                        case FProject.Shared.PointerType.Touchpad:
-                                                            pointerTypeTooltip = "تاچ‌پد";
-                                                            pointerTypeIconName = "TouchPointer";
-                                                            break;
-                                                        case FProject.Shared.PointerType.Pen:
-                                                            pointerTypeTooltip = "قلم دیجیتالی";
-                                                            pointerTypeIconName = "PenWorkspace";
-                                                            break;
-                                                        case FProject.Shared.PointerType.Touch:
-                                                            pointerTypeTooltip = "لمس";
-                                                            pointerTypeIconName = "Touch";
-                                                            break;
-                                                        case FProject.Shared.PointerType.TouchPen:
-                                                            pointerTypeTooltip = "قلم لمسی";
-                                                            pointerTypeIconName = "EditMirrored";
-                                                            break;
-                                                    }
-
-                                                    string textTypeTooltip = string.Empty;
-                                                    string textTypeIconName = string.Empty;
-                                                    switch (writepad.Type)
-                                                    {
-                                                        case FProject.Shared.WritepadType.Text:
-                                                            textTypeTooltip = "متن";
-                                                            textTypeIconName = "TextDocument";
-                                                            break;
-                                                        case FProject.Shared.WritepadType.WordGroup:
-                                                            textTypeTooltip = "گروه کلمات";
-                                                            textTypeIconName = "TextBox";
-                                                            break;
-                                                        case FProject.Shared.WritepadType.Sign:
-                                                            textTypeTooltip = "امضاء";
-                                                            textTypeIconName = "InsertSignatureLine";
-                                                            break;
-                                                    }
+                                                    var (pointerTypeTooltip, pointerTypeIconName) = GetPointerTypeUIElementValues(writepad);
+                                                    var (textTypeTooltip, textTypeIconName) = GetTextTypeUIElementValues(writepad);
                                                 }
                                                 <MyBFUText Block="true" Variant=@TextType.XLarge>
                                                     <TooltipHost>
@@ -257,6 +218,14 @@
                                Label=@(Utils.GetDisplayName<NewWritepadModel, IDropdownOption>(b => b.WritepadType))
                                Required="true"
                                OnChange="TextTypeChangeHandler" />
+                @if (IsWordGroupSelected)
+                {
+                    <MyBFUDropdown ItemsSource=WordGroupTypeOptions
+                               Placeholder="یک گزینه را برگزینید..."
+                               @bind-SelectedOption=NewWritepad.WordGroupType
+                               Label=@(Utils.GetDisplayName<NewWritepadModel, IDropdownOption>(b => b.WordGroupType))
+                               Required="true" />
+                }
                 @if (Handedness == Handedness.Both)
                 {
                     <MyBFUDropdown ItemsSource=HandOptions

@@ -30,22 +30,22 @@ namespace FProject.Server.Models
         public string OwnerId { get; set; }
         public ApplicationUser Owner { get; set; }
 
-        public static WritepadDTO ToAdminWritepadDTO(Writepad writepad)
+        public WritepadDTO ToAdminWritepadDTO()
         {
             return new WritepadDTO
             {
-                Id = writepad.Id,
-                SpecifiedNumber = writepad.UserSpecifiedNumber,
-                PointerType = writepad.PointerType,
-                Type = writepad.Type,
-                Hand = writepad.Hand,
-                LastModified = writepad.LastModified,
-                Status = writepad.Status,
-                TextId = writepad.TextId,
-                Text = writepad.Text,
-                Points = writepad.Points,
-                Owner = (UserDTO) writepad.Owner,
-                CommentsStatus = writepad.CommentsStatus,
+                Id = Id,
+                SpecifiedNumber = UserSpecifiedNumber,
+                PointerType = PointerType,
+                Type = Type,
+                Hand = Hand,
+                LastModified = LastModified,
+                Status = Status,
+                TextId = TextId,
+                Text = Text,
+                Points = Points,
+                Owner = (UserDTO) Owner,
+                CommentsStatus = CommentsStatus,
             };
         }
 

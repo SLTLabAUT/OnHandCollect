@@ -54,12 +54,24 @@
                                     textTypeIconName = "TextDocument";
                                     break;
                                 case FProject.Shared.WritepadType.WordGroup:
-                                    textTypeTooltip = "گروه کلمات";
+                                    textTypeTooltip = "گروه کلمات تکی";
                                     textTypeIconName = "TextBox";
                                     break;
                                 case FProject.Shared.WritepadType.Sign:
                                     textTypeTooltip = "امضاء";
                                     textTypeIconName = "InsertSignatureLine";
+                                    break;
+                                case FProject.Shared.WritepadType.WordGroup2:
+                                    textTypeTooltip = "گروه کلمات دوتایی";
+                                    textTypeIconName = "TextBox";
+                                    break;
+                                case FProject.Shared.WritepadType.WordGroup3:
+                                    textTypeTooltip = "گروه کلمات سه‌تایی";
+                                    textTypeIconName = "TextBox";
+                                    break;
+                                case FProject.Shared.WritepadType.NumberGroup:
+                                    textTypeTooltip = "گروه ارقام";
+                                    textTypeIconName = "NumberField";
                                     break;
                             }
                         }
@@ -95,12 +107,15 @@
                                     case FProject.Shared.WritepadType.Text:
                                         textHeader = $"لطفا متن زیر را با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
                                         break;
-                                    case FProject.Shared.WritepadType.WordGroup:
-                                        textHeader = $"لطفا کلمات زیر را هرکدام در <strong>خطی جداگانه</strong> و با رعایت <strong>فاصله‌ی مناسب از هم</strong>، با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
-                                        break;
                                     case FProject.Shared.WritepadType.Sign:
                                         textHeader = $"لطفا امضایتان را با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود بکشید.<br />امضای رسم شده نباید با امضاهای قبلی مغایرت داشته باشد و همچنین امضای اصلیتان نباشد.";
                                         break;
+                                    case FProject.Shared.WritepadType.NumberGroup:
+                                        textHeader = $"لطفا گروه ارقام زیر را مطابق جداسازی انجام‌شده، در <strong>خطوط جداگانه</strong> و با رعایت <strong>فاصله‌ی مناسب از هم</strong>، با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
+                                        break;
+                                }
+                                if (Parent.WritepadInstance.Type.IsWordGroup()) {
+                                    textHeader = $"لطفا گروه کلمات زیر را مطابق جداسازی انجام‌شده، در <strong>خطوط جداگانه</strong> و با رعایت <strong>فاصله‌ی مناسب از هم</strong>، با <strong>{pointerType}</strong> و <strong>{hand}</strong> خود در تخته بنویسید:";
                                 }
                             }
                             @((MarkupString) textHeader)

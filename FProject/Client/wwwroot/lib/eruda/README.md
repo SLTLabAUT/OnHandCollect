@@ -1,34 +1,41 @@
 <a href="https://eruda.liriliri.io/" target="_blank">
-    <img src="./doc/banner.jpg">
+  <img src="https://eruda.liriliri.io/img/banner.jpg" style="width:100%">
 </a>
 
-[中文](doc/README_CN.md)
+<h1 align="center">Eruda</h1>
 
-# Eruda
-
-[![Join the chat at https://gitter.im/liriliri/eruda][gitter-image]][gitter-url]
-[![NPM version][npm-image]][npm-url]
-[![Build status][travis-image]][travis-url]
-[![Test coverage][codecov-image]][codecov-url]
-[![License][license-image]][npm-url]
-
-[gitter-image]: https://badges.gitter.im/liriliri/eruda.svg
-[gitter-url]: https://gitter.im/liriliri/eruda?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
-[npm-image]: https://img.shields.io/npm/v/eruda.svg
-[npm-url]: https://npmjs.org/package/eruda
-[travis-image]: https://img.shields.io/travis/liriliri/eruda.svg
-[travis-url]: https://travis-ci.org/liriliri/eruda
-[codecov-image]: https://codecov.io/github/liriliri/eruda/coverage.svg?branch=master
-[codecov-url]: https://codecov.io/github/liriliri/eruda?branch=master
-[license-image]: https://img.shields.io/npm/l/eruda.svg
+<div align="center">
 
 Console for Mobile Browsers.
 
-![Eruda](./doc/screenshot.jpg)
+[![NPM version][npm-image]][npm-url]
+[![Build status][ci-image]][ci-url]
+[![Test coverage][codecov-image]][codecov-url]
+[![Downloads][jsdelivr-image]][jsdelivr-url]
+[![License][license-image]][npm-url]
+[![Donate][donate-image]][paypal-url]
+
+</div>
+
+[npm-image]: https://img.shields.io/npm/v/eruda?style=flat-square
+[npm-url]: https://npmjs.org/package/eruda
+[jsdelivr-image]: https://img.shields.io/jsdelivr/npm/hm/eruda?style=flat-square
+[jsdelivr-url]: https://www.jsdelivr.com/package/npm/eruda
+[ci-image]: https://img.shields.io/github/workflow/status/liriliri/eruda/CI?style=flat-square
+[ci-url]: https://github.com/liriliri/eruda/actions/workflows/main.yml
+[codecov-image]: https://img.shields.io/codecov/c/github/liriliri/eruda?style=flat-square
+[codecov-url]: https://codecov.io/github/liriliri/eruda?branch=master
+[license-image]: https://img.shields.io/npm/l/eruda?style=flat-square
+[donate-image]: https://img.shields.io/badge/$-donate-0070ba.svg?style=flat-square
+[paypal-url]: https://www.paypal.com/paypalme/surunzi
+
+<img src="https://eruda.liriliri.io/img/screenshot.jpg" style="width:100%">
+
+[中文](README_CN.md)
 
 ## Demo
 
-![Demo](./doc/qrcode.png)
+![Demo](https://eruda.liriliri.io/img/qrcode.png)
 
 Browse it on your phone: [https://eruda.liriliri.io/](https://eruda.liriliri.io/)
 

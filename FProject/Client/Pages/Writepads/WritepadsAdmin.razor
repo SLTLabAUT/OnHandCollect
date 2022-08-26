@@ -1,6 +1,8 @@
 ﻿@page "/writepadsadmin"
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authorization
+@namespace FProject.Client.Pages
+@inherits WritepadsShared
 @attribute [Authorize(Roles = IdentityRoleConstants.Admin)]
 
 <div style="height:100%;">
@@ -46,49 +48,8 @@
                                             <StackItem>
                                                 <MyBFUText Variant=@TextType.XLarge>
                                                     @{
-                                                        string pointerTypeTooltip = string.Empty;
-                                                        string pointerTypeIconName = string.Empty;
-                                                        switch (writepad.PointerType)
-                                                        {
-                                                            case FProject.Shared.PointerType.Mouse:
-                                                                pointerTypeTooltip = "موس";
-                                                                pointerTypeIconName = "TouchPointer";
-                                                                break;
-                                                            case FProject.Shared.PointerType.Touchpad:
-                                                                pointerTypeTooltip = "تاچ‌پد";
-                                                                pointerTypeIconName = "TouchPointer";
-                                                                break;
-                                                            case FProject.Shared.PointerType.Pen:
-                                                                pointerTypeTooltip = "قلم دیجیتالی";
-                                                                pointerTypeIconName = "PenWorkspace";
-                                                                break;
-                                                            case FProject.Shared.PointerType.Touch:
-                                                                pointerTypeTooltip = "لمس";
-                                                                pointerTypeIconName = "Touch";
-                                                                break;
-                                                            case FProject.Shared.PointerType.TouchPen:
-                                                                pointerTypeTooltip = "قلم لمسی";
-                                                                pointerTypeIconName = "EditMirrored";
-                                                                break;
-                                                        }
-
-                                                        string textTypeTooltip = string.Empty;
-                                                        string textTypeIconName = string.Empty;
-                                                        switch (writepad.Type)
-                                                        {
-                                                            case FProject.Shared.WritepadType.Text:
-                                                                textTypeTooltip = "متن";
-                                                                textTypeIconName = "TextDocument";
-                                                                break;
-                                                            case FProject.Shared.WritepadType.WordGroup:
-                                                                textTypeTooltip = "گروه کلمات";
-                                                                textTypeIconName = "TextBox";
-                                                                break;
-                                                            case FProject.Shared.WritepadType.Sign:
-                                                                textTypeTooltip = "امضاء";
-                                                                textTypeIconName = "InsertSignatureLine";
-                                                                break;
-                                                        }
+                                                        var (pointerTypeTooltip, pointerTypeIconName) = GetPointerTypeUIElementValues(writepad);
+                                                        var (textTypeTooltip, textTypeIconName) = GetTextTypeUIElementValues(writepad);
                                                     }
                                                     <TooltipHost>
                                                         <TooltipContent>@pointerTypeTooltip</TooltipContent>
@@ -106,23 +67,12 @@
                                             </StackItem>
                                         </Stack>
                                         <MyBFUText Block="true" Variant=@TextType.SmallPlus Style="padding:0 16px;min-height:4.847em;display:-webkit-box !important;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
-                                            @{
-                                                var text = string.Empty;
-                                                if (writepad.Type == FProject.Shared.WritepadType.WordGroup)
-                                                {
-                                                    text = writepad.Text.Content.Replace(" ", " - ");
-                                                }
-                                                else
-                                                {
-                                                    text = writepad.Text?.Content ?? "امضاء.";
-                                                }
-                                            }
                                             شماره‌ی تخته برای کاربر: @writepad.SpecifiedNumber
                                             <br />
                                             @*کاربر: <BlazorFluentUI.Link Href=@($"mailto:{writepad.Owner.Email}")>@writepad.Owner.Email</BlazorFluentUI.Link>*@
                                             کاربر: @writepad.Owner.Email
                                             <br />
-                                            @text
+                                            @GetWritepadTextContent(writepad)
                                         </MyBFUText>
                                         @{
                                             string statusIcon = string.Empty;

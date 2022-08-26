@@ -22,15 +22,8 @@ using FProject.Client.Shared;
 
 namespace FProject.Client.Pages
 {
-    public partial class Writepads
+    public partial class Writepads : WritepadsShared
     {
-        [Inject]
-        ThemeProvider ThemeProvider { get; set; }
-        [Inject]
-        HttpClient Http { get; set; }
-        [Inject]
-        NavigationManager Navigation { get; set; }
-
         [CascadingParameter]
         Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
@@ -46,6 +39,7 @@ namespace FProject.Client.Pages
         Button SaveButton { get; set; }
         Button SendCommentButton { get; set; }
         bool IsSignSelected { get; set; }
+        bool IsWordGroupSelected { get; set; }
         Handedness Handedness { get; set; }
         NewWritepadModel NewWritepad { get; set; }
         ValidationMessageStore CreateErrors { get; set; }
@@ -55,6 +49,7 @@ namespace FProject.Client.Pages
         IEnumerable<IDropdownOption> PointerTypes { get; set; }
         IEnumerable<IDropdownOption> TextTypes { get; set; }
         IEnumerable<IDropdownOption> HandOptions { get; set; }
+        IEnumerable<IDropdownOption> WordGroupTypeOptions { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
 
         CommentDTO CommentDTO { get; set; }
@@ -73,12 +68,30 @@ namespace FProject.Client.Pages
                     Key = ((int) p).ToString()
                 });
             TextTypes = Enum.GetValues<WritepadType>()
+                .Where(t => t != WritepadType.WordGroup2 && t != WritepadType.WordGroup3)
+                .Select(t => {
+                    string text;
+                    if (t.IsWordGroup())
+                    {
+                        text = "گروه کلمات";
+                    }
+                    else
+                    {
+                        text = t.GetAttribute<DisplayAttribute>().Name;
+                    }
+                    return new DropdownOption
+                    {
+                        Text = text,
+                        Key = ((int)t).ToString()
+                    };
+                });
+            HandOptions = Enum.GetValues<Hand>()
                 .Select(p => new DropdownOption
                 {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
                     Key = ((int)p).ToString()
                 });
-            HandOptions = Enum.GetValues<Hand>()
+            WordGroupTypeOptions = Enum.GetValues<WordGroupType>()
                 .Select(p => new DropdownOption
                 {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
@@ -95,6 +108,7 @@ namespace FProject.Client.Pages
 
             NewWritepad = new NewWritepadModel()
             {
+                WordGroupType = WordGroupTypeOptions.First(),
                 Hand = Handedness == Handedness.Both ? null : new DropdownOption
                 {
                     Text = Handedness.ToHand().GetAttribute<DisplayAttribute>().Name,
@@ -140,26 +154,6 @@ namespace FProject.Client.Pages
                 AllCount = result.AllCount;
                 StateHasChanged();
             }
-        }
-
-        protected string GetWritepadTextContent(WritepadDTO writepad)
-        {
-            var text = string.Empty;
-
-            if (writepad is null)
-            {
-                return text;
-            }
-
-            if (writepad.Type == WritepadType.WordGroup)
-            {
-                text = writepad.Text.Content.Replace(" ", " - ");
-            }
-            else
-            {
-                text = writepad.Text?.Content ?? "امضاء.";
-            }
-            return text;
         }
 
         async Task OnPageChangeHandler(bool isNext)
@@ -347,11 +341,18 @@ namespace FProject.Client.Pages
         {
             if (args.Option.Key == ((int)WritepadType.Sign).ToString())
             {
+                IsWordGroupSelected = false;
                 IsSignSelected = true;
                 NewWritepad.Number = Math.Min(7, NewWritepad.Number);
             }
+            else if (args.Option.Key == ((int)WritepadType.WordGroup).ToString())
+            {
+                IsWordGroupSelected = true;
+                IsSignSelected = false;
+            }
             else
             {
+                IsWordGroupSelected = false;
                 IsSignSelected = false;
             }
         }
@@ -364,6 +365,9 @@ namespace FProject.Client.Pages
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "نوع داده")]
             public IDropdownOption WritepadType { get; set; }
+            [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
+            [Display(Name = "نوع گروه کلمات")]
+            public IDropdownOption WordGroupType { get; set; }
             [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ErrorMessageResource))]
             [Display(Name = "نوع دست")]
             public IDropdownOption Hand { get; set; }
@@ -378,6 +382,7 @@ namespace FProject.Client.Pages
                 {
                     PointerType = Enum.Parse<PointerType>(model.PointerType.Key),
                     Type = Enum.Parse<WritepadType>(model.WritepadType.Key),
+                    WordGroupType = Enum.Parse<WordGroupType>(model.WordGroupType.Key),
                     Hand = Enum.Parse<Hand>(model.Hand.Key),
                     Number = (int)model.Number
                 };

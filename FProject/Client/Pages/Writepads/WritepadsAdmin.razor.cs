@@ -1,38 +1,20 @@
-﻿using BlazorFluentUI;
+﻿using FProject.Client.Shared;
 using FProject.Shared;
-using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using FProject.Shared.Extensions;
-using System.Net.Http;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
-using FProject.Shared.Resources;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Web;
-using FProject.Client.Shared;
+using System;
+using System.Collections.Generic;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace FProject.Client.Pages
 {
     public partial class WritepadsAdmin : WritepadsShared
     {
-        Uri Uri { get; set; }
-        int Page { get; set; } = 1;
-        WritepadStatus? Status { get; set; }
-        WritepadType? Type { get; set; }
-        string UserEmail { get; set; }
-        int? WritepadId { get; set; }
-        int AllCount { get; set; }
         bool DeleteDialogOpen { get; set; }
         bool CommentsDialogOpen { get; set; }
         bool EmptyWritepadDialogOpen { get; set; }
         Button SendCommentButton { get; set; }
-        List<WritepadDTO> WritepadList { get; set; }
         WritepadDTO CurrentWritepad { get; set; }
 
         CommentDTO CommentDTO { get; set; }
@@ -40,51 +22,9 @@ namespace FProject.Client.Pages
 
         bool HaveNextPage => Page * 10 < AllCount;
 
-        protected override void OnParametersSet()
+        protected override void OnInitialized()
         {
-            Uri = new Uri(Navigation.Uri);
-            foreach (var queryItem in QueryHelpers.ParseQuery(Uri.Query))
-            {
-                switch (queryItem.Key)
-                {
-                    case "page":
-                        Page = int.Parse(queryItem.Value);
-                        break;
-                    case "userEmail":
-                        UserEmail = queryItem.Value;
-                        break;
-                    case "status":
-                        Status = Enum.Parse<WritepadStatus>(queryItem.Value);
-                        break;
-                    case "type":
-                        Type = Enum.Parse<WritepadType>(queryItem.Value);
-                        break;
-                    case "writepadId":
-                        WritepadId = int.Parse(queryItem.Value);
-                        break;
-                }
-            }
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (WritepadList is null)
-            {
-                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}&admin=true&status={Status}&type={Type}&userEmail={UserEmail}&writepadId={WritepadId}");
-                WritepadList = result.Writepads.ToList();
-                AllCount = result.AllCount;
-                StateHasChanged();
-            }
-        }
-
-        async Task OnPageChangeHandler(bool isNext)
-        {
-            var queries = HttpUtility.ParseQueryString(Uri.Query);
-            queries["page"] = $"{Page + (isNext ? 1 : -1)}";
-            var dic = queries.AllKeys.ToDictionary(k => k, k => queries[k]);
-            Navigation.NavigateTo(QueryHelpers.AddQueryString(Uri.AbsolutePath, dic));
-            WritepadList = null;
-            OnParametersSet();
+            IsAdminPage = true;
         }
 
         async Task SendCommentHandler()

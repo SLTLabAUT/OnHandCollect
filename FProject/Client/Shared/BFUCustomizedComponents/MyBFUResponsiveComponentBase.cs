@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlazorFluentUI
@@ -14,7 +12,7 @@ namespace BlazorFluentUI
         protected DotNetObjectReference<MyBFUResponsiveComponentBase>? selfReference;
 
         [Inject] IJSRuntime? JSRuntime { get; set; }
-        protected const string BasePath = "/ts/Ts/baseComponent.js";
+        protected const string BasePath = "/ts/baseComponent.js";
         protected IJSObjectReference? baseModule;
 
         protected ResponsiveMode CurrentMode { get; set; }

@@ -8,7 +8,7 @@
     "allowJs": true,
     "target": "es6",
     "module": "ESNext",
-    "outDir": "wwwroot/ts",
+    //"outDir": "wwwroot/ts",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
@@ -20,6 +20,6 @@
   "include": [
     "Pages",
     "Shared",
-    "Ts"
+    "wwwroot/ts"
   ]
 }

@@ -47,7 +47,7 @@ namespace FProject.Client.Pages
         {
             componentRef = DotNetObjectReference.Create(this);
 
-            JSRef = await JS.InvokeAsync<IJSObjectReference>("FProject.ImportGlobal", "Writepad", "/ts/Pages/Writepad/Writepad.razor.js");
+            JSRef = await JS.InvokeAsync<IJSObjectReference>("FProject.ImportGlobal", "Writepad", "/Pages/Writepad/Writepad.razor.js");
 
             SaveTimer.Elapsed += SaveTimerElapsedHandler;
         }

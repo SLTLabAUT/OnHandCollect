@@ -32,7 +32,7 @@
                         </MessageBar>
                     </StackItem>
                     <StackItem VerticalFill=false Align=Alignment.Center>
-                        <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
+                        <Paginator Page=(int)Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
                     </StackItem>
                     <StackItem VerticalFill="false" Style="width:100%;">
                         <Stack VerticalFill="true" Horizontal="true" Wrap="true" HorizontalAlign=Alignment.SpaceEvenly Tokens=@(new StackTokens { ChildrenGap = new double[] { 50 } }) Style="margin:0;">
@@ -182,7 +182,7 @@
                         </Stack>
                     </StackItem>
                     <StackItem VerticalFill=false Align=Alignment.Center>
-                        <Paginator Page=Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
+                        <Paginator Page=(int)Page NextDisabled=!HaveNextPage OnPageChangeHandler=OnPageChangeHandler />
                     </StackItem>
                     <StackItem VerticalFill="false">
                         <MessageBar>

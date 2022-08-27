@@ -55,7 +55,6 @@ namespace FProject.Server.Controllers
                     break;
                 default:
                     return BadRequest();
-                    break;
             }
 
             return Ok(count);
@@ -302,8 +301,10 @@ namespace FProject.Server.Controllers
                     writepad.TextId = text.Id;
                     writepad.Text = text;
                 }
+
+                newWritepads.Add(writepad);
+                _context.Entry(writepad).State = EntityState.Added;
             }
-            _context.Writepads.AddRange(newWritepads);
             await _context.SaveChangesAsync();
 
             return Ok(newWritepads.Select(w => (WritepadDTO)w));

@@ -262,6 +262,10 @@ namespace FProject.Server.Controllers
                     for (int i = 0; i < fractions.Length; i++)
                     {
                         var count = Math.Min((int)Math.Ceiling(fractions[i] * originalCount), remainingCount);
+                        if (count == 0)
+                        {
+                            continue;
+                        }
                         newWritepad.Number = count;
                         remainingCount -= count;
                         newWritepad.Type = types[i];

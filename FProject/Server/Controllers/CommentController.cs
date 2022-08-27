@@ -3,7 +3,6 @@ using FProject.Server.Models;
 using FProject.Shared;
 using FProject.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -55,6 +54,7 @@ namespace FProject.Server.Controllers
 
             var comments = await _context.Comments
                 .Where(c => c.WritepadId == writepad.Id)
+                .OrderBy(c => c.CreatedAt)
                 .ToListAsync();
 
             if (writepad.CommentsStatus != WritepadCommentsStatus.None)

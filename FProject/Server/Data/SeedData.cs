@@ -3,10 +3,8 @@ using FProject.Shared;
 using FProject.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -37,6 +35,9 @@ namespace FProject.Server.Data
                 await EnsureText(context);
                 await EnsureWordGroup(context);
                 await EnsureWordGroupNormalization(context);
+                await EnsureWordGroupX(context, TextType.WordGroup2, "Data/len2_40k_scored.txt", 2);
+                await EnsureWordGroupX(context, TextType.WordGroup3, "Data/len3_40k_scored.txt", 3);
+                await EnsureNumbers(context);
 
                 await EnsureUserWordCount(context);
             }
@@ -47,7 +48,6 @@ namespace FProject.Server.Data
             var wordsNotCounted = await context.Writepads
                 .Where(w => w.Status == WritepadStatus.Accepted && w.Owner.AcceptedWordCount == 0)
                 .AnyAsync();
-
             if (!wordsNotCounted)
             {
                 return;
@@ -146,33 +146,109 @@ namespace FProject.Server.Data
             var count = await context.Text
                 .Where(t => t.Type == TextType.Text)
                 .CountAsync();
+            if (count == 0)
+            {
+                string line;
+                float maxRarity = 1f;
+                var splitter = new Regex(@"^(\d+\.\d+)\t(.+)$", RegexOptions.Compiled);
+                var wordCounter = new Regex(@" +", RegexOptions.Compiled);
+                var file = new StreamReader(@"Data/HandWritingPhrases.txt");
+                while ((line = await file.ReadLineAsync()) is not null)
+                {
+                    var match = splitter.Match(line);
+                    var text = new Text
+                    {
+                        Rarity = float.Parse(match.Groups[1].Value) / maxRarity,
+                        Content = match.Groups[2].Value
+                    };
+                    text.WordCount = wordCounter.Matches(text.Content).Count + 1;
+
+                    if (maxRarity == 1f)
+                    {
+                        maxRarity = text.Rarity;
+                        text.Rarity = 1f;
+                    }
+
+                    context.Text.Add(text);
+                }
+                file.Close();
+
+                await context.SaveChangesAsync();
+            }
+
+            // w/number text
+            count = await context.Text
+                .Where(t => t.Type == TextType.Text && t.Content == "رنگ پوستش کرم بود و موها و لب‌هایش مثل یک کوروت مدل ۱۹۶۷ که همین الان از خط تولید در آمده باشد سرخ سرخ بود.")
+                .CountAsync();
+            if (count == 0)
+            {
+                string line;
+                float maxRarity = 1f;
+                var splitter = new Regex(@"^(\d+\.\d+)\t(.+)$", RegexOptions.Compiled);
+                var wordCounter = new Regex(@" +", RegexOptions.Compiled);
+                var file = new StreamReader(@"Data/has_num_40k_scored.txt");
+                while ((line = await file.ReadLineAsync()) is not null)
+                {
+                    var match = splitter.Match(line);
+                    var text = new Text
+                    {
+                        Rarity = float.Parse(match.Groups[1].Value) / maxRarity,
+                        Content = match.Groups[2].Value
+                    };
+                    text.WordCount = wordCounter.Matches(text.Content).Count + 1;
+
+                    if (maxRarity == 1f)
+                    {
+                        maxRarity = text.Rarity;
+                        text.Rarity = 1f;
+                    }
+
+                    context.Text.Add(text);
+                }
+                file.Close();
+
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private async Task EnsureNumbers(ApplicationDbContext context)
+        {
+            var count = await context.Text
+                .Where(t => t.Type == TextType.NumberGroup)
+                .CountAsync();
             if (count != 0)
             {
                 return;
             }
 
             string line;
-            float maxRarity = 1f;
-            var splitter = new Regex(@"^(\d+\.\d+)\t(.+)$", RegexOptions.Compiled);
-            var wordCounter = new Regex(@"(?: |\\n)+", RegexOptions.Compiled);
-            var file = new StreamReader(@"Data/HandWritingPhrases.txt");
+            int batchSize = 14;
+            int numberCount = 0;
+            int wordCount = 0;
+            string content = string.Empty;
+            var file = new StreamReader("Data/random_numbers.txt");
             while ((line = await file.ReadLineAsync()) is not null)
             {
-                var match = splitter.Match(line);
-                var text = new Text
-                {
-                    Rarity = float.Parse(match.Groups[1].Value) / maxRarity,
-                    Content = match.Groups[2].Value
-                };
-                text.WordCount = wordCounter.Matches(text.Content).Count + 1;
+                numberCount++;
+                wordCount += line.Contains(" ") ? 2 : 1;
+                content += line + '\n';
 
-                if (maxRarity == 1f)
+                if (numberCount == batchSize)
                 {
-                    maxRarity = text.Rarity;
-                    text.Rarity = 1f;
+                    var text = new Text
+                    {
+                        Type = TextType.NumberGroup,
+                        Rarity = 0.5f,
+                        Content = content.TrimEnd(),
+                        WordCount = wordCount
+                    };
+
+                    context.Text.Add(text);
+
+                    numberCount = 0;
+                    wordCount = 0;
+                    content = string.Empty;
                 }
-
-                context.Text.Add(text);
             }
             file.Close();
 
@@ -194,8 +270,7 @@ namespace FProject.Server.Data
                 .ToListAsync();
             foreach (var text in allText)
             {
-                var rnd = new Random();
-                var words = text.Content.Split(" ").OrderBy(w => rnd.Next()).ToList();
+                var words = text.Content.Split(" ").ToList();
                 var batches = words.Batch(7, e => e.ToList()).ToList();
                 var lastBatch = batches.Last();
                 if (lastBatch.Count < 7
@@ -249,6 +324,76 @@ namespace FProject.Server.Data
             {
                 wg.Content = wg.Content.Replace(" ", "\n");
             }
+
+            await context.SaveChangesAsync();
+        }
+
+        private async Task EnsureWordGroupX(ApplicationDbContext context, TextType type, string fileName, int wordCountPerGroup)
+        {
+            var count = await context.Text
+                .Where(t => t.Type == type)
+                .CountAsync();
+            if (count != 0)
+            {
+                return;
+            }
+
+            string line;
+            float maxRarity = 1f;
+            var splitter = new Regex(@"^(\d+\.\d+)\t(.+)$", RegexOptions.Compiled);
+            var wordCounter = new Regex(@"(?: |\n)+", RegexOptions.Compiled);
+            // create groupExtractor
+            // language=regex
+            var groupExtractorPattern = @"([^ ]+)(?: +)?";
+            for (int i = 0; i < wordCountPerGroup - 1; i++)
+            {
+                // language=regex
+                groupExtractorPattern = @"([^ ]+) +" + groupExtractorPattern;
+            }
+            var groupExtractor = new Regex(groupExtractorPattern, RegexOptions.Compiled);
+            // ...
+            var file = new StreamReader(fileName);
+            while ((line = await file.ReadLineAsync()) is not null)
+            {
+                var match = splitter.Match(line);
+
+                var rarity = float.Parse(match.Groups[1].Value) / maxRarity;
+                if (maxRarity == 1f)
+                {
+                    maxRarity = rarity;
+                    rarity = 1f;
+                }
+
+                var content = string.Empty;
+                var groups = groupExtractor.Matches(match.Groups[2].Value).OfType<Match>();
+                foreach (var group in groups)
+                {
+                    for (int i = 1; i <= wordCountPerGroup; i++)
+                    {
+                        content += $"{group.Groups[i]}";
+                        if (i == wordCountPerGroup)
+                        {
+                            content += "\n";
+                        }
+                        else
+                        {
+                            content += " ";
+                        }
+                    }
+                }
+                content = content.TrimEnd();
+
+                var text = new Text
+                {
+                    Type = type,
+                    Rarity = rarity,
+                    Content = content,
+                    WordCount = wordCounter.Matches(content).Count + 1
+                };
+
+                context.Text.Add(text);
+            }
+            file.Close();
 
             await context.SaveChangesAsync();
         }

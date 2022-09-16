@@ -79,15 +79,19 @@ namespace FProject.Client.Pages
                 var lines = WritepadInstance.Text.Content.Split("\n");
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    lines[i] = $"<span class=\"line-indicator\">خط {i}</span>:<br /><strong>{lines[i]}</strong>";
+                    lines[i] = $"<span class=\"line-indicator\">خط {(i + 1).ToPersianNumber()}</span>:<br /><strong class=\"{(WritepadInstance.Text.Type == TextType.NumberGroup ? "ltr-text" : "")}\">{lines[i]}</strong>";
                 }
                 WritepadInstance.Text.Content = string.Join("<br />", lines);
+            }
+            else if (WritepadInstance.Text?.Content is not null)
+            {
+                WritepadInstance.Text.Content = $"<strong>{WritepadInstance.Text.Content}</strong>";
             }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender || InitiationDone)
+            if (JSRef is null || InitiationDone)
             {
                 return;
             }
@@ -193,6 +197,10 @@ namespace FProject.Client.Pages
         {
             if (JSRef is not null)
             {
+                if (InitiationDone)
+                {
+                    await JSRef.InvokeVoidAsync("dispose");
+                }
                 await JSRef.DisposeAsync();
             }
             SaveTimer.Dispose();

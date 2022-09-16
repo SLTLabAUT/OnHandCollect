@@ -23,7 +23,6 @@
 
   <PropertyGroup>
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
-    <TypeScriptEnableIncrementalMSBuild>False</TypeScriptEnableIncrementalMSBuild>
   </PropertyGroup>
 
 </Project>

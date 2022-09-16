@@ -72,7 +72,9 @@
                                             @*کاربر: <BlazorFluentUI.Link Href=@($"mailto:{writepad.Owner.Email}")>@writepad.Owner.Email</BlazorFluentUI.Link>*@
                                             کاربر: @writepad.Owner.Email
                                             <br />
-                                            @GetWritepadTextContent(writepad)
+                                            <MyBFUText Block="true" ClassName="@GetWritepadTextContentClassName(writepad)">
+                                                @GetWritepadTextContent(writepad)
+                                            </MyBFUText>
                                         </MyBFUText>
                                         @{
                                             string statusIcon = string.Empty;

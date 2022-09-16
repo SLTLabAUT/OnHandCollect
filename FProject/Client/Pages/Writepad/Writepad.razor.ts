@@ -104,6 +104,12 @@ export async function init(compRef, ratio: number, origin: number, writepadCompr
     updateDotNetUndoRedo();
 }
 
+export async function dispose() {
+    window.removeEventListener("resize", onResize);
+    document.removeEventListener("scroll", onScroll);
+    document.removeEventListener("keyup", onKeyUp);
+}
+
 function initContext() {
     context.lineCap = "round";
     context.lineJoin = "round";

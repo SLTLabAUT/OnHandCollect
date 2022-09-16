@@ -19,20 +19,27 @@
             </MessageBar>
         }
         <MyBFUDropdown ItemsSource=ModeOptions
-                        Placeholder="یک گزینه را برگزینید..."
-                        @bind-SelectedOption=Model.Mode
-                        Label=@(Utils.GetDisplayName<ExportModel>(m => m.Mode))
-                        Required=true />
-        <DatePicker @bind-Value=Model.Start
+                Placeholder="یک گزینه را برگزینید..."
+                @bind-SelectedOption=Model.Mode
+                Label=@(Utils.GetDisplayName<ExportModel>(m => m.Mode))
+                Required=true
+                OnChange="TypeChangeHandler" />
+        @if (SelectedMode == ExportMode.Writepads)
+        {
+            <DatePicker @bind-Value=Model.Start
                     Label=@(Utils.GetDisplayName<ExportModel, DateTime?>(m => m.Start))
                     Placeholder="یک زمان را برگزینید..." />
-        <DatePicker @bind-Value=Model.End
+            <DatePicker @bind-Value=Model.End
                     Label=@(Utils.GetDisplayName<ExportModel, DateTime?>(m => m.End))
                     Placeholder="یک زمان را برگزینید..." />
-        <MyBFUDropdown ItemsSource=TextTypeOptions
-                        Placeholder="یک گزینه را برگزینید..."
-                        @bind-SelectedOption=Model.TextType
-                        Label=@(Utils.GetDisplayName<ExportModel>(m => m.TextType)) />
+        }
+        @if (SelectedMode == ExportMode.GroundTruths)
+        {
+            <MyBFUDropdown ItemsSource=TextTypeOptions
+                    Placeholder="یک گزینه را برگزینید..."
+                    @bind-SelectedOption=Model.TextType
+                    Label=@(Utils.GetDisplayName<ExportModel>(m => m.TextType)) />
+        }
         <Stack HorizontalAlign=Alignment.Center VerticalAlign=Alignment.Center Tokens=@(new StackTokens { ChildrenGap = new double[] { 10 } })>
             <StackItem Align=Alignment.Center>
                 <Button ButtonType=ButtonType.Submit @ref="SubmitButton" ManualStateControl=true Text="ایجاد خروجی" />

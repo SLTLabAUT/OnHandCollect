@@ -101,6 +101,7 @@ namespace FProject.Client.Pages
             Navigation.NavigateTo(uri);
             ShouldLoadWritepadList = true;
             WritepadList = null;
+            await Task.CompletedTask;
         }
 
         protected string GetWritepadTextContent(WritepadDTO writepad)
@@ -121,6 +122,15 @@ namespace FProject.Client.Pages
                 text = writepad.Text?.Content ?? "امضاء.";
             }
             return text;
+        }
+
+        protected string GetWritepadTextContentClassName(WritepadDTO writepad)
+        {
+            if (writepad.Type == WritepadType.NumberGroup)
+            {
+                return "ltr-text";
+            }
+            return string.Empty;
         }
 
         protected (string tooltip, string iconName) GetPointerTypeUIElementValues(WritepadDTO writepad)

@@ -45,6 +45,14 @@ namespace FProject.Server.Controllers
             switch (mode)
             {
                 case ExportMode.Writepads:
+                    if (start == default)
+                    {
+                        start = DateTimeOffset.MinValue;
+                    }
+                    if (end == default)
+                    {
+                        end = DateTimeOffset.MaxValue;
+                    }
                     count = await exporter.ExportWritepads(start, end);
                     break;
                 case ExportMode.Writers:
@@ -274,6 +282,7 @@ namespace FProject.Server.Controllers
                 }
                 else
                 {
+                    newWritepad.Type = newWritepad.WordGroupType.ToWritepadType();
                     texts = await textProvider.GetNewText(userId, newWritepad);
                 }
             }

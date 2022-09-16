@@ -49,14 +49,14 @@ namespace FProject.Server.Services
         public async Task<int> ExportWritepads(DateTimeOffset start, DateTimeOffset end)
         {
             IQueryable<Writepad> query = _context.Writepads.IgnoreQueryFilters()
-                .Where(w => w.Status == Shared.WritepadStatus.Accepted && w.LastModified >= start && w.LastModified < end);
+                .Where(w => w.Status == WritepadStatus.Accepted && w.LastModified >= start && w.LastModified < end);
             var count = await query.CountAsync().ConfigureAwait(false);
             if (count == 0)
             {
                 return count;
             }
             var partsRange = 200;
-            var partsCount = count / partsRange + 1;
+            var partsCount = Math.Ceiling((double)count / partsRange);
 
             var folderName = $"{start.ToUniversalTime().ToString("yy-MM-dd HH-mm")} to {end.ToUniversalTime().ToString("yy-MM-dd HH-mm")} ({DateTime.UtcNow.ToString("yy-MM-dd HH-mm-ss")})";
             Directory.CreateDirectory($"Data/InkMLs/Dataset/Writepads/{folderName}");
@@ -100,7 +100,7 @@ namespace FProject.Server.Services
                     annotation.SetElementValue("truthId", writepad.TextId);
 
                     double timeOrigin = 0;
-                    var strokePoints = new List<Shared.DrawingPoint>();
+                    var strokePoints = new List<DrawingPoint>();
                     var strokeStarted = false;
                     var strokeEnded = false;
                     var traceGroup = document.Descendants(ns + "traceGroup").First();
@@ -109,7 +109,7 @@ namespace FProject.Server.Services
                         var strokeCompleted = false;
                         switch (point.Type)
                         {
-                            case Shared.PointType.Starting:
+                            case PointType.Starting:
                                 strokeStarted = true;
                                 strokeEnded = false;
 
@@ -121,7 +121,7 @@ namespace FProject.Server.Services
                                     timeOrigin = point.TimeStamp;
                                 }
                                 break;
-                            case Shared.PointType.Middle:
+                            case PointType.Middle:
                                 if (!strokeStarted || strokeEnded)
                                 {
                                     continue;
@@ -129,7 +129,7 @@ namespace FProject.Server.Services
 
                                 strokePoints.Add(point);
                                 break;
-                            case Shared.PointType.Ending:
+                            case PointType.Ending:
                                 if (!strokeStarted || strokeEnded)
                                 {
                                     continue;
@@ -182,7 +182,7 @@ namespace FProject.Server.Services
                 return count;
             }
             var partsRange = 200;
-            var partsCount = count / partsRange + 1;
+            var partsCount = Math.Ceiling((double)count / partsRange);
 
             for (int p = 0; p < partsCount; p++)
             {
@@ -234,21 +234,19 @@ namespace FProject.Server.Services
             return count;
         }
 
-        public async Task<int> ExportGroundTruths(Shared.TextType type)
+        public async Task<int> ExportGroundTruths(TextType type)
         {
-            IQueryable<Shared.Text> query = _context.Text
+            IQueryable<Text> query = _context.Text
                 .Where(t => t.Type == type);
             var count = await query.CountAsync().ConfigureAwait(false);
             if (count == 0)
             {
                 return count;
             }
-            var partsRange = 300;
-            if (type == Shared.TextType.Text)
-            {
-                partsRange = 200;
-            }
-            var partsCount = count / partsRange + 1;
+            var partsRange = 200;
+            var partsCount = Math.Ceiling((double)count / partsRange);
+
+            Directory.CreateDirectory($"Data/InkMLs/Dataset/GroundTruths/{type}");
 
             for (int p = 0; p < partsCount; p++)
             {
@@ -271,7 +269,7 @@ namespace FProject.Server.Services
                     textElement.SetAttributeValue("id", text.Id);
 
                     var content = text.Content;
-                    if (text.Type == Shared.TextType.Text)
+                    if (text.Type == TextType.Text)
                     {
                         textElement.SetElementValue("content", content);
                     }
@@ -288,7 +286,7 @@ namespace FProject.Server.Services
                     document.Root.Add(textElement);
                 }
 
-                using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/GroundTruths/{type}-{p}.xml", new XmlWriterSettings { Async = true, Indent = true });
+                using var writer = XmlWriter.Create($"Data/InkMLs/Dataset/GroundTruths/{type}/{p}.xml", new XmlWriterSettings { Async = true, Indent = true });
                 await document.SaveAsync(writer, default).ConfigureAwait(false);
             }
 

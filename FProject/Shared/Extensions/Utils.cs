@@ -7,8 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FProject.Shared.Extensions
 {
@@ -126,6 +124,17 @@ namespace FProject.Shared.Extensions
                 TextType.WordGroup2 => WritepadType.WordGroup2,
                 TextType.WordGroup3 => WritepadType.WordGroup3,
                 TextType.NumberGroup => WritepadType.NumberGroup,
+                _ => throw new NotSupportedException()
+            };
+        }
+
+        public static WritepadType ToWritepadType(this WordGroupType type)
+        {
+            return type switch
+            {
+                WordGroupType.WordGroup => WritepadType.WordGroup,
+                WordGroupType.WordGroup2 => WritepadType.WordGroup2,
+                WordGroupType.WordGroup3 => WritepadType.WordGroup3,
                 _ => throw new NotSupportedException()
             };
         }

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using BlazorFluentUI.Style;
 
 namespace BlazorFluentUI
 {
@@ -99,10 +98,6 @@ namespace BlazorFluentUI
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-            {
-            }
-
             if (contextMenuShown && _registrationToken == null)
                 await RegisterListFocusAsync();
 

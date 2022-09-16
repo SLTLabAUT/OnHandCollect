@@ -7,6 +7,8 @@
     }
 
     .pad {
+        overflow: hidden;
+
         #writepad {
             touch-action: none;
             user-select: none;

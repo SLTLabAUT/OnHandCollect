@@ -341,3 +341,12 @@ healthchecksdb
 
 # Custom
 **/InkMLs/Dataset/
+**/wwwroot/ts/**/*.js
+**/wwwroot/sass/**/*.css
+*.7z
+FProject/Client/Pages/**/*.css
+FProject/Client/Shared/**/*.css
+FProject/Client/Pages/**/*.js
+FProject/Client/Shared/**/*.js
+help - old.mp4
+migrations-script.partial.sql

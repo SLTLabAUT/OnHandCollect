@@ -1,19 +1,16 @@
 ﻿using BlazorFluentUI;
 using FProject.Client.Shared;
-using FProject.Shared;
 using FProject.Shared.Extensions;
 using FProject.Shared.Models;
 using FProject.Shared.Resources;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FProject.Client.Pages
@@ -25,6 +22,7 @@ namespace FProject.Client.Pages
 
         int? ExportedCount { get; set; }
         bool IsExporting { get; set; }
+        ExportMode SelectedMode { get; set; }
         IEnumerable<IDropdownOption> ModeOptions { get; set; }
         IEnumerable<IDropdownOption> TextTypeOptions { get; set; }
         ExportModel Model { get; set; }
@@ -89,6 +87,11 @@ namespace FProject.Client.Pages
         {
             ExportedCount = null;
             IsExporting = false;
+        }
+
+        void TypeChangeHandler(DropdownChangeArgs args)
+        {
+            SelectedMode = Enum.Parse<ExportMode>(args.Option.Key);
         }
 
         public class ExportModel

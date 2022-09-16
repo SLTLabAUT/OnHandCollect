@@ -369,3 +369,8 @@ form > *:not(.ms-Dropdown-root) {
     left: 0.75rem;
     top: 0.5rem;
 }
+
+.ltr-text {
+    direction: ltr;
+    unicode-bidi: embed;
+}

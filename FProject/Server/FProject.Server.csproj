@@ -42,7 +42,7 @@
   <ItemGroup>
     <Content Include="Data\InkMLs\**" CopyToPublishDirectory="PreserveNewest" />
     <Content Include=".config\dotnet-tools.json" />
-    <Content Include="Data\HandWritingPhrases.txt" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Data\*.txt" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="cert.pfx" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="dkim-key.pem" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>

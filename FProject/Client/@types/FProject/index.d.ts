@@ -1,4 +1,4 @@
-﻿import { DotNetReferenceType } from "../../Ts/baseComponent";
+﻿import { DotNetReferenceType } from "/ts/baseComponent";
 
 declare global {
     interface Window {

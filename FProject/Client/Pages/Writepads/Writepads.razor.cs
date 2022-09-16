@@ -1,24 +1,19 @@
 ﻿using BlazorFluentUI;
+using FProject.Client.Shared;
 using FProject.Shared;
+using FProject.Shared.Extensions;
+using FProject.Shared.Models;
+using FProject.Shared.Resources;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Threading.Tasks;
-using FProject.Shared.Extensions;
-using System.Net.Http;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
-using FProject.Shared.Resources;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Web;
-using Microsoft.AspNetCore.Components.Authorization;
-using FProject.Shared.Models;
-using System.Security.Claims;
-using FProject.Client.Shared;
+using System.Threading.Tasks;
 
 namespace FProject.Client.Pages
 {
@@ -27,9 +22,6 @@ namespace FProject.Client.Pages
         [CascadingParameter]
         Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
-        Uri Uri { get; set; }
-        int Page { get; set; } = 1;
-        int AllCount { get; set; }
         bool CreateDialogOpen { get; set; }
         bool DeleteDialogOpen { get; set; }
         bool CommentsDialogOpen { get; set; }
@@ -44,7 +36,6 @@ namespace FProject.Client.Pages
         NewWritepadModel NewWritepad { get; set; }
         ValidationMessageStore CreateErrors { get; set; }
         EditContext EditContext { get; set; }
-        List<WritepadDTO> WritepadList { get; set; }
         CommandBarItem[] Items { get; set; }
         IEnumerable<IDropdownOption> PointerTypes { get; set; }
         IEnumerable<IDropdownOption> TextTypes { get; set; }
@@ -63,13 +54,15 @@ namespace FProject.Client.Pages
                 new CommandBarItem() { Text = "ایجاد تخته‌ی جدید", IconName = "Add", Key = "add", OnClick = AddOnClickHandler }
             };
             PointerTypes = Enum.GetValues<PointerType>()
-                .Select(p => new DropdownOption {
+                .Select(p => new DropdownOption
+                {
                     Text = p.GetAttribute<DisplayAttribute>().Name,
-                    Key = ((int) p).ToString()
+                    Key = ((int)p).ToString()
                 });
             TextTypes = Enum.GetValues<WritepadType>()
                 .Where(t => t != WritepadType.WordGroup2 && t != WritepadType.WordGroup3)
-                .Select(t => {
+                .Select(t =>
+                {
                     string text;
                     if (t.IsWordGroup())
                     {
@@ -101,7 +94,9 @@ namespace FProject.Client.Pages
 
         protected override async Task OnParametersSetAsync()
         {
-            if (Enum.TryParse<Handedness>((await AuthenticationStateTask).User.FindFirstValue(ClaimTypeConstants.Handedness), out var handedness))
+            await base.OnParametersSetAsync();
+
+            if (Enum.TryParse<Handedness>((await AuthenticationStateTask).User.FindFirst(ClaimTypeConstants.Handedness)?.Value, out var handedness))
             {
                 Handedness = handedness;
             }
@@ -132,43 +127,12 @@ namespace FProject.Client.Pages
             {
                 CreateErrors.Clear();
             };
-
-            Uri = new Uri(Navigation.Uri);
-            foreach (var queryItem in QueryHelpers.ParseQuery(Uri.Query))
-            {
-                switch (queryItem.Key)
-                {
-                    case "page":
-                        Page = int.Parse(queryItem.Value);
-                        break;
-                }
-            }
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (WritepadList is null)
-            {
-                var result = await Http.GetFromJsonAsync<WritepadsDTO>($"api/Writepad/?page={Page}");
-                WritepadList = result.Writepads.ToList();
-                AllCount = result.AllCount;
-                StateHasChanged();
-            }
-        }
-
-        async Task OnPageChangeHandler(bool isNext)
-        {
-            var queries = HttpUtility.ParseQueryString(Uri.Query);
-            queries["page"] = $"{Page + (isNext ? 1 : -1)}";
-            var dic = queries.AllKeys.ToDictionary(k => k, k => queries[k]);
-            Navigation.NavigateTo(QueryHelpers.AddQueryString(Uri.AbsolutePath, dic));
-            WritepadList = null;
-            await OnParametersSetAsync();
         }
 
         void AddOnClickHandler(ItemClickedArgs args)
         {
-            if (!CreateDialogOpen) {
+            if (!CreateDialogOpen)
+            {
                 CreateDialogOpen = true;
                 StateHasChanged();
             }

@@ -1,5 +1,5 @@
 ﻿<div>
-    @foreach (var comment in Comments.Reverse())
+    @foreach (var comment in Comments)
     {
     <MyBFUText Block="true" Style=@($"text-align:{(comment.FromAdmin ? "left" : "right")};")>
         @{

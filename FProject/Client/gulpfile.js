@@ -19,10 +19,18 @@ process.env.ASPNETCORE_ENVIRONMENT =
 
 function clean() {
     return del([
-        "wwwroot/ts/**",
+        "wwwroot/ts/**/*.js",
+        "wwwroot/ts/**/*.js.map",
+        "wwwroot/sass/**/*.css",
+        "wwwroot/sass/**/*.css.map",
+        "Pages/**/*.js",
         "Pages/**/*.css",
+        "Pages/**/*.js.map",
+        "Pages/**/*.css.map",
+        "Shared/**/*.js",
         "Shared/**/*.css",
-        "wwwroot/sass/**/*.css"
+        "Shared/**/*.js.map",
+        "Shared/**/*.css.map",
     ]);
 }
 
@@ -38,13 +46,15 @@ function buildSass() {
 
 function buildTs() {
     return tsProject.src()
-        //.pipe(gulp.dest(tsProject.config.compilerOptions.outDir))
         .pipe(sourcemaps.init())
         .pipe(tsProject())
         .pipe(pathResolver.tsPathResolver(tsProject.config.compilerOptions, {}))
         .pipe(terser())
-        //.pipe(sourcemaps.write("."))
-        .pipe(gulp.dest(tsProject.config.compilerOptions.outDir, { sourcemaps: "." }));
+        //.pipe(rename(function (path) {
+        //    // Updates the object in-place
+        //    path.basename = path.basename.replace(/\.(?:razor|cshtml)$/, "");
+        //}))
+        .pipe(gulp.dest(".", { sourcemaps: true }));
 }
 
 function release() {

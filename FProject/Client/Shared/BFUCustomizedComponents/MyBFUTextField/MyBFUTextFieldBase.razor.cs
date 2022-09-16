@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace BlazorFluentUI
 {
@@ -43,7 +42,7 @@ namespace BlazorFluentUI
         [Inject] private IJSRuntime? JSRuntime { get; set; }
         [CascadingParameter] EditContext CascadedEditContext { get; set; } = default!;
 
-        private const string BasePath = "/ts/Ts/baseComponent.js";
+        private const string BasePath = "/ts/baseComponent.js";
         private IJSObjectReference? baseModule;
 
         private readonly ICollection<Task> DeferredValidationTasks = new List<Task>();
@@ -165,9 +164,9 @@ namespace BlazorFluentUI
 
         public void Validate()
         {
-            if(ValidateOnFocusOut)
+            if (ValidateOnFocusOut)
             {
-                if(!isFocused)
+                if (!isFocused)
                 {
                     Validate(CurrentValue);
                 }
@@ -613,7 +612,7 @@ namespace BlazorFluentUI
             }
         }
 
-        
+
 
         public async ValueTask DisposeAsync()
         {

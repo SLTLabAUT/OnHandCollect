@@ -3,6 +3,8 @@ using FProject.Server.Models;
 using FProject.Server.Services;
 using FProject.Shared;
 using FProject.Shared.Extensions;
+using FProject.Shared.Models;
+using LZStringCSharp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using System.Text.Json;
-using LZStringCSharp;
-using FProject.Shared.Models;
-using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -56,7 +55,6 @@ namespace FProject.Server.Controllers
                     break;
                 default:
                     return BadRequest();
-                    break;
             }
 
             return Ok(count);
@@ -140,8 +138,11 @@ namespace FProject.Server.Controllers
             }
             allCount = await writepadsCountQuery.CountAsync();
 
-            return new WritepadsDTO { Writepads = writepads.Select(w => adminMode ? w.ToAdminWritepadDTO() : (WritepadDTO)w),
-                AllCount = allCount };
+            return new WritepadsDTO
+            {
+                Writepads = writepads.Select(w => adminMode ? w.ToAdminWritepadDTO() : (WritepadDTO)w),
+                AllCount = allCount
+            };
         }
 
         // GET api/<WritepadController>/5
@@ -166,7 +167,7 @@ namespace FProject.Server.Controllers
             if (withPoints)
             {
                 writepadQuery = writepadQuery
-                    .Include(w => w.Points);
+                    .Include(w => w.Points.OrderBy(p => p.Number));
             }
             var writepad = await writepadQuery.FirstOrDefaultAsync();
             if (writepad is null)
@@ -261,6 +262,10 @@ namespace FProject.Server.Controllers
                     for (int i = 0; i < fractions.Length; i++)
                     {
                         var count = Math.Min((int)Math.Ceiling(fractions[i] * originalCount), remainingCount);
+                        if (count == 0)
+                        {
+                            continue;
+                        }
                         newWritepad.Number = count;
                         remainingCount -= count;
                         newWritepad.Type = types[i];
@@ -300,8 +305,10 @@ namespace FProject.Server.Controllers
                     writepad.TextId = text.Id;
                     writepad.Text = text;
                 }
+
+                newWritepads.Add(writepad);
+                _context.Entry(writepad).State = EntityState.Added;
             }
-            _context.Writepads.AddRange(newWritepads);
             await _context.SaveChangesAsync();
 
             return Ok(newWritepads.Select(w => (WritepadDTO)w));
@@ -362,7 +369,8 @@ namespace FProject.Server.Controllers
             foreach (var p in savePointsDTO.NewPoints) p.WritepadId = writepad.Id;
             _context.Points.AddRange(savePointsDTO.NewPoints);
 
-            if (!savePointsDTO.DeletedDrawings.IsNullOrEmpty()) {
+            if (!savePointsDTO.DeletedDrawings.IsNullOrEmpty())
+            {
                 foreach (var drawing in savePointsDTO.DeletedDrawings)
                 {
                     for (int i = drawing.StartingNumber; i <= drawing.EndingNumber; i++)
@@ -401,7 +409,8 @@ namespace FProject.Server.Controllers
             await _context.SaveChangesAsync();
 
             var lastPoint = savePointsDTO.NewPoints.LastOrDefault();
-            return Ok(new SavePointsResponseDTO {
+            return Ok(new SavePointsResponseDTO
+            {
                 LastModified = writepad.LastModified,
                 LastSavedDrawingNumber = lastPoint is null ? -1 : lastPoint.Number
             });
@@ -467,12 +476,12 @@ namespace FProject.Server.Controllers
                     .Where(w => w.UserSpecifiedNumber == id && w.OwnerId == userId)
                     .FirstOrDefaultAsync();
             }
-            
+
             if (writepad is null)
             {
                 return NotFound();
             }
-            
+
             if ((writepad.Status == WritepadStatus.Accepted
                 || status == WritepadStatus.Accepted
                 || status == WritepadStatus.NeedEdit) && !adminMode)

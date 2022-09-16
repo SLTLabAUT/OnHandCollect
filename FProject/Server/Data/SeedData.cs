@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -17,30 +18,37 @@ namespace FProject.Server.Data
 {
     public class SeedData
     {
+        protected ILogger<SeedData> Logger { get; set; }
+
         public async Task Initialize(IServiceProvider serviceProvider)
         {
-            using (var context = serviceProvider.GetRequiredService<ApplicationDbContext>())
+            Logger = serviceProvider.GetRequiredService<ILogger<SeedData>>();
+            Logger.LogInformation("SeedData started...");
+
+            using var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            var config = serviceProvider.GetRequiredService<IConfiguration>();
+            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
+
+            var adminEmails = config.GetSection("SeedAdmins").Get<List<string>>();
+            foreach (var adminEmail in adminEmails)
             {
-                var config = serviceProvider.GetRequiredService<IConfiguration>();
-                var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
-
-                var adminEmails = config.GetSection("SeedAdmins").Get<List<string>>();
-                foreach (var adminEmail in adminEmails)
-                {
-                    var admin = await userManager.FindByNameAsync(adminEmail);
-                    admin = await EnsureAdmin(userManager, admin, adminEmail, config["SeedAdminPw"]);
-                    await EnsureAdminRole(serviceProvider, userManager, admin);
-                }
-
-                await EnsureText(context);
-                await EnsureWordGroup(context);
-                await EnsureWordGroupNormalization(context);
-                await EnsureWordGroupX(context, TextType.WordGroup2, "Data/len2_40k_scored.txt", 2);
-                await EnsureWordGroupX(context, TextType.WordGroup3, "Data/len3_40k_scored.txt", 3);
-                await EnsureNumbers(context);
-
-                await EnsureUserWordCount(context);
+                Logger.LogInformation("Ensuring admins' roles...");
+                var admin = await userManager.FindByNameAsync(adminEmail);
+                admin = await EnsureAdmin(userManager, admin, adminEmail, config["SeedAdminPw"]);
+                await EnsureAdminRole(serviceProvider, userManager, admin);
+                Logger.LogInformation("Seeding done.");
             }
+
+            await EnsureText(context);
+            await EnsureWordGroup(context);
+            await EnsureWordGroupNormalization(context);
+            await EnsureWordGroupX(context, TextType.WordGroup2, "Data/len2_40k_scored.txt", 2);
+            await EnsureWordGroupX(context, TextType.WordGroup3, "Data/len3_40k_scored.txt", 3);
+            await EnsureNumbers(context);
+
+            await EnsureUserWordCount(context);
+
+            Logger.LogInformation("SeedData ended.");
         }
 
         private async Task EnsureUserWordCount(ApplicationDbContext context)
@@ -52,6 +60,7 @@ namespace FProject.Server.Data
             {
                 return;
             }
+            Logger.LogInformation("Seeding UserWordCount data...");
 
             var text = context.Text
                 .Select(t => new { Id = t.Id, WordCount = t.WordCount });
@@ -87,6 +96,8 @@ namespace FProject.Server.Data
             }
 
             await context.SaveChangesAsync();
+
+            Logger.LogInformation("Seeding done.");
         }
 
         private async Task<ApplicationUser> EnsureAdmin(UserManager<ApplicationUser> userManager, ApplicationUser admin, string Email, string UserPw)
@@ -148,6 +159,7 @@ namespace FProject.Server.Data
                 .CountAsync();
             if (count == 0)
             {
+                Logger.LogInformation("Seeding Text data...");
                 string line;
                 float maxRarity = 1f;
                 var splitter = new Regex(@"^(\d+\.\d+)\t(.+)$", RegexOptions.Compiled);
@@ -174,6 +186,8 @@ namespace FProject.Server.Data
                 file.Close();
 
                 await context.SaveChangesAsync();
+
+                Logger.LogInformation("Seeding done.");
             }
 
             // w/number text
@@ -182,6 +196,7 @@ namespace FProject.Server.Data
                 .CountAsync();
             if (count == 0)
             {
+                Logger.LogInformation("Seeding Text/w/Number data...");
                 string line;
                 float maxRarity = 1f;
                 var splitter = new Regex(@"^(\d+\.\d+)\t(.+)$", RegexOptions.Compiled);
@@ -208,6 +223,8 @@ namespace FProject.Server.Data
                 file.Close();
 
                 await context.SaveChangesAsync();
+
+                Logger.LogInformation("Seeding done.");
             }
         }
 
@@ -220,6 +237,7 @@ namespace FProject.Server.Data
             {
                 return;
             }
+            Logger.LogInformation("Seeding NumberGroup data...");
 
             string line;
             int batchSize = 14;
@@ -253,6 +271,7 @@ namespace FProject.Server.Data
             file.Close();
 
             await context.SaveChangesAsync();
+            Logger.LogInformation("Seeding done.");
         }
 
         private async Task EnsureWordGroup(ApplicationDbContext context)
@@ -264,6 +283,7 @@ namespace FProject.Server.Data
             {
                 return;
             }
+            Logger.LogInformation("Seeding WordGroup data...");
 
             var allText = await context.Text
                 .Where(t => t.Type == TextType.Text)
@@ -305,6 +325,8 @@ namespace FProject.Server.Data
             }
 
             await context.SaveChangesAsync();
+
+            Logger.LogInformation("Seeding done.");
         }
 
         private async Task EnsureWordGroupNormalization(ApplicationDbContext context)
@@ -316,6 +338,7 @@ namespace FProject.Server.Data
             {
                 return;
             }
+            Logger.LogInformation("Ensuring WordGroup data normalization...");
 
             var allWordGroups = await context.Text
                 .Where(t => t.Type == TextType.WordGroup)
@@ -326,6 +349,8 @@ namespace FProject.Server.Data
             }
 
             await context.SaveChangesAsync();
+
+            Logger.LogInformation("Seeding done.");
         }
 
         private async Task EnsureWordGroupX(ApplicationDbContext context, TextType type, string fileName, int wordCountPerGroup)
@@ -337,6 +362,7 @@ namespace FProject.Server.Data
             {
                 return;
             }
+            Logger.LogInformation($"Seeding {type} data...");
 
             string line;
             float maxRarity = 1f;
@@ -396,6 +422,8 @@ namespace FProject.Server.Data
             file.Close();
 
             await context.SaveChangesAsync();
+
+            Logger.LogInformation("Seeding done.");
         }
     }
 }

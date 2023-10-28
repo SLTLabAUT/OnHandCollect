@@ -35,7 +35,7 @@ namespace FProject.Server.Services
             }
             catch (InvalidOperationException) { }
             int maxWritepads = 1;
-            int writepadsFraction = 7;
+            int writepadsFraction = 1;
             try
             {
                 maxWritepads = Math.Max((await _context.Writepads
@@ -74,6 +74,7 @@ namespace FProject.Server.Services
                 .Select(g => new { g.Key, Count = (int?)g.Count() });
             var writepadsTextCount = _context.Writepads
                 .Where(w => w.Status != WritepadStatus.Accepted
+                    && DateTimeOffset.UtcNow - w.LastModified < TimeSpan.FromDays(1)
                     && w.Type == newWritepad.Type)
                 .GroupBy(w => w.TextId)
                 .Select(g => new { g.Key, Count = (int?)g.Count() });

@@ -20,44 +20,6 @@ namespace FProject.Server.Services
 
         public async Task<List<Text>> GetNewText(string userId, NewWritepadDTO newWritepad)
         {
-            // fetch maximums
-            int maxUser = 1;
-            try
-            {
-                maxUser = Math.Max(await _context.Writepads
-                    .Where(w => w.OwnerId == userId
-                        && w.PointerType == newWritepad.PointerType
-                        && w.Hand == newWritepad.Hand
-                        && w.Type == newWritepad.Type)
-                    .GroupBy(w => w.TextId)
-                    .Select(g => g.Count())
-                    .MaxAsync(), 1);
-            }
-            catch (InvalidOperationException) { }
-            int maxWritepads = 1;
-            int writepadsFraction = 1;
-            try
-            {
-                maxWritepads = Math.Max((await _context.Writepads
-                    .Where(w => w.Status != WritepadStatus.Accepted
-                        && w.Type == newWritepad.Type)
-                    .GroupBy(w => w.TextId)
-                    .Select(g => g.Count())
-                    .MaxAsync()) / writepadsFraction, 1);
-            }
-            catch (InvalidOperationException) { }
-            int maxAcceptedWritepads = 1;
-            int acceptedWritepadsFraction = 3;
-            try
-            {
-                maxAcceptedWritepads = Math.Max((await _context.Writepads
-                    .Where(w => w.Status == WritepadStatus.Accepted
-                        && w.Type == newWritepad.Type)
-                    .GroupBy(w => w.TextId)
-                    .Select(g => g.Count())
-                    .MaxAsync()) / acceptedWritepadsFraction, 1);
-            }
-            catch (InvalidOperationException) { }
             // get text type
             var textType = newWritepad.Type.ToTextType();
             // fetch text required data
@@ -65,37 +27,49 @@ namespace FProject.Server.Services
                 .Where(t => t.Type == textType)
                 .Select(t => new { TextId = t.Id, Rarity = t.Rarity, Priority = t.Priority });
             // calculate counts
-            var userTextCount = _context.Writepads
+            // user writepads
+            var userWritepadsTextCount = _context.Writepads
                 .Where(w => w.OwnerId == userId
                     && w.PointerType == newWritepad.PointerType
                     && w.Hand == newWritepad.Hand
                     && w.Type == newWritepad.Type)
                 .GroupBy(w => w.TextId)
                 .Select(g => new { g.Key, Count = (int?)g.Count() });
-            var writepadsTextCount = _context.Writepads
-                .Where(w => w.Status != WritepadStatus.Accepted
-                    && DateTimeOffset.UtcNow - w.LastModified < TimeSpan.FromDays(1)
+            var maxUserWritepads = Math.Max((await userWritepadsTextCount.MaxAsync(e => e.Count) ?? 0), 1);
+            // active writepads
+            var activeWritepadsFraction = 1;
+            var activeWritepadsTextCount = _context.Writepads
+                .Where(w => (w.Status == WritepadStatus.NeedEdit || w.Status == WritepadStatus.Draft)
+                    && DateTimeOffset.UtcNow - w.LastModified < TimeSpan.FromDays(7)
+                    && w.PointerType == newWritepad.PointerType
+                    && w.Hand == newWritepad.Hand
                     && w.Type == newWritepad.Type)
                 .GroupBy(w => w.TextId)
                 .Select(g => new { g.Key, Count = (int?)g.Count() });
-            var writepadsAcceptedTextCount = _context.Writepads
-                .Where(w => w.Status == WritepadStatus.Accepted
+            var maxActiveWritepads = Math.Max((await activeWritepadsTextCount.MaxAsync(e => e.Count) ?? 0) / activeWritepadsFraction, 1);
+            // ready writepads
+            int readyWritepadsFraction = 2;
+            var readyWritepadsTextCount = _context.Writepads
+                .Where(w => (w.Status == WritepadStatus.Accepted || w.Status == WritepadStatus.WaitForAcceptance)
+                    && w.PointerType == newWritepad.PointerType
+                    && w.Hand == newWritepad.Hand
                     && w.Type == newWritepad.Type)
                 .GroupBy(w => w.TextId)
                 .Select(g => new { g.Key, Count = (int?)g.Count() });
+            var maxReadyWritepads = Math.Max((await readyWritepadsTextCount.MaxAsync(e => e.Count) ?? 0) / readyWritepadsFraction, 1);
             // calculate ranks
             var query = from t in allText
-                        join a in writepadsAcceptedTextCount on t.TextId equals a.Key into gj
+                        join a in readyWritepadsTextCount on t.TextId equals a.Key into gj
                         from ta in gj.DefaultIfEmpty()
-                        select new { t.TextId, Rank = -(float)((ta.Count ?? 0) / acceptedWritepadsFraction) / maxAcceptedWritepads + t.Rarity + t.Priority };
+                        select new { t.TextId, Rank = -(float)((ta.Count ?? 0) / readyWritepadsFraction) / maxReadyWritepads + t.Rarity + t.Priority };
             query = from ta in query
-                    join w in writepadsTextCount on ta.TextId equals w.Key into gj
+                    join w in activeWritepadsTextCount on ta.TextId equals w.Key into gj
                     from taw in gj.DefaultIfEmpty()
-                    select new { ta.TextId, Rank = -(float)((taw.Count ?? 0) / writepadsFraction) / maxWritepads + ta.Rank };
+                    select new { ta.TextId, Rank = -(float)((taw.Count ?? 0) / activeWritepadsFraction) / maxActiveWritepads + ta.Rank };
             query = from taw in query
-                    join u in userTextCount on taw.TextId equals u.Key into gj
+                    join u in userWritepadsTextCount on taw.TextId equals u.Key into gj
                     from tawu in gj.DefaultIfEmpty()
-                    select new { taw.TextId, Rank = -(float)(tawu.Count ?? 0) * 5 / maxUser + taw.Rank };
+                    select new { taw.TextId, Rank = -(float)(tawu.Count ?? 0) * 5 / maxUserWritepads + taw.Rank };
             // fetch texts
             var ids = await query
                 .OrderByDescending(e => e.Rank)

@@ -61,11 +61,11 @@ namespace FProject.Server.Services
             var query = from t in allText
                         join a in readyWritepadsTextCount on t.TextId equals a.Key into gj
                         from ta in gj.DefaultIfEmpty()
-                        select new { t.TextId, Rank = -(float)((ta.Count ?? 0) / readyWritepadsFraction) / maxReadyWritepads + t.Rarity + t.Priority };
+                        select new { t.TextId, Rank = -((float)(ta.Count ?? 0) / readyWritepadsFraction) / maxReadyWritepads + t.Rarity + t.Priority };
             query = from ta in query
                     join w in activeWritepadsTextCount on ta.TextId equals w.Key into gj
                     from taw in gj.DefaultIfEmpty()
-                    select new { ta.TextId, Rank = -(float)((taw.Count ?? 0) / activeWritepadsFraction) / maxActiveWritepads + ta.Rank };
+                    select new { ta.TextId, Rank = -((float)(taw.Count ?? 0) / activeWritepadsFraction) / maxActiveWritepads + ta.Rank };
             query = from taw in query
                     join u in userWritepadsTextCount on taw.TextId equals u.Key into gj
                     from tawu in gj.DefaultIfEmpty()
